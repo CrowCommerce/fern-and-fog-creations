@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+/* Fern & Fog Brand Colors */
+:root {
+  --moss: #33593D;
+  --fern: #4F7942;
+  --parchment: #F5F0E6;
+  --bark: #5B4636;
+  --mist: #E6ECE8;
+  --gold: #C5A05A;
+  --background: #F5F0E6;
+  --foreground: #5B4636;
+}
+
+@theme inline {
+  /* Brand Colors */
+  --color-moss: var(--moss);
+  --color-fern: var(--fern);
+  --color-parchment: var(--parchment);
+  --color-bark: var(--bark);
+  --color-mist: var(--mist);
+  --color-gold: var(--gold);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  
+  /* Typography */
+  --font-display: var(--font-cormorant);
+  --font-sans: var(--font-inter);
+  
+  /* Custom utilities */
+  --radius-lg: 0.5rem;
+  --ring-width: 1.5px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #2a3d32;
+    --foreground: #F5F0E6;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-inter), system-ui, -apple-system, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Custom Utilities */
+.ring-brand {
+  box-shadow: 0 0 0 1.5px var(--bark);
+}
+
+.parchment-texture {
+  background-color: var(--parchment);
+  background-image: 
+    repeating-linear-gradient(
+      0deg,
+      transparent,
+      transparent 2px,
+      rgba(91, 70, 54, 0.02) 2px,
+      rgba(91, 70, 54, 0.02) 4px
+    );
+}
+
+.leaf-divider {
+  position: relative;
+}
+
+.leaf-divider::after {
+  content: '❖';
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  color: var(--fern);
+  font-size: 1.5rem;
+  opacity: 0.4;
+}
+
+/* Focus Visible States */
+*:focus-visible {
+  outline: 2px solid var(--fern);
+  outline-offset: 2px;
+}
+
+/* Skip to Content Link */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  z-index: 999;
+  padding: 1rem 1.5rem;
+  background-color: var(--moss);
+  color: var(--parchment);
+  text-decoration: none;
+  border-radius: 0 0 0.5rem 0.5rem;
+}
+
+.skip-to-content:focus {
+  left: 50%;
+  transform: translateX(-50%);
+  top: 0;
+}
