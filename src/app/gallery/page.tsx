@@ -1,8 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Metadata } from 'next'
-import { galleryItems, getGalleryItemsByCategory } from '@/data/gallery'
+import { getGalleryItemsByCategory } from '@/data/gallery'
 import Lightbox from '@/components/Lightbox'
 
 const filters = [
@@ -57,7 +56,7 @@ export default function GalleryPage() {
           {filters.map((filter) => (
             <button
               key={filter.id}
-              onClick={() => setActiveFilter(filter.id as any)}
+              onClick={() => setActiveFilter(filter.id as 'all' | 'earrings' | 'resin' | 'driftwood' | 'wall-hangings')}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
                 activeFilter === filter.id
                   ? 'bg-fern text-parchment ring-2 ring-fern'
@@ -93,7 +92,7 @@ export default function GalleryPage() {
                 </p>
                 {item.story && (
                   <p className="mt-2 text-sm text-bark/70 italic line-clamp-2">
-                    "{item.story}"
+                    &quot;{item.story}&quot;
                   </p>
                 )}
               </div>

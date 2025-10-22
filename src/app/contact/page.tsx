@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 
 const productInterests = [
@@ -12,7 +12,7 @@ const productInterests = [
   'Custom Request',
 ]
 
-export default function ContactPage() {
+function ContactForm() {
   const searchParams = useSearchParams()
   const productParam = searchParams?.get('product')
 
@@ -79,7 +79,7 @@ export default function ContactPage() {
               Get in Touch
             </h1>
             <p className="mt-4 text-lg text-bark/70">
-              I'd love to hear from you. Whether you have a question about a piece, want to commission something custom, or just want to say hello.
+              I&apos;d love to hear from you. Whether you have a question about a piece, want to commission something custom, or just want to say hello.
             </p>
           </div>
 
@@ -210,7 +210,7 @@ export default function ContactPage() {
                 role="status"
                 aria-live="polite"
               >
-                Thank you for reaching out! I'll get back to you as soon as possible, usually within 1-2 business days.
+                Thank you for reaching out! I&apos;ll get back to you as soon as possible, usually within 1-2 business days.
               </div>
             )}
 
@@ -222,6 +222,14 @@ export default function ContactPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ContactPage() {
+  return (
+    <Suspense fallback={<div className="bg-parchment min-h-screen" />}>
+      <ContactForm />
+    </Suspense>
   )
 }
 

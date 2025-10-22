@@ -36,7 +36,7 @@ export default function AboutPage() {
                 Fern & Fog Creations was born from countless walks along the Oregon coast, where the mist meets the shore and treasures reveal themselves to those who pause to look.
               </p>
               <p>
-                I'm Heather, a maker and gatherer who believes that the most beautiful things come from nature itself. Every piece in my collection begins with a moment of discovery—a perfectly frosted piece of sea glass, a delicate wildflower pressed between pages, a piece of driftwood shaped by years of waves and weather.
+                I&apos;m Heather, a maker and gatherer who believes that the most beautiful things come from nature itself. Every piece in my collection begins with a moment of discovery—a perfectly frosted piece of sea glass, a delicate wildflower pressed between pages, a piece of driftwood shaped by years of waves and weather.
               </p>
               <p>
                 What started as a personal practice of collecting and preserving these moments has grown into Fern & Fog Creations, where I transform these found treasures into wearable art and home décor that carry the spirit of the Pacific Northwest.
@@ -58,7 +58,7 @@ export default function AboutPage() {
             </div>
             <div className="mt-6 p-6 bg-mist rounded-lg">
               <p className="text-sm italic text-bark/70">
-                "I believe that when you wear or display something made from the natural world, you carry a piece of that world with you—its stories, its journeys, its quiet beauty."
+                &quot;I believe that when you wear or display something made from the natural world, you carry a piece of that world with you—its stories, its journeys, its quiet beauty.&quot;
               </p>
               <p className="mt-2 text-sm font-medium text-bark">— Heather</p>
             </div>

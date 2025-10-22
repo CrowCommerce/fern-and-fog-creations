@@ -1,18 +1,18 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import Link from 'next/link'
 import { products, categories, getProductsByCategory } from '@/data/products'
 
-export default function ProductsPage() {
+function ProductsContent() {
   const searchParams = useSearchParams()
   const categoryParam = searchParams?.get('category')
   const [filteredProducts, setFilteredProducts] = useState(products.filter(p => p.forSale))
 
   useEffect(() => {
     if (categoryParam) {
-      setFilteredProducts(getProductsByCategory(categoryParam as any))
+      setFilteredProducts(getProductsByCategory(categoryParam as 'earrings' | 'resin' | 'driftwood' | 'wall-hangings'))
     } else {
       setFilteredProducts(products.filter(p => p.forSale))
     }
@@ -121,7 +121,7 @@ export default function ProductsPage() {
             Looking for Something Custom?
           </h2>
           <p className="mt-4 text-lg text-bark/70 max-w-2xl mx-auto">
-            I love creating custom pieces. Whether it's a memorial piece, a special gift, or something uniquely yours, let's bring your vision to life.
+            I love creating custom pieces. Whether it&apos;s a memorial piece, a special gift, or something uniquely yours, let&apos;s bring your vision to life.
           </p>
           <Link
             href="/contact"
@@ -132,5 +132,13 @@ export default function ProductsPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function ProductsPage() {
+  return (
+    <Suspense fallback={<div className="bg-parchment min-h-screen" />}>
+      <ProductsContent />
+    </Suspense>
   )
 }

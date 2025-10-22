@@ -21,7 +21,7 @@ export default function ProductDetailPage() {
       <div className="bg-parchment min-h-screen flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-display font-bold text-bark">Product Not Found</h1>
-          <p className="mt-2 text-bark/60">The product you're looking for doesn't exist.</p>
+          <p className="mt-2 text-bark/60">The product you&apos;re looking for doesn&apos;t exist.</p>
           <Link href="/products" className="mt-4 inline-block text-fern hover:text-moss">
             Return to Shop
           </Link>
@@ -146,7 +146,7 @@ export default function ProductDetailPage() {
                 <div className="mt-6 p-4 bg-mist rounded-lg">
                   <h2 className="text-sm font-medium text-bark font-display">The Story</h2>
                   <p className="mt-2 text-sm text-bark/70 italic leading-relaxed">
-                    "{product.story}"
+                    &quot;{product.story}&quot;
                   </p>
                 </div>
               )}

@@ -38,7 +38,7 @@ export default function CollectionSection() {
                   {item.materials.join(' • ')}
                 </p>
                 <p className="mt-3 text-sm text-mist leading-relaxed italic line-clamp-3">
-                  "{item.story}"
+                  &quot;{item.story}&quot;
                 </p>
               </div>
             </div>
