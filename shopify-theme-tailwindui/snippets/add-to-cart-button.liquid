@@ -1,0 +1,38 @@
+{%- comment -%}
+  Renders an add to cart button
+
+  Usage:
+    {% render 'add-to-cart-button', product: product, variant: variant %}
+{%- endcomment -%}
+
+{%- liquid
+  if variant
+    assign selected_variant = variant
+  elsif product
+    assign selected_variant = product.selected_or_first_available_variant
+  else
+    assign selected_variant = nil
+  endif
+
+  assign button_text = 'products.product.add_to_cart' | t
+
+  if selected_variant == nil or selected_variant.available == false
+    assign button_disabled = true
+    assign button_text = 'products.product.sold_out' | t
+  else
+    assign button_disabled = false
+  endif
+-%}
+
+<button
+  type="submit"
+  name="add"
+  class="flex w-full items-center justify-center rounded-md border-2 border-fern bg-fern px-8 py-3 text-base font-medium text-parchment hover:bg-moss hover:border-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-fern"
+  {%- if button_disabled %}disabled{% endif -%}
+  data-add-to-cart-button
+>
+  <svg class="mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+  </svg>
+  <span data-button-text>{{ button_text }}</span>
+</button>

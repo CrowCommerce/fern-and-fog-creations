@@ -1,0 +1,63 @@
+{%- comment -%}
+  Related Products Section - "You May Also Like"
+  Shows product recommendations
+{%- endcomment -%}
+
+{%- if product.id -%}
+  <section class="bg-parchment py-16 sm:py-24">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+      {%- if section.settings.heading != blank -%}
+        <h2 class="text-2xl font-display font-bold tracking-tight text-bark sm:text-3xl mb-12">
+          {{ section.settings.heading }}
+        </h2>
+      {%- endif -%}
+
+      {%- comment -%} Get related products from same collection {%- endcomment -%}
+      {%- assign related_products = product.collections.first.products | where_not: "id", product.id | limit: section.settings.products_to_show -%}
+
+      {%- if related_products.size > 0 -%}
+        <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+          {%- for related_product in related_products -%}
+            {% render 'product-card', product: related_product %}
+          {%- endfor -%}
+        </div>
+      {%- else -%}
+        {%- comment -%} Fallback: Show some products from the first collection {%- endcomment -%}
+        {%- assign fallback_collection = collections.all -%}
+        {%- if fallback_collection.products.size > 0 -%}
+          <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+            {%- for fallback_product in fallback_collection.products limit: section.settings.products_to_show -%}
+              {%- unless fallback_product.id == product.id -%}
+                {% render 'product-card', product: fallback_product %}
+              {%- endunless -%}
+            {%- endfor -%}
+          </div>
+        {%- endif -%}
+      {%- endif -%}
+    </div>
+  </section>
+{%- endif -%}
+
+{% schema %}
+{
+  "name": "Related Products",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "You May Also Like"
+    },
+    {
+      "type": "range",
+      "id": "products_to_show",
+      "min": 2,
+      "max": 8,
+      "step": 1,
+      "label": "Products to Show",
+      "default": 4
+    }
+  ]
+}
+{% endschema %}

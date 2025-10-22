@@ -5,6 +5,9 @@ import Link from 'next/link'
 import { useParams } from 'next/navigation'
 import { getProductBySlug, getRelatedProducts } from '@/data/products'
 import { useCart } from '@/context/CartContext'
+import { VariantSelector } from '@/components/product/VariantSelector'
+import type { ProductVariant } from '@/types/product'
+import { formatPriceRange } from '@/lib/variant-utils'
 
 export default function ProductDetailPage() {
   const params = useParams()
@@ -15,6 +18,9 @@ export default function ProductDetailPage() {
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
   const [addedToCart, setAddedToCart] = useState(false)
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    product?.variants?.[0] || null
+  )
 
   if (!product) {
     return (
@@ -32,14 +38,23 @@ export default function ProductDetailPage() {
 
   const relatedProducts = getRelatedProducts(product, 4)
 
+  // Determine display price and availability
+  const displayPrice = selectedVariant?.price || product.price
+  const isAvailable = selectedVariant?.availableForSale ?? product.forSale
+
   const handleAddToCart = () => {
-    addItem({
+    const itemToAdd = {
       productId: product.id,
       slug: product.slug,
       name: product.name,
-      price: product.price,
-      image: product.images[0],
-    }, quantity)
+      price: displayPrice,
+      image: selectedVariant?.image || product.images[0],
+      variantId: selectedVariant?.id,
+      variantTitle: selectedVariant?.title,
+      selectedOptions: selectedVariant?.selectedOptions,
+    }
+
+    addItem(itemToAdd, quantity)
     setAddedToCart(true)
     setTimeout(() => setAddedToCart(false), 3000)
   }
@@ -122,9 +137,30 @@ export default function ProductDetailPage() {
               <h1 className="text-3xl font-display font-bold text-bark sm:text-4xl">
                 {product.name}
               </h1>
-              <p className="mt-4 text-3xl font-display font-semibold text-fern">
-                ${product.price.toFixed(2)}
-              </p>
+
+              {/* Price */}
+              <div className="mt-4">
+                <p className="text-3xl font-display font-semibold text-fern">
+                  ${displayPrice.toFixed(2)}
+                </p>
+                {product.priceRange && (
+                  <p className="mt-1 text-sm text-bark/60">
+                    Price range: {formatPriceRange(product.priceRange)}
+                  </p>
+                )}
+              </div>
+
+              {/* Variant Selector */}
+              {product.variants && product.options && (
+                <div className="mt-6 pb-6 border-b border-mist">
+                  <VariantSelector
+                    options={product.options}
+                    variants={product.variants}
+                    defaultVariant={selectedVariant}
+                    onVariantChange={setSelectedVariant}
+                  />
+                </div>
+              )}
 
               <div className="mt-6">
                 <h2 className="text-sm font-medium text-bark">Materials</h2>
@@ -153,7 +189,7 @@ export default function ProductDetailPage() {
 
               {/* CTAs */}
               <div className="mt-10 space-y-4">
-                {product.forSale && !product.externalUrl && (
+                {isAvailable && !product.externalUrl && (
                   <div className="flex items-center space-x-4">
                     <div className="flex items-center space-x-2">
                       <button

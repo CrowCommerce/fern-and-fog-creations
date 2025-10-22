@@ -1,0 +1,113 @@
+{%- comment -%}
+  Main Product Section - Product detail page
+  Displays product images, title, price, variants, and add to cart
+{%- endcomment -%}
+
+<section class="bg-parchment py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <div class="lg:grid lg:grid-cols-2 lg:gap-x-12 lg:items-start">
+
+      {%- comment -%} Product Images {%- endcomment -%}
+      <div class="lg:sticky lg:top-24">
+        {%- if product.images.size > 0 -%}
+          <div class="aspect-square overflow-hidden rounded-lg bg-mist mb-4">
+            <img
+              src="{{ product.featured_image | image_url: width: 1000 }}"
+              alt="{{ product.featured_image.alt | default: product.title | escape }}"
+              width="1000"
+              height="1000"
+              class="size-full object-cover object-center"
+              id="main-product-image"
+            >
+          </div>
+
+          {%- if product.images.size > 1 -%}
+            <div class="grid grid-cols-4 gap-4">
+              {%- for image in product.images limit: 4 -%}
+                <button
+                  type="button"
+                  class="aspect-square overflow-hidden rounded-lg bg-mist ring-2 ring-transparent hover:ring-fern transition-all"
+                  onclick="document.getElementById('main-product-image').src = '{{ image | image_url: width: 1000 }}'"
+                >
+                  <img
+                    src="{{ image | image_url: width: 200 }}"
+                    alt="{{ image.alt | default: product.title | escape }}"
+                    width="200"
+                    height="200"
+                    class="size-full object-cover"
+                  >
+                </button>
+              {%- endfor -%}
+            </div>
+          {%- endif -%}
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Product Info {%- endcomment -%}
+      <div class="mt-10 lg:mt-0">
+        <h1 class="text-3xl font-display font-bold tracking-tight text-bark sm:text-4xl">
+          {{ product.title }}
+        </h1>
+
+        <div class="mt-3">
+          {% render 'price', product: product %}
+        </div>
+
+        {%- if product.description != blank -%}
+          <div class="mt-6 prose prose-sm text-bark max-w-none">
+            {{ product.description }}
+          </div>
+        {%- endif -%}
+
+        {%- comment -%} Product Form {%- endcomment -%}
+        <form method="post" action="{{ routes.cart_add_url }}" class="mt-8" data-product-form>
+          <input type="hidden" name="id" value="{{ product.selected_or_first_available_variant.id }}">
+
+          {%- unless product.has_only_default_variant -%}
+            <div class="space-y-4">
+              {%- for option in product.options_with_values -%}
+                <div>
+                  <label class="block text-sm font-medium text-bark mb-2">
+                    {{ option.name }}
+                  </label>
+                  <select
+                    name="options[{{ option.name }}]"
+                    class="w-full rounded-md border-bark/20 bg-parchment text-bark focus:border-fern focus:ring-fern"
+                  >
+                    {%- for value in option.values -%}
+                      <option value="{{ value }}">{{ value }}</option>
+                    {%- endfor -%}
+                  </select>
+                </div>
+              {%- endfor -%}
+            </div>
+          {%- endunless -%}
+
+          <div class="mt-6">
+            <label class="block text-sm font-medium text-bark mb-2">
+              {{ 'products.product.quantity' | t }}
+            </label>
+            <input
+              type="number"
+              name="quantity"
+              value="1"
+              min="1"
+              class="w-24 rounded-md border-bark/20 bg-parchment text-bark focus:border-fern focus:ring-fern"
+            >
+          </div>
+
+          <div class="mt-8">
+            {% render 'add-to-cart-button', product: product %}
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Product",
+  "settings": []
+}
+{% endschema %}

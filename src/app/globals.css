@@ -101,3 +101,49 @@ body {
   transform: translateX(-50%);
   top: 0;
 }
+
+/*
+  Tailwind v4 Safelist - Dynamic Classes
+  These classes are used dynamically in components and must not be purged.
+  Referenced by: FilterPanel, ProductGrid, VariantSelector, etc.
+
+  Grid utilities: grid-cols-{1,2,3,4} with responsive variants
+  Aspect ratios: aspect-square aspect-video aspect-[4/5]
+  Gradients: from-moss/10 from-moss/20 to-transparent
+  Brand colors: bg-moss bg-fern bg-mist bg-parchment bg-gold
+  Text colors: text-moss text-fern text-bark text-gold text-parchment
+  Ring colors: ring-moss ring-fern ring-gold ring-bark
+  Border colors: border-moss border-fern border-mist border-gold
+
+  Note: Tailwind v4 will scan for these patterns when components use them.
+  This comment serves as documentation for dynamic class usage.
+*/
+
+/* Loading State Utilities */
+.animate-pulse-subtle {
+  animation: pulse-subtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+
+/* Smooth Transitions */
+.transition-height {
+  transition: height 0.3s ease-in-out;
+}
+
+.transition-opacity-fast {
+  transition: opacity 0.15s ease-in-out;
+}
+
+/* Focus Ring for Interactive Elements */
+.focus-ring-fern:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--fern);
+}

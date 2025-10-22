@@ -1,0 +1,136 @@
+{%- comment -%}
+  Hero Section - Converted from Next.js HeroSection component
+  Full-width image banner with overlay text and CTAs
+{%- endcomment -%}
+
+<div class="relative bg-moss">
+  {%- comment -%} Background Image {%- endcomment -%}
+  <div aria-hidden="true" class="absolute inset-0 overflow-hidden">
+    {%- if section.settings.image != blank -%}
+      <img
+        src="{{ section.settings.image | image_url: width: 2000 }}"
+        srcset="{{ section.settings.image | image_url: width: 750 }} 750w,
+                {{ section.settings.image | image_url: width: 1100 }} 1100w,
+                {{ section.settings.image | image_url: width: 1500 }} 1500w,
+                {{ section.settings.image | image_url: width: 2000 }} 2000w"
+        alt="{{ section.settings.image.alt | default: section.settings.heading | escape }}"
+        width="2000"
+        height="1200"
+        class="size-full object-cover object-center"
+        loading="eager"
+      >
+    {%- else -%}
+      <div class="size-full bg-moss"></div>
+    {%- endif -%}
+  </div>
+
+  {%- comment -%} Gradient Overlay {%- endcomment -%}
+  <div aria-hidden="true" class="absolute inset-0 bg-gradient-to-b from-moss/70 via-moss/50 to-moss/70"></div>
+
+  {%- comment -%} Content {%- endcomment -%}
+  <div class="relative mx-auto flex max-w-4xl flex-col items-center px-6 py-32 text-center sm:py-48 lg:py-64 lg:px-0">
+    {%- if section.settings.heading != blank -%}
+      <h1 class="text-5xl font-display font-bold tracking-tight text-parchment lg:text-7xl drop-shadow-lg">
+        {{ section.settings.heading }}
+      </h1>
+    {%- endif -%}
+
+    {%- if section.settings.subheading != blank -%}
+      <p class="mt-6 text-xl text-mist max-w-2xl leading-relaxed">
+        {{ section.settings.subheading }}
+      </p>
+    {%- endif -%}
+
+    {%- comment -%} CTA Buttons {%- endcomment -%}
+    {%- if section.settings.primary_cta_label != blank or section.settings.secondary_cta_label != blank -%}
+      <div class="mt-10 flex flex-col sm:flex-row gap-4">
+        {%- if section.settings.secondary_cta_label != blank -%}
+          <a
+            href="{{ section.settings.secondary_cta_url }}"
+            class="inline-block rounded-md border-2 border-parchment bg-transparent px-8 py-3 text-base font-medium text-parchment hover:bg-parchment/10 transition-colors"
+          >
+            {{ section.settings.secondary_cta_label }}
+          </a>
+        {%- endif -%}
+
+        {%- if section.settings.primary_cta_label != blank -%}
+          <a
+            href="{{ section.settings.primary_cta_url }}"
+            class="inline-block rounded-md border-2 border-gold bg-gold px-8 py-3 text-base font-medium text-moss hover:bg-gold/90 transition-colors"
+          >
+            {{ section.settings.primary_cta_label }}
+          </a>
+        {%- endif -%}
+      </div>
+    {%- endif -%}
+
+    {%- comment -%} Decorative Divider {%- endcomment -%}
+    {%- if section.settings.show_divider -%}
+      <div class="mt-16 flex items-center space-x-4 text-gold/40">
+        <div class="h-px w-12 bg-gold/40"></div>
+        <span class="text-2xl">❖</span>
+        <div class="h-px w-12 bg-gold/40"></div>
+      </div>
+    {%- endif -%}
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero",
+  "settings": [
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Background Image",
+      "info": "Recommended size: 2000x1200px"
+    },
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Handmade Coastal & Woodland Treasures"
+    },
+    {
+      "type": "textarea",
+      "id": "subheading",
+      "label": "Subheading",
+      "default": "Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches with materials gathered from the Pacific Northwest shores."
+    },
+    {
+      "type": "text",
+      "id": "primary_cta_label",
+      "label": "Primary CTA Label",
+      "default": "Shop New Arrivals"
+    },
+    {
+      "type": "url",
+      "id": "primary_cta_url",
+      "label": "Primary CTA URL"
+    },
+    {
+      "type": "text",
+      "id": "secondary_cta_label",
+      "label": "Secondary CTA Label",
+      "default": "View Gallery"
+    },
+    {
+      "type": "url",
+      "id": "secondary_cta_url",
+      "label": "Secondary CTA URL"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show Decorative Divider",
+      "default": true
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero",
+      "settings": {}
+    }
+  ]
+}
+{% endschema %}

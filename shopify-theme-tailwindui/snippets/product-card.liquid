@@ -1,0 +1,87 @@
+{%- comment -%}
+  Renders a product card for collection/featured product grids
+
+  Usage:
+    {% render 'product-card', product: product %}
+{%- endcomment -%}
+
+{%- liquid
+  assign featured_image = product.featured_image
+  assign product_url = product.url | within: collection
+  assign on_sale = false
+  if product.compare_at_price > product.price
+    assign on_sale = true
+  endif
+-%}
+
+<article class="group relative">
+  <a href="{{ product_url }}" class="block">
+    {%- comment -%} Product Image {%- endcomment -%}
+    <div class="aspect-square w-full overflow-hidden rounded-lg bg-mist">
+      {%- if featured_image != blank -%}
+        <img
+          src="{{ featured_image | image_url: width: 600 }}"
+          srcset="{{ featured_image | image_url: width: 300 }} 300w,
+                  {{ featured_image | image_url: width: 600 }} 600w,
+                  {{ featured_image | image_url: width: 900 }} 900w"
+          alt="{{ featured_image.alt | default: product.title | escape }}"
+          width="600"
+          height="600"
+          class="size-full object-cover object-center group-hover:opacity-90 transition-opacity"
+          loading="lazy"
+        >
+      {%- else -%}
+        <div class="size-full flex items-center justify-center">
+          <svg class="w-16 h-16 text-bark/20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+          </svg>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Sale Badge {%- endcomment -%}
+      {%- if on_sale -%}
+        <div class="absolute top-2 right-2">
+          <span class="inline-flex items-center rounded-full bg-gold px-3 py-1 text-xs font-medium text-moss">
+            Sale
+          </span>
+        </div>
+      {%- endif -%}
+
+      {%- comment -%} Sold Out Badge {%- endcomment -%}
+      {%- unless product.available -%}
+        <div class="absolute top-2 left-2">
+          <span class="inline-flex items-center rounded-full bg-bark px-3 py-1 text-xs font-medium text-parchment">
+            {{ 'products.product.sold_out' | t }}
+          </span>
+        </div>
+      {%- endunless -%}
+    </div>
+
+    {%- comment -%} Product Info {%- endcomment -%}
+    <div class="mt-4 space-y-2">
+      <h3 class="text-base font-medium text-bark group-hover:text-fern transition-colors">
+        {{ product.title }}
+      </h3>
+
+      {%- if settings.show_vendor and product.vendor != blank -%}
+        <p class="text-sm text-bark/60">{{ product.vendor }}</p>
+      {%- endif -%}
+
+      {%- comment -%} Price {%- endcomment -%}
+      <div class="flex items-center gap-2">
+        {%- if on_sale -%}
+          <span class="text-bark font-display font-semibold">
+            {{ product.price | money }}
+          </span>
+          <span class="text-bark/50 line-through text-sm">
+            {{ product.compare_at_price | money }}
+          </span>
+        {%- else -%}
+          <span class="text-bark font-display font-semibold">
+            {{ product.price | money }}
+          </span>
+        {%- endif -%}
+      </div>
+    </div>
+  </a>
+</article>

@@ -1,0 +1,33 @@
+{
+  "current": {
+    "color_moss": "#33593D",
+    "color_fern": "#4F7942",
+    "color_parchment": "#F5F0E6",
+    "color_bark": "#5B4636",
+    "color_mist": "#E6ECE8",
+    "color_gold": "#C5A05A",
+    "font_heading": "cormorant_garamond_n4",
+    "font_body": "inter_n4",
+    "base_font_size": 16,
+    "page_width": "default",
+    "enable_sticky_header": true,
+    "cart_type": "drawer",
+    "cart_empty_message": "Your basket is empty",
+    "cart_empty_description": "Start adding handmade treasures to your collection.",
+    "product_image_aspect_ratio": "natural",
+    "show_vendor": false,
+    "enable_product_zoom": true,
+    "sections": {
+      "header": {
+        "type": "header",
+        "settings": {}
+      },
+      "footer": {
+        "type": "footer",
+        "settings": {
+          "tagline": "Handmade with care on the coast"
+        }
+      }
+    }
+  }
+}

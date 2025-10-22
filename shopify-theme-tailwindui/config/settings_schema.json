@@ -1,0 +1,237 @@
+[
+  {
+    "name": "theme_info",
+    "theme_name": "Fern & Fog Creations",
+    "theme_version": "1.0.0",
+    "theme_author": "Fern & Fog",
+    "theme_documentation_url": "https://fernandfogged creations.com",
+    "theme_support_url": "https://fernandfogcreations.com/support"
+  },
+  {
+    "name": "Colors",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Brand Colors"
+      },
+      {
+        "type": "color",
+        "id": "color_moss",
+        "label": "Moss (Dark Green)",
+        "default": "#33593D",
+        "info": "Primary dark green accent"
+      },
+      {
+        "type": "color",
+        "id": "color_fern",
+        "label": "Fern (Medium Green)",
+        "default": "#4F7942",
+        "info": "Medium green for hover states and accents"
+      },
+      {
+        "type": "color",
+        "id": "color_parchment",
+        "label": "Parchment (Background)",
+        "default": "#F5F0E6",
+        "info": "Main background color - warm off-white"
+      },
+      {
+        "type": "color",
+        "id": "color_bark",
+        "label": "Bark (Text)",
+        "default": "#5B4636",
+        "info": "Primary text color - brown"
+      },
+      {
+        "type": "color",
+        "id": "color_mist",
+        "label": "Mist (Light Gray)",
+        "default": "#E6ECE8",
+        "info": "Secondary background and hover states"
+      },
+      {
+        "type": "color",
+        "id": "color_gold",
+        "label": "Gold (Accent)",
+        "default": "#C5A05A",
+        "info": "Accent color for CTAs and highlights"
+      }
+    ]
+  },
+  {
+    "name": "Typography",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Font Settings"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_heading",
+        "label": "Heading Font",
+        "default": "assistant_n4",
+        "info": "Used for headings and display text"
+      },
+      {
+        "type": "font_picker",
+        "id": "font_body",
+        "label": "Body Font",
+        "default": "assistant_n4",
+        "info": "Used for body text and UI elements"
+      },
+      {
+        "type": "range",
+        "id": "base_font_size",
+        "label": "Base Font Size",
+        "min": 14,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 16
+      }
+    ]
+  },
+  {
+    "name": "Layout",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Page Layout"
+      },
+      {
+        "type": "select",
+        "id": "page_width",
+        "label": "Page Width",
+        "options": [
+          {
+            "value": "narrow",
+            "label": "Narrow (1200px)"
+          },
+          {
+            "value": "default",
+            "label": "Default (1280px)"
+          },
+          {
+            "value": "wide",
+            "label": "Wide (1440px)"
+          }
+        ],
+        "default": "default"
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_sticky_header",
+        "label": "Enable Sticky Header",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Cart",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Cart Settings"
+      },
+      {
+        "type": "select",
+        "id": "cart_type",
+        "label": "Cart Type",
+        "options": [
+          {
+            "value": "drawer",
+            "label": "Drawer (Recommended)"
+          },
+          {
+            "value": "page",
+            "label": "Page Only"
+          }
+        ],
+        "default": "drawer",
+        "info": "Drawer provides better UX with slide-out cart"
+      },
+      {
+        "type": "text",
+        "id": "cart_empty_message",
+        "label": "Empty Cart Message",
+        "default": "Your basket is empty"
+      },
+      {
+        "type": "text",
+        "id": "cart_empty_description",
+        "label": "Empty Cart Description",
+        "default": "Start adding handmade treasures to your collection."
+      }
+    ]
+  },
+  {
+    "name": "Product",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Product Display"
+      },
+      {
+        "type": "select",
+        "id": "product_image_aspect_ratio",
+        "label": "Product Image Aspect Ratio",
+        "options": [
+          {
+            "value": "natural",
+            "label": "Natural"
+          },
+          {
+            "value": "square",
+            "label": "Square (1:1)"
+          },
+          {
+            "value": "portrait",
+            "label": "Portrait (3:4)"
+          },
+          {
+            "value": "landscape",
+            "label": "Landscape (4:3)"
+          }
+        ],
+        "default": "natural"
+      },
+      {
+        "type": "checkbox",
+        "id": "show_vendor",
+        "label": "Show Vendor",
+        "default": false
+      },
+      {
+        "type": "checkbox",
+        "id": "enable_product_zoom",
+        "label": "Enable Image Zoom on Product Pages",
+        "default": true
+      }
+    ]
+  },
+  {
+    "name": "Social Media",
+    "settings": [
+      {
+        "type": "header",
+        "content": "Social Links"
+      },
+      {
+        "type": "text",
+        "id": "social_instagram_link",
+        "label": "Instagram URL",
+        "info": "Full URL (https://instagram.com/...)"
+      },
+      {
+        "type": "text",
+        "id": "social_facebook_link",
+        "label": "Facebook URL"
+      },
+      {
+        "type": "text",
+        "id": "social_pinterest_link",
+        "label": "Pinterest URL"
+      }
+    ]
+  }
+]

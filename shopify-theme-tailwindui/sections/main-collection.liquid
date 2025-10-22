@@ -1,0 +1,128 @@
+{%- comment -%}
+  Main Collection Section - Product grid with filtering and sorting
+{%- endcomment -%}
+
+<section class="bg-parchment py-12 sm:py-16">
+  <div class="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+
+    {%- comment -%} Collection Header {%- endcomment -%}
+    <div class="flex items-center justify-between mb-8">
+      <div>
+        <h1 class="text-3xl font-display font-bold tracking-tight text-bark sm:text-4xl">
+          {{ collection.title }}
+        </h1>
+        {%- if collection.description != blank -%}
+          <p class="mt-4 text-base text-bark/70 max-w-2xl">
+            {{ collection.description }}
+          </p>
+        {%- endif -%}
+      </div>
+
+      {%- comment -%} Sort Dropdown {%- endcomment -%}
+      {%- if section.settings.enable_sorting -%}
+        <div class="hidden sm:block">
+          <select
+            class="rounded-md border-bark/20 bg-parchment text-bark focus:border-fern focus:ring-fern"
+            onchange="window.location.href = this.value"
+          >
+            <option value="{{ collection.url }}">{{ 'products.collection.sort' | t }}</option>
+            <option value="{{ collection.url }}?sort_by=manual">Featured</option>
+            <option value="{{ collection.url }}?sort_by=best-selling">Best Selling</option>
+            <option value="{{ collection.url }}?sort_by=title-ascending">A-Z</option>
+            <option value="{{ collection.url }}?sort_by=title-descending">Z-A</option>
+            <option value="{{ collection.url }}?sort_by=price-ascending">Price: Low to High</option>
+            <option value="{{ collection.url }}?sort_by=price-descending">Price: High to Low</option>
+            <option value="{{ collection.url }}?sort_by=created-descending">Newest</option>
+          </select>
+        </div>
+      {%- endif -%}
+    </div>
+
+    {%- comment -%} Product Grid {%- endcomment -%}
+    {%- if collection.products.size > 0 -%}
+      <div class="grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+        {%- for product in collection.products -%}
+          {% render 'product-card', product: product %}
+        {%- endfor -%}
+      </div>
+
+      {%- comment -%} Pagination {%- endcomment -%}
+      {%- if paginate.pages > 1 -%}
+        <div class="mt-12 flex justify-center">
+          <nav class="flex items-center space-x-2">
+            {%- if paginate.previous -%}
+              <a
+                href="{{ paginate.previous.url }}"
+                class="px-4 py-2 text-sm font-medium text-bark hover:text-fern transition-colors"
+              >
+                ← {{ 'general.accessibility.previous' | t }}
+              </a>
+            {%- endif -%}
+
+            {%- for part in paginate.parts -%}
+              {%- if part.is_link -%}
+                <a
+                  href="{{ part.url }}"
+                  class="px-4 py-2 text-sm font-medium text-bark hover:text-fern transition-colors"
+                >
+                  {{ part.title }}
+                </a>
+              {%- else -%}
+                <span class="px-4 py-2 text-sm font-medium text-fern">
+                  {{ part.title }}
+                </span>
+              {%- endif -%}
+            {%- endfor -%}
+
+            {%- if paginate.next -%}
+              <a
+                href="{{ paginate.next.url }}"
+                class="px-4 py-2 text-sm font-medium text-bark hover:text-fern transition-colors"
+              >
+                {{ 'general.accessibility.next' | t }} →
+              </a>
+            {%- endif -%}
+          </nav>
+        </div>
+      {%- endif -%}
+    {%- else -%}
+      {%- comment -%} Empty State {%- endcomment -%}
+      <div class="text-center py-12">
+        <p class="text-bark/60">{{ 'products.collection.products_count.zero' | t }}</p>
+      </div>
+    {%- endif -%}
+  </div>
+</section>
+
+{% schema %}
+{
+  "name": "Main Collection",
+  "settings": [
+    {
+      "type": "range",
+      "id": "products_per_page",
+      "min": 8,
+      "max": 48,
+      "step": 4,
+      "label": "Products per Page",
+      "default": 24
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_filtering",
+      "label": "Enable Filtering",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_sorting",
+      "label": "Enable Sorting",
+      "default": true
+    }
+  ]
+}
+{% endschema %}
+
+{%- paginate collection.products by section.settings.products_per_page -%}
+  {%- comment -%} Pagination wrapper is required {%- endcomment -%}
+{%- endpaginate -%}

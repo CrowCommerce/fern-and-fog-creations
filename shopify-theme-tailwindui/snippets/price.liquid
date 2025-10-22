@@ -1,0 +1,50 @@
+{%- comment -%}
+  Renders product price with sale price support
+
+  Usage:
+    {% render 'price', product: product %}
+    {% render 'price', variant: variant %}
+{%- endcomment -%}
+
+{%- liquid
+  if variant
+    assign target = variant
+  elsif product
+    assign target = product
+  else
+    assign target = nil
+  endif
+
+  assign compare_at_price = target.compare_at_price
+  assign price = target.price
+  assign available = target.available
+-%}
+
+{%- if target == nil -%}
+  {%- comment -%} Return early if no product/variant provided {%- endcomment -%}
+{%- else -%}
+
+<div class="flex items-center gap-2" data-price-wrapper>
+  {%- if available == false -%}
+    <span class="text-bark font-medium">
+      {{ 'products.product.sold_out' | t }}
+    </span>
+  {%- elsif compare_at_price > price -%}
+    {%- comment -%} Sale Price {%- endcomment -%}
+    <span class="text-bark font-display font-semibold text-xl" data-price>
+      {{ price | money }}
+    </span>
+    <span class="text-bark/50 line-through text-sm" data-compare-price>
+      {{ compare_at_price | money }}
+    </span>
+    <span class="text-xs font-medium text-gold px-2 py-1 bg-gold/10 rounded">
+      Save {{ compare_at_price | minus: price | times: 100.0 | divided_by: compare_at_price | round }}%
+    </span>
+  {%- else -%}
+    {%- comment -%} Regular Price {%- endcomment -%}
+    <span class="text-bark font-display font-semibold text-xl" data-price>
+      {{ price | money }}
+    </span>
+  {%- endif -%}
+</div>
+{%- endif -%}

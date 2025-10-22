@@ -1,0 +1,32 @@
+{
+  "name": "shopify-theme-fern-fog",
+  "version": "1.0.0",
+  "description": "Shopify theme for Fern & Fog Creations with Tailwind CSS",
+  "scripts": {
+    "dev": "concurrently \"npm run tailwind:watch\" \"shopify theme dev\"",
+    "dev:css": "npm run tailwind:watch",
+    "build": "npm run tailwind:build",
+    "tailwind:watch": "tailwindcss -i ./src/tailwind-source.css -o ./assets/theme.css --watch",
+    "tailwind:build": "cross-env NODE_ENV=production tailwindcss -i ./src/tailwind-source.css -o ./assets/theme.css --minify",
+    "deploy": "npm run build && shopify theme push",
+    "theme:check": "shopify theme check",
+    "shopify:dev": "shopify theme dev",
+    "shopify:push": "shopify theme push",
+    "shopify:pull": "shopify theme pull"
+  },
+  "devDependencies": {
+    "@shopify/cli": "^3.50.0",
+    "@tailwindcss/forms": "^0.5.7",
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "tailwindcss": "^3.4.0"
+  },
+  "keywords": [
+    "shopify",
+    "theme",
+    "tailwindcss",
+    "ecommerce"
+  ],
+  "author": "Fern & Fog Creations",
+  "license": "MIT"
+}

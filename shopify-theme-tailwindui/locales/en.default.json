@@ -1,0 +1,132 @@
+{
+  "general": {
+    "accessibility": {
+      "skip_to_content": "Skip to content",
+      "close": "Close",
+      "close_menu": "Close menu",
+      "open_menu": "Open menu",
+      "previous": "Previous",
+      "next": "Next",
+      "refresh_page": "Refresh the page"
+    },
+    "meta": {
+      "tags": "Tagged \"{{ tags }}\"",
+      "page": "Page {{ page }}"
+    },
+    "search": {
+      "search": "Search",
+      "placeholder": "Search products..."
+    },
+    "404": {
+      "title": "Page not found",
+      "subtext": "The page you requested does not exist."
+    }
+  },
+  "header": {
+    "navigation": {
+      "home": "Home",
+      "gallery": "Gallery",
+      "shop": "Shop",
+      "contact": "Contact",
+      "about": "About"
+    },
+    "cart": {
+      "title": "Cart",
+      "items_count": {
+        "one": "{{ count }} item",
+        "other": "{{ count }} items"
+      }
+    },
+    "mobile_tagline": "Handmade with care on the coast"
+  },
+  "cart": {
+    "general": {
+      "title": "Your Basket",
+      "empty": "Your basket is empty",
+      "empty_description": "Start adding handmade treasures to your collection.",
+      "subtotal": "Subtotal",
+      "shipping_note": "Shipping calculated at checkout.",
+      "continue_shopping": "Continue Shopping",
+      "view_cart": "View Cart",
+      "checkout": "Checkout",
+      "browse_shop": "Browse Shop",
+      "cart_error": "There was an error updating your cart. Please try again.",
+      "quantity_error": "You can only add a maximum quantity available for this item."
+    },
+    "item": {
+      "remove": "Remove",
+      "quantity": "Quantity",
+      "increase_quantity": "Increase quantity",
+      "decrease_quantity": "Decrease quantity",
+      "price": "Price"
+    }
+  },
+  "products": {
+    "product": {
+      "add_to_cart": "Add to Cart",
+      "sold_out": "Sold Out",
+      "unavailable": "Unavailable",
+      "quantity": "Quantity",
+      "price": {
+        "from": "From {{ price }}",
+        "regular": "Regular price",
+        "sale": "Sale price"
+      },
+      "vendor": "Vendor",
+      "view_full_details": "View full details"
+    },
+    "collection": {
+      "products_count": {
+        "zero": "No products",
+        "one": "{{ count }} product",
+        "other": "{{ count }} products"
+      },
+      "filter": "Filter",
+      "sort": "Sort",
+      "clear_all": "Clear all"
+    }
+  },
+  "footer": {
+    "tagline": "Handmade with care on the coast",
+    "newsletter": {
+      "title": "Subscribe to our newsletter",
+      "subtitle": "Get updates on new products and special offers",
+      "email_placeholder": "Enter your email",
+      "submit": "Subscribe",
+      "success": "Thanks for subscribing!"
+    },
+    "social": {
+      "follow": "Follow us"
+    },
+    "copyright": "© {{ year }} {{ shop_name }}. All rights reserved."
+  },
+  "sections": {
+    "hero": {
+      "shop_now": "Shop Now",
+      "learn_more": "Learn More"
+    },
+    "featured_collection": {
+      "view_all": "View all",
+      "shop_collection": "Shop {{ collection }}"
+    }
+  },
+  "customer": {
+    "account": {
+      "title": "Account",
+      "sign_out": "Sign out",
+      "sign_in": "Sign in",
+      "create_account": "Create account"
+    },
+    "orders": {
+      "title": "Order history",
+      "order_number": "Order {{ number }}",
+      "date": "{{ date }}",
+      "total": "Total"
+    }
+  },
+  "checkout": {
+    "general": {
+      "proceed": "Proceed to checkout"
+    }
+  }
+}
