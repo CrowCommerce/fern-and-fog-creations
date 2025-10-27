@@ -55,20 +55,43 @@ This project uses Next.js 15's App Router with the following page structure:
 - Event handlers (onClick, onChange)
 - Browser APIs (localStorage, window)
 
+### Dual-Mode Data Source Architecture
+
+**Critical Pattern:** This app supports both Shopify and local data sources via `src/lib/data-source.ts`.
+
+**Data Source Control:**
+```bash
+# Toggle between modes via environment variable
+NEXT_PUBLIC_USE_SHOPIFY=true   # Use Shopify API
+NEXT_PUBLIC_USE_SHOPIFY=false  # Use local data from src/data/products.ts
+```
+
+**Unified Interface Functions:**
+```typescript
+// Always use these functions - they automatically route to correct source
+import { getProduct, getProducts } from '@/lib/data-source';
+
+// Check current mode
+import { getDataSourceMode, isShopifyEnabled } from '@/lib/data-source';
+```
+
+**Important:** The data source layer automatically converts Shopify's format to match the local `Product` interface, ensuring components work seamlessly with either source.
+
 ### Shopify Integration
 
 **API Layer:** `src/lib/shopify/index.ts` contains all Shopify API interactions via GraphQL.
 
-**Key Functions:**
+**Direct Shopify Functions** (use `src/lib/data-source.ts` instead in components):
 ```typescript
+// From src/lib/shopify/index.ts - internal use only
 getProduct(handle)                    // Fetch single product
 getProducts(query, sort, reverse)     // Fetch products with filtering
 getCollections()                      // Fetch all collections
-getCart(cartId)                       // Fetch cart contents
-addToCart(cartId, lines)             // Add items to cart
-removeFromCart(cartId, lineIds)      // Remove items
-updateCart(cartId, lines)            // Update quantities
-getProductRecommendations(productId) // Related products
+getCart()                             // Fetch cart contents
+addToCart(lines)                      // Add items to cart
+removeFromCart(lineIds)               // Remove items
+updateCart(lines)                     // Update quantities
+getProductRecommendations(productId)  // Related products
 ```
 
 **GraphQL Organization:**
@@ -90,21 +113,108 @@ Uses Next.js 15's native caching with cache tags for targeted revalidation.
 SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
 SHOPIFY_STOREFRONT_ACCESS_TOKEN=your-token-here
 SHOPIFY_REVALIDATION_SECRET=your-secret
+NEXT_PUBLIC_USE_SHOPIFY=true
 ```
 
-**Fallback:** If Shopify env vars not configured, app uses local data from `src/data/products.ts`.
+**Development Workflow:**
+1. **Local Development**: Set `NEXT_PUBLIC_USE_SHOPIFY=false` to use `src/data/products.ts`
+2. **Shopify Testing**: Set `NEXT_PUBLIC_USE_SHOPIFY=true` with valid credentials
+3. **Production**: Always use `NEXT_PUBLIC_USE_SHOPIFY=true`
+
+**Fallback:** If Shopify env vars not configured, app automatically falls back to local data.
 
 ### State Management
 
 **Cart State:** React Context API (`src/context/CartContext.tsx`)
 
 ```typescript
-const { items, addItem, removeItem, updateQuantity, clearCart, total, itemCount } = useCart();
+const {
+  // Standard cart operations
+  items, addItem, removeItem, updateQuantity, clearCart, total, itemCount,
+
+  // Optimistic updates (React 19 useOptimistic)
+  optimisticItems, isPending,
+
+  // Undo functionality
+  undoLastAction, canUndo
+} = useCart();
 ```
 
-**Persistence:** Cart state is persisted to `localStorage` under the key `fern-fog-cart`.
+**Features:**
+- **Optimistic Updates**: Cart mutations update UI instantly via `useOptimistic` before actual state changes
+- **Undo Support**: Last 5 actions can be undone with `undoLastAction()`
+- **Shopify Sync**: When `NEXT_PUBLIC_USE_SHOPIFY=true`, cart changes sync to Shopify (fire-and-forget, local cart remains source of truth)
+  - Cart sync handled via `src/lib/shopify-cart-adapter.ts` which maps local cart format to Shopify's merchandiseId format
+  - Uses `variantId` if available, falls back to `productId`
+- **Persistence**: Cart state persisted to `localStorage` under key `fern-fog-cart`
 
 **Important:** Cart context is client-side only. Wrap usage in Client Components.
+
+### Product Variants System
+
+Products support multiple variants (colors, sizes, etc.) via the `variants` and `options` fields.
+
+**Product Structure:**
+```typescript
+interface Product {
+  // Basic fields
+  id: string;
+  name: string;
+  price: number; // Base price
+
+  // Variant support
+  variants?: ProductVariant[]; // All available variants
+  options?: ProductOption[];   // Option groups (Color, Size, etc.)
+  priceRange?: { min: number; max: number }; // Price range across variants
+}
+```
+
+**Variant Selection Component:**
+```typescript
+import VariantSelector from '@/components/product/VariantSelector';
+
+// In product detail page
+<VariantSelector
+  variants={product.variants}
+  options={product.options}
+  selectedVariant={selectedVariant}
+  onVariantChange={setSelectedVariant}
+/>
+```
+
+**Utilities:**
+- `src/lib/variant-utils.ts` - Helper functions for variant selection logic
+- `src/components/product/VariantSelector.tsx` - Client component for variant UI
+
+**Pattern:** When a product has variants, use the selected variant's price and availability. Fall back to base `product.price` if no variants.
+
+### Product Filtering System
+
+The products page supports filtering and sorting via URL search params and dedicated filter components.
+
+**Filter Components:**
+- `src/components/filters/FilterPanel.tsx` - Desktop filter sidebar
+- `src/components/filters/MobileFilterDrawer.tsx` - Mobile filter drawer
+- `src/components/filters/CheckboxFilter.tsx` - Category/tag checkboxes
+- `src/components/filters/PriceRangeFilter.tsx` - Min/max price inputs
+- `src/components/filters/SortDropdown.tsx` - Sort order selector
+
+**URL Pattern:**
+```
+/products?category=earrings&sort=price&order=asc&minPrice=20&maxPrice=100
+```
+
+**Implementation Pattern:**
+```typescript
+'use client';
+import { useSearchParams } from 'next/navigation';
+
+const searchParams = useSearchParams();
+const category = searchParams?.get('category');
+const sortBy = searchParams?.get('sort');
+```
+
+**Note:** Filter state is managed via URL for shareability and back-button support.
 
 ### Path Aliases
 
@@ -328,14 +438,19 @@ This codebase prioritizes accessibility:
 ## Important Notes
 
 - **No API routes**: Direct Shopify GraphQL integration via server functions, no `/app/api` routes
-- **Image optimization**: Currently uses static `<img>` tags; consider `next/image` for optimization
+- **Image optimization**: Next.js Image component configured with remote patterns for:
+  - `cdn.shopify.com/s/files/**` (Shopify CDN)
+  - `via.placeholder.com` (Placeholders)
+  - `tailwindcss.com/plus-assets/**` (TailwindUI assets)
+  - Supports AVIF and WebP formats
 - **Cart is client-only**: No server-side cart persistence; uses localStorage
 - **Turbopack enabled**: Both `dev` and `build` use `--turbopack` flag
-- **Next.js 15 features**: Uses `'use cache'` directive, `cacheTag()`, `cacheLife()` for caching
+- **Next.js 15 features**: Uses `'use cache'` directive, `cacheTag()`, `cacheLife()` for caching, `useOptimistic` for cart updates
 - **Suspense boundaries**: Use `<Suspense>` for loading states in async components
+- **React 19**: This project uses React 19 features including `useOptimistic` hook
 
 ## Git Workflow
 
-- Main branch: `main`
-- Current status: Clean working directory
+- Main branch: (not configured in repo yet)
+- Current branch: `feat/shopify`
 - Use conventional commit messages (e.g., `feat:`, `fix:`, `chore:`)
