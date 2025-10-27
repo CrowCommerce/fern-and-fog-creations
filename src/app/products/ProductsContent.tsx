@@ -7,6 +7,7 @@ import type { Product } from '@/data/products'
 import { useFilters } from '@/hooks/useFilters'
 import { FilterPanel } from '@/components/filters/FilterPanel'
 import { MobileFilterDrawer } from '@/components/filters/MobileFilterDrawer'
+import SortDropdown from '@/components/filters/SortDropdown'
 import type { ActiveFilters, SortOption } from '@/types/filter'
 
 interface ProductsContentProps {
@@ -146,27 +147,16 @@ export default function ProductsContent({ products, dataMode }: ProductsContentP
               </div>
 
               {/* Sort Dropdown */}
-              <div className="flex items-center gap-2 ml-auto">
-                <label htmlFor="sort" className="text-sm text-bark/70">
-                  Sort:
-                </label>
-                <select
-                  id="sort"
-                  value={activeFilters.sort || 'featured'}
-                  onChange={(e) =>
+              <div className="ml-auto">
+                <SortDropdown
+                  value={(activeFilters.sort || 'featured') as SortOption}
+                  onChange={(v) =>
                     handleFilterChange({
                       ...activeFilters,
-                      sort: e.target.value as SortOption,
+                      sort: v,
                     })
                   }
-                  className="px-3 py-2 text-sm border border-mist rounded-md bg-parchment text-bark focus:outline-none focus:ring-2 focus:ring-fern"
-                >
-                  {sortOptions.map((option) => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
             </div>
 
