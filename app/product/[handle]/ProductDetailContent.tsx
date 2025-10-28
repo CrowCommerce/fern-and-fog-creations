@@ -6,9 +6,38 @@ import { useCart } from '@/components/cart/cart-context'
 import { ProductProvider } from '@/components/product/product-context'
 import { VariantSelector } from '@/components/product/VariantSelector'
 import type { Product, ProductVariant } from '@/types/product'
+import type { Product as ShopifyProduct, ProductVariant as ShopifyVariant } from '@/lib/shopify/types'
 import { formatPriceRange } from '@/lib/variant-utils'
 import { addItem } from '@/components/cart/actions'
 import { useTransition } from 'react'
+
+// Adapter to convert local types to Shopify types for cart operations
+function adaptToShopifyVariant(variant: ProductVariant): ShopifyVariant {
+  return {
+    id: variant.id,
+    title: variant.title,
+    availableForSale: variant.availableForSale,
+    selectedOptions: variant.selectedOptions,
+    price: {
+      amount: variant.price.toString(),
+      currencyCode: 'USD'
+    }
+  } as ShopifyVariant
+}
+
+function adaptToShopifyProduct(product: Product): ShopifyProduct {
+  return {
+    id: product.id,
+    handle: product.slug,
+    title: product.name,
+    featuredImage: {
+      url: product.images[0] || '',
+      altText: product.name,
+      width: 800,
+      height: 800
+    }
+  } as ShopifyProduct
+}
 
 interface ProductDetailContentProps {
   product: Product
@@ -34,8 +63,15 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
     // Use the variant ID if available, otherwise use product ID
     const merchandiseId = selectedVariant?.id || product.id
 
+    // 1. OPTIMISTIC UPDATE - Instant UI feedback
+    if (selectedVariant) {
+      const shopifyVariant = adaptToShopifyVariant(selectedVariant)
+      const shopifyProduct = adaptToShopifyProduct(product)
+      addCartItem(shopifyVariant, shopifyProduct)
+    }
+
+    // 2. SERVER ACTION - Persist to Shopify
     startTransition(async () => {
-      // Call server action to add to cart
       for (let i = 0; i < quantity; i++) {
         await addItem(null, merchandiseId)
       }

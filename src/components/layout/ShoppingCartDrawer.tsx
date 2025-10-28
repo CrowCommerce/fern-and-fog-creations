@@ -5,8 +5,8 @@ import Image from 'next/image'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { useCart } from '@/components/cart/cart-context'
-import { removeItem, updateItemQuantity } from '@/components/cart/actions'
-import { useTransition } from 'react'
+import { removeItem, updateItemQuantity, createCartAndSetCookie } from '@/components/cart/actions'
+import { useTransition, useEffect, useRef } from 'react'
 
 interface ShoppingCartDrawerProps {
   open: boolean
@@ -16,6 +16,28 @@ interface ShoppingCartDrawerProps {
 export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawerProps) {
   const { cart, updateCartItem } = useCart()
   const [isPending, startTransition] = useTransition()
+  const quantityRef = useRef(cart?.totalQuantity)
+
+  // Initialize cart if it doesn't exist (first-time visitors)
+  useEffect(() => {
+    if (!cart) {
+      createCartAndSetCookie()
+    }
+  }, [cart])
+
+  // Auto-open drawer when items are added to cart
+  useEffect(() => {
+    if (
+      cart?.totalQuantity &&
+      cart?.totalQuantity !== quantityRef.current &&
+      cart?.totalQuantity > 0
+    ) {
+      if (!open) {
+        setOpen(true)
+      }
+      quantityRef.current = cart?.totalQuantity
+    }
+  }, [open, cart?.totalQuantity, setOpen])
 
   const displayItems = cart?.lines || []
   const total = cart?.cost.totalAmount.amount ? parseFloat(cart.cost.totalAmount.amount) : 0
