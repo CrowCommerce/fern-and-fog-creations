@@ -1,3 +1,5 @@
+import type { ProductVariant, ProductOption, PriceRange } from '@/types/product';
+
 export interface Product {
   id: string;
   slug: string;
@@ -11,13 +13,10 @@ export interface Product {
   featured?: boolean;
   externalUrl?: string;
   story?: string;
+  // New variant support (optional - backward compatible)
   variants?: ProductVariant[];
-}
-
-export interface ProductVariant {
-  id: string;
-  name: string;
-  options: string[];
+  options?: ProductOption[];
+  priceRange?: PriceRange;
 }
 
 export const products: Product[] = [
@@ -26,6 +25,7 @@ export const products: Product[] = [
     slug: 'seafoam-glass-earrings',
     name: 'Seafoam Glass Earrings',
     price: 38.00,
+    priceRange: { min: 38.00, max: 48.00 },
     category: 'earrings',
     images: [
       '/stock-assets/products/earrings/sea-glass-earrings.jpg',
@@ -35,13 +35,98 @@ export const products: Product[] = [
     description: 'Delicate seafoam green sea glass pieces, tumbled smooth by the Pacific. Each piece is unique with its own character and history from the shore.',
     forSale: true,
     featured: true,
-    story: 'Found along the rocky shores of the Oregon coast during an early morning walk. The mist was rolling in as these beautiful pieces caught the light.'
+    story: 'Found along the rocky shores of the Oregon coast during an early morning walk. The mist was rolling in as these beautiful pieces caught the light.',
+    options: [
+      { id: 'color', name: 'Color', values: ['Seafoam', 'Aqua', 'Sage'] },
+      { id: 'size', name: 'Size', values: ['Small', 'Medium', 'Large'] }
+    ],
+    variants: [
+      {
+        id: '1-seafoam-small',
+        title: 'Seafoam / Small',
+        price: 38.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Color', value: 'Seafoam' },
+          { name: 'Size', value: 'Small' }
+        ],
+        sku: 'SFG-SEAFOAM-SM',
+        quantityAvailable: 3,
+        image: '/stock-assets/products/earrings/sea-glass-earrings.jpg'
+      },
+      {
+        id: '1-seafoam-medium',
+        title: 'Seafoam / Medium',
+        price: 42.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Color', value: 'Seafoam' },
+          { name: 'Size', value: 'Medium' }
+        ],
+        sku: 'SFG-SEAFOAM-MD',
+        quantityAvailable: 5,
+        image: '/stock-assets/products/earrings/sea-glass-earrings.jpg'
+      },
+      {
+        id: '1-seafoam-large',
+        title: 'Seafoam / Large',
+        price: 48.00,
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Color', value: 'Seafoam' },
+          { name: 'Size', value: 'Large' }
+        ],
+        sku: 'SFG-SEAFOAM-LG',
+        quantityAvailable: 0,
+        image: '/stock-assets/products/earrings/sea-glass-earrings.jpg'
+      },
+      {
+        id: '1-aqua-small',
+        title: 'Aqua / Small',
+        price: 38.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Color', value: 'Aqua' },
+          { name: 'Size', value: 'Small' }
+        ],
+        sku: 'SFG-AQUA-SM',
+        quantityAvailable: 2,
+        image: '/stock-assets/products/earrings/sea-glass-earrings-2.jpg'
+      },
+      {
+        id: '1-aqua-medium',
+        title: 'Aqua / Medium',
+        price: 42.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Color', value: 'Aqua' },
+          { name: 'Size', value: 'Medium' }
+        ],
+        sku: 'SFG-AQUA-MD',
+        quantityAvailable: 4,
+        image: '/stock-assets/products/earrings/sea-glass-earrings-2.jpg'
+      },
+      {
+        id: '1-sage-medium',
+        title: 'Sage / Medium',
+        price: 42.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Color', value: 'Sage' },
+          { name: 'Size', value: 'Medium' }
+        ],
+        sku: 'SFG-SAGE-MD',
+        quantityAvailable: 1,
+        image: '/stock-assets/products/earrings/sea-glass-earrings.jpg'
+      }
+    ]
   },
   {
     id: '2',
     slug: 'amber-resin-pendant',
     name: 'Amber Wildflower Pendant',
     price: 45.00,
+    priceRange: { min: 45.00, max: 55.00 },
     category: 'resin',
     images: [
       '/stock-assets/products/resin/wildflower-pendant.jpg',
@@ -50,7 +135,85 @@ export const products: Product[] = [
     materials: ['Pressed wildflowers', 'Clear resin', 'Gold-plated chain'],
     description: 'Tiny wildflowers preserved in crystal-clear resin, capturing a moment in time. The golden flowers seem to glow when held up to light.',
     forSale: true,
-    featured: true
+    featured: true,
+    options: [
+      { id: 'chain-length', name: 'Chain Length', values: ['16"', '18"', '20"', '24"'] },
+      { id: 'finish', name: 'Finish', values: ['Gold', 'Silver', 'Rose Gold'] }
+    ],
+    variants: [
+      {
+        id: '2-16-gold',
+        title: '16" / Gold',
+        price: 45.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Chain Length', value: '16"' },
+          { name: 'Finish', value: 'Gold' }
+        ],
+        sku: 'AWP-16-GOLD',
+        quantityAvailable: 3
+      },
+      {
+        id: '2-18-gold',
+        title: '18" / Gold',
+        price: 48.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Chain Length', value: '18"' },
+          { name: 'Finish', value: 'Gold' }
+        ],
+        sku: 'AWP-18-GOLD',
+        quantityAvailable: 5
+      },
+      {
+        id: '2-20-gold',
+        title: '20" / Gold',
+        price: 50.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Chain Length', value: '20"' },
+          { name: 'Finish', value: 'Gold' }
+        ],
+        sku: 'AWP-20-GOLD',
+        quantityAvailable: 2
+      },
+      {
+        id: '2-18-silver',
+        title: '18" / Silver',
+        price: 48.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Chain Length', value: '18"' },
+          { name: 'Finish', value: 'Silver' }
+        ],
+        sku: 'AWP-18-SILVER',
+        quantityAvailable: 4
+      },
+      {
+        id: '2-20-rose',
+        title: '20" / Rose Gold',
+        price: 55.00,
+        availableForSale: true,
+        selectedOptions: [
+          { name: 'Chain Length', value: '20"' },
+          { name: 'Finish', value: 'Rose Gold' }
+        ],
+        sku: 'AWP-20-ROSE',
+        quantityAvailable: 1
+      },
+      {
+        id: '2-24-gold',
+        title: '24" / Gold',
+        price: 52.00,
+        availableForSale: false,
+        selectedOptions: [
+          { name: 'Chain Length', value: '24"' },
+          { name: 'Finish', value: 'Gold' }
+        ],
+        sku: 'AWP-24-GOLD',
+        quantityAvailable: 0
+      }
+    ]
   },
   {
     id: '3',

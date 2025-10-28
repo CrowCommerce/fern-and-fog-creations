@@ -11,7 +11,19 @@ interface ShoppingCartDrawerProps {
 }
 
 export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawerProps) {
-  const { items, removeItem, updateQuantity, total } = useCart()
+  const {
+    items,
+    optimisticItems,
+    isPending,
+    removeItem,
+    updateQuantity,
+    total,
+    undoLastAction,
+    canUndo
+  } = useCart()
+
+  // Use optimistic items for instant UI feedback
+  const displayItems = isPending ? optimisticItems : items
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-[60]">
@@ -46,8 +58,32 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                     </div>
                   </div>
 
-                  <div className="mt-8">
-                    {items.length === 0 ? (
+                  {/* Undo button */}
+                  {canUndo && (
+                    <div className="mt-4 px-3 py-2 bg-mist rounded-md flex items-center justify-between">
+                      <span className="text-sm text-bark/70">Action can be undone</span>
+                      <button
+                        onClick={undoLastAction}
+                        className="text-sm font-medium text-fern hover:text-moss transition-colors underline"
+                        aria-label="Undo last action"
+                      >
+                        Undo
+                      </button>
+                    </div>
+                  )}
+
+                  <div className={`mt-8 ${isPending ? 'relative' : ''}`}>
+                    {/* Loading overlay during transitions */}
+                    {isPending && (
+                      <div className="absolute inset-0 bg-parchment/60 flex items-center justify-center z-10 rounded-lg">
+                        <div className="flex flex-col items-center gap-2">
+                          <div className="animate-spin h-6 w-6 border-2 border-fern border-t-transparent rounded-full" />
+                          <span className="text-xs text-bark/70">Updating...</span>
+                        </div>
+                      </div>
+                    )}
+
+                    {displayItems.length === 0 ? (
                       <div className="text-center py-12">
                         <svg
                           className="mx-auto h-12 w-12 text-bark/30"
@@ -80,7 +116,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                     ) : (
                       <div className="flow-root">
                         <ul role="list" className="-my-6 divide-y divide-bark/10">
-                          {items.map((item) => (
+                          {displayItems.map((item) => (
                             <li key={item.productId} className="flex py-6">
                               <div className="size-24 shrink-0 overflow-hidden rounded-md ring-1 ring-bark/20">
                                 <img
@@ -104,6 +140,10 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                     </h3>
                                     <p className="ml-4">${item.price.toFixed(2)}</p>
                                   </div>
+                                  {/* Show variant info if available */}
+                                  {item.variantTitle && (
+                                    <p className="mt-1 text-sm text-bark/60">{item.variantTitle}</p>
+                                  )}
                                 </div>
                                 <div className="flex flex-1 items-end justify-between text-sm">
                                   <div className="flex items-center space-x-2">
@@ -147,7 +187,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                   </div>
                 </div>
 
-                {items.length > 0 && (
+                {displayItems.length > 0 && (
                   <div className="border-t border-bark/20 px-4 py-6 sm:px-6">
                     <div className="flex justify-between text-base font-medium text-bark">
                       <p>Subtotal</p>
