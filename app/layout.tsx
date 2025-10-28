@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import Header from "@/components/layout/Header";
 import Footer from '@/components/layout/Footer'
-import { CartProvider } from '@/context/CartContext';
+import { CartProvider } from '@/components/cart/cart-context';
+import { getCart } from '@/lib/shopify';
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -24,11 +25,13 @@ export const metadata: Metadata = {
   description: "Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches on the coast.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cartPromise = getCart();
+
   return (
     <html lang="en">
       <head>
@@ -50,7 +53,7 @@ export default function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
-        <CartProvider>
+        <CartProvider cartPromise={cartPromise}>
           <a href="#main-content" className="skip-to-content">
             Skip to content
           </a>

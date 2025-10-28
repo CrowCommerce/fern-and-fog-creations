@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
+    cacheComponents: true,
+    inlineCss: true,
     useCache: true,
   },
   images: {
@@ -22,6 +24,22 @@ const nextConfig: NextConfig = {
         pathname: "/plus-assets/**",
       },
     ],
+  },
+  async redirects() {
+    return [
+      {
+        source: "/products",
+        has: [
+          {
+            type: "query",
+            key: "category",
+            value: "(?<category>.*)",
+          },
+        ],
+        destination: "/products/:category",
+        permanent: true,
+      },
+    ];
   },
 };
 

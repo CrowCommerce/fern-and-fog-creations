@@ -1,9 +1,12 @@
 'use client'
 
 import Link from 'next/link'
+import Image from 'next/image'
 import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/react'
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
-import { useCart } from '@/context/CartContext'
+import { useCart } from '@/components/cart/cart-context'
+import { removeItem, updateItemQuantity } from '@/components/cart/actions'
+import { useTransition } from 'react'
 
 interface ShoppingCartDrawerProps {
   open: boolean
@@ -11,19 +14,33 @@ interface ShoppingCartDrawerProps {
 }
 
 export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawerProps) {
-  const {
-    items,
-    optimisticItems,
-    isPending,
-    removeItem,
-    updateQuantity,
-    total,
-    undoLastAction,
-    canUndo
-  } = useCart()
+  const { cart, updateCartItem } = useCart()
+  const [isPending, startTransition] = useTransition()
 
-  // Use optimistic items for instant UI feedback
-  const displayItems = isPending ? optimisticItems : items
+  const displayItems = cart?.lines || []
+  const total = cart?.cost.totalAmount.amount ? parseFloat(cart.cost.totalAmount.amount) : 0
+
+  const handleUpdateQuantity = (merchandiseId: string, currentQuantity: number, change: number) => {
+    const newQuantity = currentQuantity + change
+
+    // Optimistic update
+    updateCartItem(merchandiseId, change > 0 ? 'plus' : 'minus')
+
+    // Server action
+    startTransition(async () => {
+      await updateItemQuantity(null, { merchandiseId, quantity: newQuantity })
+    })
+  }
+
+  const handleRemove = (merchandiseId: string) => {
+    // Optimistic update
+    updateCartItem(merchandiseId, 'delete')
+
+    // Server action
+    startTransition(async () => {
+      await removeItem(null, merchandiseId)
+    })
+  }
 
   return (
     <Dialog open={open} onClose={setOpen} className="relative z-[60]">
@@ -57,20 +74,6 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                       </button>
                     </div>
                   </div>
-
-                  {/* Undo button */}
-                  {canUndo && (
-                    <div className="mt-4 px-3 py-2 bg-mist rounded-md flex items-center justify-between">
-                      <span className="text-sm text-bark/70">Action can be undone</span>
-                      <button
-                        onClick={undoLastAction}
-                        className="text-sm font-medium text-fern hover:text-moss transition-colors underline"
-                        aria-label="Undo last action"
-                      >
-                        Undo
-                      </button>
-                    </div>
-                  )}
 
                   <div className={`mt-8 ${isPending ? 'relative' : ''}`}>
                     {/* Loading overlay during transitions */}
@@ -116,71 +119,82 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                     ) : (
                       <div className="flow-root">
                         <ul role="list" className="-my-6 divide-y divide-bark/10">
-                          {displayItems.map((item) => (
-                            <li key={item.productId} className="flex py-6">
-                              <div className="size-24 shrink-0 overflow-hidden rounded-md ring-1 ring-bark/20">
-                                <img
-                                  alt={item.name}
-                                  src={item.image}
-                                  className="size-full object-cover"
-                                />
-                              </div>
+                          {displayItems.map((item) => {
+                            const image = item.merchandise.product.featuredImage
+                            const price = parseFloat(item.cost.totalAmount.amount) / item.quantity
 
-                              <div className="ml-4 flex flex-1 flex-col">
-                                <div>
-                                  <div className="flex justify-between text-base font-medium text-bark">
-                                    <h3>
-                                      <Link
-                                        href={`/products/${item.slug}`}
-                                        onClick={() => setOpen(false)}
-                                        className="hover:text-fern transition-colors"
-                                      >
-                                        {item.name}
-                                      </Link>
-                                    </h3>
-                                    <p className="ml-4">${item.price.toFixed(2)}</p>
-                                  </div>
-                                  {/* Show variant info if available */}
-                                  {item.variantTitle && (
-                                    <p className="mt-1 text-sm text-bark/60">{item.variantTitle}</p>
+                            return (
+                              <li key={item.id} className="flex py-6">
+                                <div className="size-24 shrink-0 overflow-hidden rounded-md ring-1 ring-bark/20">
+                                  {image ? (
+                                    <Image
+                                      alt={item.merchandise.title}
+                                      src={image.url}
+                                      width={image.width || 96}
+                                      height={image.height || 96}
+                                      className="size-full object-cover"
+                                    />
+                                  ) : (
+                                    <div className="size-full bg-mist" />
                                   )}
                                 </div>
-                                <div className="flex flex-1 items-end justify-between text-sm">
-                                  <div className="flex items-center space-x-2">
-                                    <button
-                                      type="button"
-                                      onClick={() => updateQuantity(item.productId, item.quantity - 1)}
-                                      className="p-1 text-bark hover:text-fern transition-colors"
-                                      aria-label="Decrease quantity"
-                                    >
-                                      <MinusIcon className="h-4 w-4" />
-                                    </button>
-                                    <span className="text-bark font-medium w-8 text-center">
-                                      {item.quantity}
-                                    </span>
-                                    <button
-                                      type="button"
-                                      onClick={() => updateQuantity(item.productId, item.quantity + 1)}
-                                      className="p-1 text-bark hover:text-fern transition-colors"
-                                      aria-label="Increase quantity"
-                                    >
-                                      <PlusIcon className="h-4 w-4" />
-                                    </button>
-                                  </div>
 
-                                  <div className="flex">
-                                    <button
-                                      type="button"
-                                      onClick={() => removeItem(item.productId)}
-                                      className="font-medium text-fern hover:text-moss transition-colors"
-                                    >
-                                      Remove
-                                    </button>
+                                <div className="ml-4 flex flex-1 flex-col">
+                                  <div>
+                                    <div className="flex justify-between text-base font-medium text-bark">
+                                      <h3>
+                                        <Link
+                                          href={`/products/${item.merchandise.product.handle}`}
+                                          onClick={() => setOpen(false)}
+                                          className="hover:text-fern transition-colors"
+                                        >
+                                          {item.merchandise.product.title}
+                                        </Link>
+                                      </h3>
+                                      <p className="ml-4">${price.toFixed(2)}</p>
+                                    </div>
+                                    {/* Show variant info if not default */}
+                                    {item.merchandise.title !== 'Default Title' && (
+                                      <p className="mt-1 text-sm text-bark/60">{item.merchandise.title}</p>
+                                    )}
+                                  </div>
+                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                    <div className="flex items-center space-x-2">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, -1)}
+                                        className="p-1 text-bark hover:text-fern transition-colors"
+                                        aria-label="Decrease quantity"
+                                      >
+                                        <MinusIcon className="h-4 w-4" />
+                                      </button>
+                                      <span className="text-bark font-medium w-8 text-center">
+                                        {item.quantity}
+                                      </span>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, 1)}
+                                        className="p-1 text-bark hover:text-fern transition-colors"
+                                        aria-label="Increase quantity"
+                                      >
+                                        <PlusIcon className="h-4 w-4" />
+                                      </button>
+                                    </div>
+
+                                    <div className="flex">
+                                      <button
+                                        type="button"
+                                        onClick={() => handleRemove(item.merchandise.id)}
+                                        className="font-medium text-fern hover:text-moss transition-colors"
+                                      >
+                                        Remove
+                                      </button>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </li>
-                          ))}
+                              </li>
+                            )
+                          })}
                         </ul>
                       </div>
                     )}

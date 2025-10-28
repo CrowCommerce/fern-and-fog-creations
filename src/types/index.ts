@@ -18,9 +18,10 @@ export type {
   FilterState,
 } from './filter'
 
-export type {
-  CartItem,
-  CartAction,
-  CartHistory,
-  OptimisticCartState,
-} from './cart'
+// Cart types are defined in @/components/cart/cart-context.tsx
+// export type {
+//   CartItem,
+//   CartAction,
+//   CartHistory,
+//   OptimisticCartState,
+// } from './cart'

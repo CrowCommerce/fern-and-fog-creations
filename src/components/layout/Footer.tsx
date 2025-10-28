@@ -3,10 +3,10 @@ import Link from 'next/link'
 const footerNavigation = {
   shop: [
     { name: 'All Products', href: '/products' },
-    { name: 'Earrings', href: '/products?category=earrings' },
-    { name: 'Resin Art', href: '/products?category=resin' },
-    { name: 'Driftwood', href: '/products?category=driftwood' },
-    { name: 'Wall Hangings', href: '/products?category=wall-hangings' },
+    { name: 'Earrings', href: '/products/earrings' },
+    { name: 'Resin Art', href: '/products/resin' },
+    { name: 'Driftwood', href: '/products/driftwood' },
+    { name: 'Wall Hangings', href: '/products/wall-hangings' },
   ],
   about: [
     { name: 'Our Story', href: '/about' },

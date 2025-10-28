@@ -18,7 +18,7 @@ export default function CategorySection() {
           {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/products?category=${category.slug}`}
+              href={`/products/${category.slug}`}
               className="group relative overflow-hidden rounded-lg ring-1 ring-bark/20 hover:ring-fern transition-all duration-300"
             >
               <div className="aspect-square overflow-hidden">

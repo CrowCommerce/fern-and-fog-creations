@@ -9,7 +9,7 @@ import {
 } from '@headlessui/react'
 import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ShoppingCartDrawer from './ShoppingCartDrawer'
-import { useCart } from '@/context/CartContext'
+import { useCart } from '@/components/cart/cart-context'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -22,7 +22,8 @@ const navigation = [
 export default function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
-  const { itemCount } = useCart()
+  const { cart } = useCart()
+  const itemCount = cart?.totalQuantity || 0
 
   return (
     <div className="bg-parchment">

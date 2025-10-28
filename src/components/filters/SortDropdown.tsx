@@ -3,6 +3,7 @@
 import { Fragment } from 'react'
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
 import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { classNames } from '@/lib/utils'
 import type { SortOption } from '@/types/filter'
 
 interface SortDropdownProps {
@@ -17,10 +18,6 @@ const OPTIONS: { value: SortOption; label: string }[] = [
   { value: 'name-asc', label: 'Name: A–Z' },
   { value: 'newest', label: 'Newest' },
 ]
-
-function classNames(...classes: Array<string | false | null | undefined>) {
-  return classes.filter(Boolean).join(' ')
-}
 
 export default function SortDropdown({ value, onChange }: SortDropdownProps) {
   const selected = OPTIONS.find((o) => o.value === value) ?? OPTIONS[0]

@@ -2,18 +2,22 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useParams } from 'next/navigation'
-import { getProductBySlug, getRelatedProducts } from '@/data/products'
-import { useCart } from '@/context/CartContext'
+import { useCart } from '@/components/cart/cart-context'
+import { ProductProvider } from '@/components/product/product-context'
 import { VariantSelector } from '@/components/product/VariantSelector'
-import type { ProductVariant } from '@/types/product'
+import type { Product, ProductVariant } from '@/types/product'
 import { formatPriceRange } from '@/lib/variant-utils'
+import { addItem } from '@/components/cart/actions'
+import { useTransition } from 'react'
 
-export default function ProductDetailPage() {
-  const params = useParams()
-  const slug = params?.slug as string
-  const product = getProductBySlug(slug)
-  const { addItem } = useCart()
+interface ProductDetailContentProps {
+  product: Product
+  relatedProducts: Product[]
+}
+
+export default function ProductDetailContent({ product, relatedProducts }: ProductDetailContentProps) {
+  const { addCartItem } = useCart()
+  const [isPending, startTransition] = useTransition()
 
   const [selectedImage, setSelectedImage] = useState(0)
   const [quantity, setQuantity] = useState(1)
@@ -22,41 +26,23 @@ export default function ProductDetailPage() {
     product?.variants?.[0] || null
   )
 
-  if (!product) {
-    return (
-      <div className="bg-parchment min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-display font-bold text-bark">Product Not Found</h1>
-          <p className="mt-2 text-bark/60">The product you&apos;re looking for doesn&apos;t exist.</p>
-          <Link href="/products" className="mt-4 inline-block text-fern hover:text-moss">
-            Return to Shop
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
-  const relatedProducts = getRelatedProducts(product, 4)
-
   // Determine display price and availability
   const displayPrice = selectedVariant?.price || product.price
   const isAvailable = selectedVariant?.availableForSale ?? product.forSale
 
   const handleAddToCart = () => {
-    const itemToAdd = {
-      productId: product.id,
-      slug: product.slug,
-      name: product.name,
-      price: displayPrice,
-      image: selectedVariant?.image || product.images[0],
-      variantId: selectedVariant?.id,
-      variantTitle: selectedVariant?.title,
-      selectedOptions: selectedVariant?.selectedOptions,
-    }
+    // Use the variant ID if available, otherwise use product ID
+    const merchandiseId = selectedVariant?.id || product.id
 
-    addItem(itemToAdd, quantity)
-    setAddedToCart(true)
-    setTimeout(() => setAddedToCart(false), 3000)
+    startTransition(async () => {
+      // Call server action to add to cart
+      for (let i = 0; i < quantity; i++) {
+        await addItem(null, merchandiseId)
+      }
+
+      setAddedToCart(true)
+      setTimeout(() => setAddedToCart(false), 3000)
+    })
   }
 
   // JSON-LD for SEO
@@ -76,7 +62,7 @@ export default function ProductDetailPage() {
   } : null
 
   return (
-    <>
+    <ProductProvider>
       {jsonLd && (
         <script
           type="application/ld+json"
@@ -108,7 +94,7 @@ export default function ProductDetailPage() {
               </div>
               {product.images.length > 1 && (
                 <div className="grid grid-cols-4 gap-4">
-                  {product.images.map((image, index) => (
+                  {product.images.map((image: string, index: number) => (
                     <button
                       key={index}
                       onClick={() => setSelectedImage(index)}
@@ -165,7 +151,7 @@ export default function ProductDetailPage() {
               <div className="mt-6">
                 <h2 className="text-sm font-medium text-bark">Materials</h2>
                 <ul className="mt-2 list-disc list-inside text-sm text-bark/70">
-                  {product.materials.map((material, index) => (
+                  {product.materials.map((material: string, index: number) => (
                     <li key={index}>{material}</li>
                   ))}
                 </ul>
@@ -212,9 +198,10 @@ export default function ProductDetailPage() {
                     </div>
                     <button
                       onClick={handleAddToCart}
-                      className="flex-1 px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors"
+                      disabled={isPending}
+                      className="flex-1 px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {addedToCart ? 'Added to Basket!' : 'Add to Basket'}
+                      {isPending ? 'Adding...' : addedToCart ? 'Added to Basket!' : 'Add to Basket'}
                     </button>
                   </div>
                 )}
@@ -288,7 +275,7 @@ export default function ProductDetailPage() {
                 {relatedProducts.map((related) => (
                   <Link
                     key={related.id}
-                    href={`/products/${related.slug}`}
+                    href={`/product/${related.slug}`}
                     className="group"
                   >
                     <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">
@@ -313,7 +300,6 @@ export default function ProductDetailPage() {
           )}
         </div>
       </div>
-    </>
+    </ProductProvider>
   )
 }
-

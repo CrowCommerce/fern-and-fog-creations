@@ -49,3 +49,11 @@ export const validateEnvironmentVariables = () => {
     );
   }
 };
+
+/**
+ * Utility function to conditionally join classNames
+ * Filters out falsy values and joins remaining classes with spaces
+ */
+export function classNames(...classes: Array<string | false | null | undefined>) {
+  return classes.filter(Boolean).join(' ');
+}

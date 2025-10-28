@@ -8,6 +8,7 @@
 
 import React from 'react';
 import { useVariantSelection } from '@/hooks/useVariantSelection';
+import VariantDropdown from './VariantDropdown';
 import type { ProductVariant, ProductOption } from '@/types/product';
 
 interface VariantSelectorProps {
@@ -90,27 +91,13 @@ export function VariantSelector({
               })}
             </div>
           ) : (
-            /* Many options: Dropdown */
-            <select
+            /* Many options: Styled Dropdown */
+            <VariantDropdown
+              option={option}
               value={selectedOptions[option.name] || ''}
-              onChange={(e) => selectOption(option.name, e.target.value)}
-              className="w-full px-4 py-3 rounded-md border border-mist bg-parchment text-bark focus:outline-none focus:ring-2 focus:ring-fern focus:border-fern"
-              aria-label={`Select ${option.name}`}
-            >
-              <option value="">Select {option.name}</option>
-              {option.values.map((value) => {
-                const isAvailable = isOptionAvailable(option.name, value);
-                return (
-                  <option
-                    key={value}
-                    value={value}
-                    disabled={!isAvailable}
-                  >
-                    {value} {!isAvailable ? '(Out of stock)' : ''}
-                  </option>
-                );
-              })}
-            </select>
+              onChange={(value) => selectOption(option.name, value)}
+              isOptionAvailable={(value) => isOptionAvailable(option.name, value)}
+            />
           )}
         </div>
       ))}

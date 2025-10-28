@@ -26,7 +26,7 @@ export default function CategoriesPage() {
           {categories.map((category) => (
             <Link
               key={category.id}
-              href={`/products?category=${category.slug}`}
+              href={`/products/${category.slug}`}
               className="group relative overflow-hidden rounded-lg ring-1 ring-bark/20 hover:ring-fern transition-all"
             >
               <div className="aspect-[4/3] overflow-hidden">

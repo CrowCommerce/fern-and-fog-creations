@@ -4,9 +4,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Fern & Fog Creations is a Next.js 15 e-commerce application for handmade coastal crafts (sea glass earrings, pressed flower resin, driftwood décor). It uses the App Router, React Server Components, TypeScript, Tailwind CSS v4, and integrates with Shopify's GraphQL Storefront API.
+Fern & Fog Creations is a Next.js 16 (canary) e-commerce application for handmade coastal crafts (sea glass earrings, pressed flower resin, driftwood décor). It uses the App Router, React Server Components, TypeScript, Tailwind CSS v4, and integrates with Shopify's GraphQL Storefront API.
 
 **Package Manager:** pnpm (v10.19.0+)
+
+**Key Technologies:**
+- Next.js 16.0.1-canary.5 with Turbopack
+- React 19.1.0 (uses `useOptimistic`, `use` hook)
+- TypeScript 5 (strict mode)
+- Tailwind CSS v4
+- Headless UI 2.x for accessible components
 
 ## Development Commands
 
@@ -30,25 +37,35 @@ Development server runs on `http://localhost:3000`
 
 ### App Router Structure
 
-This project uses Next.js 15's App Router with the following page structure:
+This project uses Next.js 16's App Router with the `app/` directory (not `src/app/`).
 
+**Route Structure:**
 - `/` - Homepage with hero, category sections, and featured products
-- `/products` - Product listing with category filtering via URL params (`?category=earrings`)
-- `/products/[slug]` - Dynamic product detail pages
+- `/products` - Product listing (route group: `app/(store)/products/page.tsx`)
+- `/products/[collection]` - Collection-specific product pages
+- `/product/[handle]` - Individual product detail pages
 - `/cart` - Shopping cart page
-- `/checkout` - Checkout page
+- `/checkout` - Checkout page (redirects to Shopify checkout)
 - `/categories`, `/gallery`, `/contact`, `/about`, `/account` - Additional pages
+
+**Route Groups:**
+- `app/(store)/` - Route group for product browsing with shared filter layout
+  - Contains `layout.tsx` that manages filter state across products/collections
+  - Filters are synced via URL search params for shareability
+
+**Server Actions:** Cart mutations in `src/components/cart/actions.ts`
 
 ### Server vs Client Components
 
 **Default: Server Components** - Most pages and layouts are server components for optimal performance.
 
 **Client Components** (marked with `'use client'`):
-- `src/context/CartContext.tsx` - Global cart state management
+- `src/components/cart/cart-context.tsx` - Global cart state management
 - `src/components/layout/Header.tsx` - Navigation with cart integration
 - `src/components/layout/ShoppingCartDrawer.tsx` - Interactive cart drawer
-- `src/app/products/page.tsx` - Product filtering with useSearchParams
-- `src/app/products/[slug]/page.tsx` - Image gallery interactions
+- `app/(store)/layout.tsx` - Shared filter layout for products pages
+- `app/(store)/products/ProductsClient.tsx` - Product filtering with useSearchParams
+- Product detail pages - Image gallery interactions
 
 **Important:** Mark components with `'use client'` ONLY when they need:
 - React hooks (useState, useEffect, useContext)
@@ -106,7 +123,10 @@ cacheTag(TAGS.products);  // Tags: products, collections, cart
 cacheLife('days');
 ```
 
-Uses Next.js 15's native caching with cache tags for targeted revalidation.
+Uses Next.js 16's native caching with cache tags for targeted revalidation. Next.js config enables:
+- `experimental.cacheComponents: true` - Component-level caching
+- `experimental.inlineCss: true` - Inline critical CSS
+- `experimental.useCache: true` - Enable `'use cache'` directive
 
 **Environment Variables Required:**
 ```
@@ -123,32 +143,49 @@ NEXT_PUBLIC_USE_SHOPIFY=true
 
 **Fallback:** If Shopify env vars not configured, app automatically falls back to local data.
 
-### State Management
+### State Management & Cart Architecture
 
-**Cart State:** React Context API (`src/context/CartContext.tsx`)
+**Cart State:** React Context API + Server Actions pattern
 
+The cart uses a hybrid architecture combining Server Actions for mutations and React 19's `useOptimistic` for instant UI updates:
+
+**Cart Context** (`src/components/cart/cart-context.tsx`):
 ```typescript
-const {
-  // Standard cart operations
-  items, addItem, removeItem, updateQuantity, clearCart, total, itemCount,
+const { cart, updateCartItem, addCartItem } = useCart();
 
-  // Optimistic updates (React 19 useOptimistic)
-  optimisticItems, isPending,
+// Update cart item quantity
+updateCartItem(merchandiseId, 'plus');   // Increment
+updateCartItem(merchandiseId, 'minus');  // Decrement
+updateCartItem(merchandiseId, 'delete'); // Remove
 
-  // Undo functionality
-  undoLastAction, canUndo
-} = useCart();
+// Add item to cart
+addCartItem(variant, product);
 ```
 
-**Features:**
-- **Optimistic Updates**: Cart mutations update UI instantly via `useOptimistic` before actual state changes
-- **Undo Support**: Last 5 actions can be undone with `undoLastAction()`
-- **Shopify Sync**: When `NEXT_PUBLIC_USE_SHOPIFY=true`, cart changes sync to Shopify (fire-and-forget, local cart remains source of truth)
-  - Cart sync handled via `src/lib/shopify-cart-adapter.ts` which maps local cart format to Shopify's merchandiseId format
-  - Uses `variantId` if available, falls back to `productId`
-- **Persistence**: Cart state persisted to `localStorage` under key `fern-fog-cart`
+**Server Actions** (`src/components/cart/actions.ts`):
+```typescript
+'use server';
+import { addItem, removeItem, updateItemQuantity, redirectToCheckout } from '@/components/cart/actions';
 
-**Important:** Cart context is client-side only. Wrap usage in Client Components.
+// These are called by form actions and useActionState
+addItem(prevState, selectedVariantId);
+removeItem(prevState, merchandiseId);
+updateItemQuantity(prevState, { merchandiseId, quantity });
+redirectToCheckout(); // Redirects to Shopify checkout
+```
+
+**Key Features:**
+- **Optimistic Updates**: Cart UI updates instantly via React 19's `useOptimistic` hook before server mutations complete
+- **Server-Side Persistence**: Cart stored in Shopify via Server Actions, tracked by `cartId` cookie
+- **Type-Safe**: Uses `Cart` and `CartItem` types from `@/lib/shopify/types`
+- **Revalidation**: Uses `revalidateTag(TAGS.cart)` to invalidate cache after mutations
+
+**Important Patterns:**
+1. Cart provider wraps app in `app/layout.tsx` with `cartPromise` from `getCart()`
+2. Client components use `useCart()` hook to access cart state
+3. Mutations trigger Server Actions which update Shopify and revalidate cache
+4. Optimistic reducer in `cart-context.tsx` handles local state updates
+5. React 19's `use` hook unwraps the `cartPromise` in the hook
 
 ### Product Variants System
 
@@ -182,9 +219,16 @@ import VariantSelector from '@/components/product/VariantSelector';
 />
 ```
 
+**Variant UI Rendering:**
+- **≤4 options**: Renders as button grid for quick visual selection
+- **>4 options**: Renders as styled Headless UI `Listbox` dropdown (not native `<select>`)
+- `src/components/product/VariantDropdown.tsx` - Styled dropdown using Headless UI
+- Dropdown features: capitalized labels, out-of-stock indicators, checkmarks, keyboard navigation
+
 **Utilities:**
 - `src/lib/variant-utils.ts` - Helper functions for variant selection logic
 - `src/components/product/VariantSelector.tsx` - Client component for variant UI
+- `src/hooks/useVariantSelection.ts` - Hook for variant state management and URL syncing
 
 **Pattern:** When a product has variants, use the selected variant's price and availability. Fall back to base `product.price` if no variants.
 
@@ -199,34 +243,79 @@ The products page supports filtering and sorting via URL search params and dedic
 - `src/components/filters/PriceRangeFilter.tsx` - Min/max price inputs
 - `src/components/filters/SortDropdown.tsx` - Sort order selector
 
+**Filter Architecture:**
+- The `app/(store)/layout.tsx` manages filter state across all product pages
+- Filters are synced to URL search params for shareability and back-button support
+- `ProductsClient.tsx` receives filter props from the layout
+
 **URL Pattern:**
 ```
-/products?category=earrings&sort=price&order=asc&minPrice=20&maxPrice=100
+/products?category=earrings&sort=price-asc&minPrice=20&maxPrice=100
+/products/[collection]?sort=newest&material=sea-glass
 ```
 
 **Implementation Pattern:**
 ```typescript
 'use client';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 
+// In app/(store)/layout.tsx - manages state for all product pages
 const searchParams = useSearchParams();
-const category = searchParams?.get('category');
-const sortBy = searchParams?.get('sort');
+const [activeFilters, setActiveFilters] = useState<ActiveFilters>(() => {
+  // Parse from URL on mount
+});
+
+const handleFilterChange = (newFilters: ActiveFilters) => {
+  setActiveFilters(newFilters);
+  // Update URL with new params
+};
 ```
 
-**Note:** Filter state is managed via URL for shareability and back-button support.
+### Product Detail State Management
+
+Product detail pages use a dedicated context for managing variant selection and image gallery state via URL params.
+
+**Product Context** (`src/components/product/product-context.tsx`):
+```typescript
+'use client';
+import { useProduct, useUpdateURL, ProductProvider } from '@/components/product/product-context';
+
+// Wrap product detail page with ProductProvider
+<ProductProvider>
+  <ProductDetailContent />
+</ProductProvider>
+
+// In child components:
+const { state, updateOption, updateImage } = useProduct();
+const updateURL = useUpdateURL();
+
+// Update variant option and sync to URL
+const newState = updateOption('Color', 'Blue');
+updateURL(newState); // Updates URL to ?Color=Blue
+
+// Update active image and sync to URL
+const newState = updateImage('2');
+updateURL(newState); // Updates URL to ?image=2
+```
+
+**Key Features:**
+- Variant selection synced to URL search params (e.g., `?Color=Blue&Size=Large`)
+- Image gallery state in URL for shareability
+- React 19's `useOptimistic` for instant UI updates before URL navigation
 
 ### Path Aliases
 
 TypeScript paths are configured for clean imports:
 
 ```typescript
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/components/cart/cart-context';
 import { getProducts } from '@/lib/shopify';
 import Header from '@/components/layout/Header';
 ```
 
-`@/*` maps to `./src/*`
+**Important:** `@/*` maps to `./src/*` (configured in `tsconfig.json`)
+- App routes are in `app/` (no src prefix)
+- Everything else (components, lib, types, data) is in `src/`
 
 ## Styling & Theming
 
@@ -234,7 +323,7 @@ import Header from '@/components/layout/Header';
 
 **Configuration:** `postcss.config.mjs` with `@tailwindcss/postcss` plugin.
 
-**Theme Definition:** `src/app/globals.css` defines brand colors as CSS variables:
+**Theme Definition:** `app/globals.css` defines brand colors as CSS variables:
 
 ```css
 --moss: #33593D;        /* Dark green */
@@ -255,7 +344,7 @@ import Header from '@/components/layout/Header';
 - `font-display` - Cormorant Garamond (headings)
 - `font-sans` - Inter (body text)
 
-Both loaded via `next/font/google` in `src/app/layout.tsx`.
+Both loaded via `next/font/google` in `app/layout.tsx`.
 
 **Custom Utilities:**
 - `.ring-brand` - Custom focus ring
@@ -268,9 +357,11 @@ Both loaded via `next/font/google` in `src/app/layout.tsx`.
 **Strict Mode Enabled:** All code must satisfy TypeScript strict checks.
 
 **Key Type Locations:**
-- `src/data/products.ts` - Local `Product` interface
+- `src/types/product.ts` - Product type definitions
+- `src/types/filter.ts` - Filter and sort type definitions
+- `src/types/index.ts` - Consolidated type exports
 - `src/lib/shopify/types.ts` - Shopify API types
-- `src/context/CartContext.tsx` - Cart-related types
+- `src/components/cart/cart-context.tsx` - Cart-related types
 
 **Type Guards:** `src/lib/type-guards.ts` contains utility functions like `isShopifyError()` for runtime type checking.
 
@@ -287,16 +378,33 @@ Always use reshaped data in components, not raw Shopify responses.
 
 ## UI Component Library
 
-**Headless UI:** Used for accessible, unstyled interactive components.
+**Headless UI:** Used for accessible, unstyled interactive components (v2.x).
 
+**Common Components:**
 ```typescript
+// Dialogs/Modals
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react';
+
+// Dropdowns/Select
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+
+// Icons
 import { ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid';
 ```
 
-**Icons:** Heroicons (outline and solid variants)
+**Dropdown Pattern (Listbox):**
+- Use `Listbox` for custom-styled dropdowns, never native `<select>` elements
+- Examples: `SortDropdown.tsx`, `VariantDropdown.tsx`
+- Features: Full style control, render props with state, built-in accessibility
+- Auto-positioning with `anchor="bottom start"` prop on `ListboxOptions`
 
-**Pattern:** Build custom styled components around Headless UI primitives for accessibility.
+**Styling Pattern:**
+- Use `classNames()` utility from `@/lib/utils` for conditional classes
+- Render props provide state: `{({ active, selected, open }) => ...}`
+- Apply brand theme colors (parchment, bark, fern, mist, moss, gold)
+
+**Icons:** Heroicons (outline for large/decorative, solid 20px for UI controls)
 
 ## Common Development Patterns
 
@@ -311,13 +419,13 @@ import { ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline';
 ### Adding a New Page
 
 ```bash
-# Create new route
-mkdir src/app/new-page
-touch src/app/new-page/page.tsx
+# Create new route in app/ directory
+mkdir app/new-page
+touch app/new-page/page.tsx
 ```
 
 ```typescript
-// src/app/new-page/page.tsx
+// app/new-page/page.tsx
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -334,6 +442,8 @@ export default function NewPage() {
 }
 ```
 
+**Note:** For product-related pages that need filters, place them inside `app/(store)/` route group.
+
 ### Dynamic Routes with URL Search Params
 
 ```typescript
@@ -344,26 +454,53 @@ const searchParams = useSearchParams();
 const category = searchParams?.get('category');
 
 // Update URL without reload
-<Link href={`/products?category=${slug}`}>
+<Link href={`/products/${slug}`}>  // Use route-based navigation, not query params
 ```
+
+### Dynamic Route Params (Next.js 15+ Async Pattern)
+
+**Critical:** In Next.js 15+, `params` in dynamic routes is now a Promise that must be awaited:
+
+```typescript
+// ❌ WRONG - Next.js 14 pattern (will error)
+export default async function Page({ params }: { params: { slug: string } }) {
+  const product = await getProduct(params.slug)
+}
+
+// ✅ CORRECT - Next.js 15+ pattern
+export default async function Page({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const product = await getProduct(slug)
+}
+```
+
+**This applies to:**
+- Page components: `app/product/[handle]/page.tsx`
+- `generateMetadata` functions
+- All dynamic route parameters (`[slug]`, `[id]`, `[handle]`, etc.)
 
 ### Adding to Cart Pattern
 
 ```typescript
 'use client';
-import { useCart } from '@/context/CartContext';
+import { useCart } from '@/components/cart/cart-context';
+import { addItem } from '@/components/cart/actions';
+import { useActionState } from 'react';
 
-const { addItem } = useCart();
+const { cart, addCartItem } = useCart();
 
+// Client-side optimistic update
 const handleAddToCart = () => {
-  addItem({
-    id: product.id,
-    name: product.name,
-    price: product.price,
-    image: product.images[0],
-    slug: product.slug,
-  }, quantity);
+  addCartItem(selectedVariant, product);
 };
+
+// Server Action via form (recommended)
+const [message, formAction] = useActionState(addItem, null);
+
+<form action={formAction}>
+  <input type="hidden" name="variantId" value={selectedVariant.id} />
+  <button type="submit">Add to Cart</button>
+</form>
 ```
 
 ### Metadata & SEO
@@ -401,7 +538,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 **Data:**
 - Static/fallback data → `src/data/`
 - API integrations → `src/lib/shopify/`
-- Utilities → `src/lib/utils.ts`
+- Utilities → `src/lib/utils.ts` (contains shared utilities like `classNames()`, `createUrl()`, etc.)
 - Constants → `src/lib/constants.ts`
 
 **Assets:**
@@ -437,20 +574,27 @@ This codebase prioritizes accessibility:
 
 ## Important Notes
 
-- **No API routes**: Direct Shopify GraphQL integration via server functions, no `/app/api` routes
+- **App directory location**: All routes are in `app/` (not `src/app/`)
+- **Server Actions for cart**: Cart mutations use Server Actions (`src/components/cart/actions.ts`), not API routes
+- **Route groups**: Product pages use `app/(store)/` route group for shared filter layout
 - **Image optimization**: Next.js Image component configured with remote patterns for:
   - `cdn.shopify.com/s/files/**` (Shopify CDN)
   - `via.placeholder.com` (Placeholders)
   - `tailwindcss.com/plus-assets/**` (TailwindUI assets)
   - Supports AVIF and WebP formats
-- **Cart is client-only**: No server-side cart persistence; uses localStorage
+- **Cart persistence**: Cart stored server-side in Shopify, tracked by `cartId` cookie
 - **Turbopack enabled**: Both `dev` and `build` use `--turbopack` flag
-- **Next.js 15 features**: Uses `'use cache'` directive, `cacheTag()`, `cacheLife()` for caching, `useOptimistic` for cart updates
-- **Suspense boundaries**: Use `<Suspense>` for loading states in async components
-- **React 19**: This project uses React 19 features including `useOptimistic` hook
+- **Next.js 16 canary features**:
+  - `'use cache'` directive with `cacheTag()` and `cacheLife()` for granular caching
+  - `experimental.cacheComponents` for component-level caching
+  - `experimental.inlineCss` for critical CSS inlining
+- **React 19 features**:
+  - `useOptimistic` hook for optimistic UI updates
+  - `use` hook for unwrapping promises in components
+  - `useActionState` for Server Action form handling
+- **Suspense boundaries**: Use `<Suspense>` for loading states in async Server Components
 
 ## Git Workflow
 
-- Main branch: (not configured in repo yet)
-- Current branch: `feat/shopify`
+- Main branch: `main`
 - Use conventional commit messages (e.g., `feat:`, `fix:`, `chore:`)
