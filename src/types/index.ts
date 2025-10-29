@@ -8,6 +8,7 @@ export type {
   ProductOption,
   PriceRange,
   ProductWithVariants,
+  Product,
 } from './product'
 
 export type {

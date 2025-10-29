@@ -6,7 +6,7 @@ import { Dialog, DialogBackdrop, DialogPanel, DialogTitle } from '@headlessui/re
 import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { useCart } from '@/components/cart/cart-context'
 import { removeItem, updateItemQuantity, createCartAndSetCookie } from '@/components/cart/actions'
-import { useTransition, useEffect, useRef } from 'react'
+import { useTransition, useEffect, useRef, useState } from 'react'
 
 interface ShoppingCartDrawerProps {
   open: boolean
@@ -16,6 +16,7 @@ interface ShoppingCartDrawerProps {
 export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawerProps) {
   const { cart, updateCartItem } = useCart()
   const [isPending, startTransition] = useTransition()
+  const [isRemoving, setIsRemoving] = useState(false)
   const quantityRef = useRef(cart?.totalQuantity)
 
   // Initialize cart if it doesn't exist (first-time visitors)
@@ -45,22 +46,26 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
   const handleUpdateQuantity = (merchandiseId: string, currentQuantity: number, change: number) => {
     const newQuantity = currentQuantity + change
 
-    // Optimistic update
+    // Optimistic update - instant UI feedback
     updateCartItem(merchandiseId, change > 0 ? 'plus' : 'minus')
 
-    // Server action
+    // Server action - happens silently in background without loading overlay
     startTransition(async () => {
       await updateItemQuantity(null, { merchandiseId, quantity: newQuantity })
     })
   }
 
   const handleRemove = (merchandiseId: string) => {
+    // Set removing state to show loading overlay
+    setIsRemoving(true)
+
     // Optimistic update
     updateCartItem(merchandiseId, 'delete')
 
     // Server action
     startTransition(async () => {
       await removeItem(null, merchandiseId)
+      setIsRemoving(false)
     })
   }
 
@@ -97,13 +102,13 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                     </div>
                   </div>
 
-                  <div className={`mt-8 ${isPending ? 'relative' : ''}`}>
-                    {/* Loading overlay during transitions */}
-                    {isPending && (
+                  <div className={`mt-8 ${isRemoving ? 'relative' : ''}`}>
+                    {/* Loading overlay only for remove actions - quantity updates happen silently */}
+                    {isRemoving && (
                       <div className="absolute inset-0 bg-parchment/60 flex items-center justify-center z-10 rounded-lg">
                         <div className="flex flex-col items-center gap-2">
                           <div className="animate-spin h-6 w-6 border-2 border-fern border-t-transparent rounded-full" />
-                          <span className="text-xs text-bark/70">Updating...</span>
+                          <span className="text-xs text-bark/70">Removing...</span>
                         </div>
                       </div>
                     )}

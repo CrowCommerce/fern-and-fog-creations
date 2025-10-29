@@ -51,3 +51,8 @@ export interface ProductWithVariants {
   variants?: ProductVariant[]
   options?: ProductOption[]
 }
+
+/**
+ * Main Product type - alias for ProductWithVariants for backward compatibility
+ */
+export type Product = ProductWithVariants
