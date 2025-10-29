@@ -1,9 +1,13 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import Script from "next/script";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import Header from "@/components/layout/Header";
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
+import PageViewTracker from "@/lib/analytics/PageViewTracker";
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -25,6 +29,9 @@ export const metadata: Metadata = {
   description: "Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches on the coast.",
 };
 
+// Google Tag Manager ID from environment
+const GTM_ID = process.env.NEXT_PUBLIC_GTM_ID;
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -35,6 +42,18 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <head>
+        {/* Google Tag Manager */}
+        {GTM_ID ? (
+          <Script id="gtm-init" strategy="afterInteractive">
+            {`(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+              new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+              j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+              'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+            })(window,document,'script','dataLayer','${GTM_ID}');`}
+          </Script>
+        ) : null}
+
+        {/* JSON-LD Schema */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -53,6 +72,18 @@ export default async function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
+        {/* Google Tag Manager (noscript) - must be in body */}
+        {GTM_ID ? (
+          <noscript>
+            <iframe
+              src={`https://www.googletagmanager.com/ns.html?id=${GTM_ID}`}
+              height="0"
+              width="0"
+              style={{ display: "none", visibility: "hidden" }}
+            />
+          </noscript>
+        ) : null}
+
         <CartProvider cartPromise={cartPromise}>
           <a href="#main-content" className="skip-to-content">
             Skip to content
@@ -63,6 +94,11 @@ export default async function RootLayout({
           </main>
           <Footer />
         </CartProvider>
+
+        {/* Analytics & Page View Tracking */}
+        <PageViewTracker />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

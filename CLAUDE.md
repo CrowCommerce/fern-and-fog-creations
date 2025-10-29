@@ -33,33 +33,6 @@ pnpm lint
 
 Development server runs on `http://localhost:3000`
 
-## Known Issues & TODOs
-
-### 🔧 Cart Drawer - Remove Loading Overlay During Quantity Updates
-
-**Issue:** When users click the +/- buttons to adjust item quantities in the cart drawer, a loading overlay appears even though the cart updates optimistically. This creates a janky UX compared to 4mula-shop-tailwindui which updates instantly without any loading state.
-
-**Current Behavior:**
-- ShoppingCartDrawer.tsx (lines 78-87) shows a loading overlay when `isPending` is true
-- The overlay appears during the `updateItemQuantity` server action
-- Users see "Updating..." spinner even though the UI already updated optimistically
-
-**Expected Behavior:**
-- Quantity should update instantly (already working via `updateCartItem()` optimistic update)
-- No loading overlay should appear since the change is already reflected
-- Server action should happen silently in the background
-
-**Files Involved:**
-- `src/components/layout/ShoppingCartDrawer.tsx` (lines 78-87)
-- `handleUpdateQuantity` function uses both `updateCartItem()` (optimistic) and `updateItemQuantity()` (server)
-
-**Fix:**
-Remove the loading overlay div or conditionally hide it for quantity updates while keeping it for remove actions. The optimistic update already provides instant feedback, so the loading state is redundant.
-
-**Reference:** See 4mula-shop-tailwindui cart implementation for comparison of smooth, instant quantity updates.
-
----
-
 ## Architecture Overview
 
 ### App Router Structure
@@ -161,6 +134,7 @@ SHOPIFY_STORE_DOMAIN=your-store.myshopify.com
 SHOPIFY_STOREFRONT_ACCESS_TOKEN=your-token-here
 SHOPIFY_REVALIDATION_SECRET=your-secret
 NEXT_PUBLIC_USE_SHOPIFY=true
+NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX  # Optional: Google Tag Manager container ID
 ```
 
 **Development Workflow:**
@@ -169,6 +143,80 @@ NEXT_PUBLIC_USE_SHOPIFY=true
 3. **Production**: Always use `NEXT_PUBLIC_USE_SHOPIFY=true`
 
 **Fallback:** If Shopify env vars not configured, app automatically falls back to local data.
+
+### Analytics & Tracking
+
+The site is instrumented with **Vercel Analytics**, **Vercel Speed Insights**, and **Google Tag Manager (GTM)** for comprehensive tracking and performance monitoring.
+
+**Architecture:**
+- Vercel Analytics: Auto-captures pageviews + custom events
+- Speed Insights: Real-user performance monitoring (Core Web Vitals)
+- GTM: Optional third-party tag management (requires `NEXT_PUBLIC_GTM_ID`)
+- Universal dispatcher: Sends events to BOTH Vercel Analytics AND GTM dataLayer
+
+**Implementation Files:**
+- `app/layout.tsx` - GTM bootstrap script, Analytics, SpeedInsights, PageViewTracker
+- `src/lib/analytics/track.ts` - Universal event dispatcher (client-side)
+- `src/lib/analytics/PageViewTracker.tsx` - App Router navigation hook
+
+**Setup:**
+
+1. **Vercel Analytics & Speed Insights** (automatic on Vercel deployments):
+   - No configuration needed
+   - Enable in Vercel Dashboard → Project → Analytics tab
+   - View dashboards: Project → Analytics, Project → Speed Insights
+
+2. **Google Tag Manager** (optional):
+   - Create GTM container at https://tagmanager.google.com
+   - Add `NEXT_PUBLIC_GTM_ID=GTM-XXXXXXX` to environment variables
+   - In Vercel: Project → Settings → Environment Variables
+   - GTM script loads `afterInteractive` (non-blocking)
+
+**Usage - Tracking Custom Events:**
+
+```typescript
+import { trackEvent, trackPageView, trackEcommerce } from '@/lib/analytics/track';
+
+// Track custom event
+trackEvent('button_click', { button_name: 'Add to Cart', product_id: '123' });
+
+// Track page view (automatic via PageViewTracker, but can call manually)
+trackPageView({ path: '/products', title: 'Products', referrer: document.referrer });
+
+// Track e-commerce events (follows GA4 schema)
+trackEcommerce('add_to_cart', {
+  items: [{
+    item_id: 'prod_123',
+    item_name: 'Sea Glass Earrings',
+    price: 29.99,
+    quantity: 1
+  }],
+  value: 29.99,
+  currency: 'USD'
+});
+```
+
+**GTM Setup for Page Views:**
+1. In GTM, create a **Trigger**: Custom Event → Event name = `page_view`
+2. Create a **Tag**: Google Analytics 4 Event → Event name = `page_view`
+3. Attach trigger to tag → Publish container
+4. Test: Navigate between pages → Check GTM Debug Mode → See `page_view` events
+
+**Automatic Page View Tracking:**
+- `<PageViewTracker />` in `app/layout.tsx` fires on every App Router navigation
+- Uses `usePathname` + `useSearchParams` to detect route changes
+- Sends to BOTH Vercel Analytics custom event "page_view" AND GTM dataLayer
+- Deduplication: Vercel also captures auto pageviews; our custom event is for GTM integration
+
+**Pages Router Fallback** (legacy projects):
+See comments in `src/lib/analytics/PageViewTracker.tsx` for `useRouter` + `routeChangeComplete` pattern.
+
+**QA Checklist:**
+- [ ] Navigate between pages → Open DevTools → `window.dataLayer` exists and receives `{ event: "page_view", path: ... }`
+- [ ] Vercel Dashboard → Analytics → Custom Events → See "page_view" events
+- [ ] GTM → Preview Mode → See page_view trigger fire on navigation
+- [ ] No console errors when `NEXT_PUBLIC_GTM_ID` is missing (graceful no-ops)
+- [ ] Lighthouse score unchanged (GTM loads afterInteractive, non-blocking)
 
 ### State Management & Cart Architecture
 
