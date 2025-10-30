@@ -1,6 +1,6 @@
-'use client'
-
 import Link from 'next/link'
+import { Suspense } from 'react'
+import CopyrightYear from './CopyrightYear'
 
 const footerNavigation = {
   shop: [
@@ -97,7 +97,7 @@ export default function Footer() {
         <div className="border-t border-fern/30 py-8">
           <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm text-mist/80">
-              &copy; {new Date().getFullYear()} Fern & Fog Creations. All rights reserved.
+              &copy; <Suspense fallback="2024"><CopyrightYear /></Suspense> Fern & Fog Creations. All rights reserved.
             </p>
             <p className="text-xs text-mist/60 italic">
               Each piece tells a story • Gathered, crafted, treasured

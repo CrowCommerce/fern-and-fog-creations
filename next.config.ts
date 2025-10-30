@@ -2,7 +2,9 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   experimental: {
-    cacheComponents: true,
+    // Temporarily disabled cacheComponents due to Next.js 16 + React 19 Suspense boundary issues
+    // See: https://nextjs.org/docs/messages/blocking-route
+    // cacheComponents: true,
     inlineCss: true,
     useCache: true,
   },

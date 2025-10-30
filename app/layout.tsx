@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/react";
@@ -88,12 +89,21 @@ export default async function RootLayout({
           <a href="#main-content" className="skip-to-content">
             Skip to content
           </a>
-          <Header />
-          <main id="main-content">
-            {children}
-          </main>
-          <Footer />
+          <Suspense fallback={
+            <header className="bg-moss h-20 flex items-center justify-between px-4 sm:px-6 lg:px-8">
+              <div className="animate-pulse h-8 bg-parchment/20 rounded w-48"></div>
+              <div className="animate-pulse h-8 bg-parchment/20 rounded w-24"></div>
+            </header>
+          }>
+            <Header />
+          </Suspense>
         </CartProvider>
+
+        <main id="main-content">
+          {children}
+        </main>
+
+        <Footer />
 
         {/* Analytics & Page View Tracking */}
         <PageViewTracker />
