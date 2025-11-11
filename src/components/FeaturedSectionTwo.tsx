@@ -20,7 +20,7 @@ export default function FeaturedSectionTwo() {
           {featuredProducts.slice(0, 6).map((product) => (
             <Link
               key={product.id}
-              href={`/products/${product.slug}`}
+              href={`/product/${product.slug}`}
               className="group"
             >
               <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">

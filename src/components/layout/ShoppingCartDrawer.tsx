@@ -88,7 +88,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                       <button
                         type="button"
                         onClick={() => setOpen(false)}
-                        className="relative -m-2 p-2 text-bark hover:text-fern transition-colors"
+                        className="relative -m-2 p-2 text-bark hover:text-fern transition-colors cursor-pointer"
                       >
                         <span className="absolute -inset-0.5" />
                         <span className="sr-only">Close panel</span>
@@ -180,12 +180,12 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                       <p className="mt-1 text-sm text-bark/60 capitalize">{item.merchandise.title}</p>
                                     )}
                                   </div>
-                                  <div className="flex flex-1 items-end justify-between text-sm">
+                                  <div className="flex flex-1 items-end justify-between text-sm mt-3">
                                     <div className="flex items-center space-x-2">
                                       <button
                                         type="button"
                                         onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, -1)}
-                                        className="p-1 text-bark hover:text-fern transition-colors"
+                                        className="p-1 text-bark hover:text-fern transition-colors cursor-pointer"
                                         aria-label="Decrease quantity"
                                       >
                                         <MinusIcon className="h-4 w-4" />
@@ -196,7 +196,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                       <button
                                         type="button"
                                         onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, 1)}
-                                        className="p-1 text-bark hover:text-fern transition-colors"
+                                        className="p-1 text-bark hover:text-fern transition-colors cursor-pointer"
                                         aria-label="Increase quantity"
                                       >
                                         <PlusIcon className="h-4 w-4" />
@@ -207,7 +207,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                       <button
                                         type="button"
                                         onClick={() => handleRemove(item.merchandise.id)}
-                                        className="font-medium text-fern hover:text-moss transition-colors"
+                                        className="font-medium text-fern hover:text-moss transition-colors cursor-pointer"
                                       >
                                         Remove
                                       </button>
@@ -247,7 +247,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                         <button
                           type="button"
                           onClick={() => setOpen(false)}
-                          className="font-medium text-fern hover:text-moss transition-colors"
+                          className="font-medium text-fern hover:text-moss transition-colors cursor-pointer"
                         >
                           Continue Shopping
                           <span aria-hidden="true"> &rarr;</span>

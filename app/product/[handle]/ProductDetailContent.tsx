@@ -138,7 +138,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                         if (e.key === 'ArrowRight') setSelectedImage((prev) => (prev + 1) % product.images.length)
                         if (e.key === 'ArrowLeft') setSelectedImage((prev) => (prev - 1 + product.images.length) % product.images.length)
                       }}
-                      className={`aspect-square overflow-hidden rounded-lg ring-1 transition-all ${
+                      className={`aspect-square overflow-hidden rounded-lg ring-1 transition-all cursor-pointer ${
                         selectedImage === index ? 'ring-2 ring-fern' : 'ring-bark/20 hover:ring-fern/50'
                       }`}
                       aria-label={`View image ${index + 1}`}
@@ -216,7 +216,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                     <div className="flex items-center space-x-2">
                       <button
                         onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                        className="px-3 py-1 bg-mist text-bark rounded-md hover:bg-fern/20"
+                        className="px-3 py-1 bg-mist text-bark rounded-md hover:bg-fern/20 cursor-pointer"
                         aria-label="Decrease quantity"
                       >
                         −
@@ -226,7 +226,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                       </span>
                       <button
                         onClick={() => setQuantity(quantity + 1)}
-                        className="px-3 py-1 bg-mist text-bark rounded-md hover:bg-fern/20"
+                        className="px-3 py-1 bg-mist text-bark rounded-md hover:bg-fern/20 cursor-pointer"
                         aria-label="Increase quantity"
                       >
                         +
@@ -235,7 +235,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                     <button
                       onClick={handleAddToCart}
                       disabled={isPending}
-                      className="flex-1 px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex-1 px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                     >
                       {isPending ? 'Adding...' : addedToCart ? 'Added to Basket!' : 'Add to Basket'}
                     </button>

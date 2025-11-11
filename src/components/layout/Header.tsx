@@ -45,7 +45,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(false)}
-                className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-bark hover:text-moss"
+                className="relative -m-2 inline-flex items-center justify-center rounded-md p-2 text-bark hover:text-moss cursor-pointer"
               >
                 <span className="absolute -inset-0.5" />
                 <span className="sr-only">Close menu</span>
@@ -85,7 +85,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
-                className="-ml-2 rounded-md p-2 text-bark hover:text-moss"
+                className="-ml-2 rounded-md p-2 text-bark hover:text-moss cursor-pointer"
               >
                 <span className="sr-only">Open menu</span>
                 <Bars3Icon aria-hidden="true" className="size-6" />
@@ -132,7 +132,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setCartOpen(true)}
-                className="group -m-2 flex items-center p-2"
+                className="group -m-2 flex items-center p-2 cursor-pointer"
               >
                 <ShoppingBagIcon
                   aria-hidden="true"
@@ -152,7 +152,7 @@ export default function Header() {
               <button
                 type="button"
                 onClick={() => setCartOpen(true)}
-                className="group -mr-2 flex items-center p-2"
+                className="group -mr-2 flex items-center p-2 cursor-pointer"
               >
                 <ShoppingBagIcon
                   aria-hidden="true"

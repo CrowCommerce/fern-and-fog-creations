@@ -138,7 +138,7 @@ export default function CartPage() {
                           <button
                             onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, -1)}
                             disabled={isPending}
-                            className="p-2 text-bark hover:text-fern hover:bg-mist rounded-md transition-colors disabled:opacity-50"
+                            className="p-2 text-bark hover:text-fern hover:bg-mist rounded-md transition-colors disabled:opacity-50 cursor-pointer"
                             aria-label="Decrease quantity"
                           >
                             <MinusIcon className="h-4 w-4" />
@@ -149,7 +149,7 @@ export default function CartPage() {
                           <button
                             onClick={() => handleUpdateQuantity(item.merchandise.id, item.quantity, 1)}
                             disabled={isPending}
-                            className="p-2 text-bark hover:text-fern hover:bg-mist rounded-md transition-colors disabled:opacity-50"
+                            className="p-2 text-bark hover:text-fern hover:bg-mist rounded-md transition-colors disabled:opacity-50 cursor-pointer"
                             aria-label="Increase quantity"
                           >
                             <PlusIcon className="h-4 w-4" />
@@ -159,7 +159,7 @@ export default function CartPage() {
                         <button
                           onClick={() => handleRemove(item.merchandise.id)}
                           disabled={isPending}
-                          className="flex items-center text-sm font-medium text-fern hover:text-moss transition-colors disabled:opacity-50"
+                          className="flex items-center text-sm font-medium text-fern hover:text-moss transition-colors disabled:opacity-50 cursor-pointer"
                         >
                           <XMarkIcon className="h-5 w-5 mr-1" />
                           Remove
@@ -202,7 +202,7 @@ export default function CartPage() {
                 <button
                   onClick={handleCheckout}
                   disabled={isPending}
-                  className="block w-full text-center px-6 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="block w-full text-center px-6 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 >
                   {isPending ? 'Processing...' : 'Proceed to Checkout'}
                 </button>

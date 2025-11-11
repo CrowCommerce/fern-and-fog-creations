@@ -45,7 +45,7 @@ export function FilterPanel({
         {hasActiveFilters && (
           <button
             onClick={clearAllFilters}
-            className="text-sm text-fern hover:text-moss transition-colors underline"
+            className="text-sm text-fern hover:text-moss transition-colors underline cursor-pointer"
           >
             Clear all
           </button>

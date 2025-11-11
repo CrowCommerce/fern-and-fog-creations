@@ -73,9 +73,9 @@ export function VariantSelector({
                       focus:outline-none focus:ring-2 focus:ring-fern focus:ring-offset-2
                       ${
                         isSelected
-                          ? 'bg-moss text-parchment ring-2 ring-moss'
+                          ? 'bg-moss text-parchment ring-2 ring-moss cursor-pointer'
                           : isAvailable
-                          ? 'bg-parchment text-bark border border-mist hover:border-fern hover:bg-mist'
+                          ? 'bg-parchment text-bark border border-mist hover:border-fern hover:bg-mist cursor-pointer'
                           : 'bg-mist/50 text-bark/40 cursor-not-allowed line-through'
                       }
                     `}

@@ -196,7 +196,7 @@ function ContactForm() {
             <div>
               <button
                 type="submit"
-                className="w-full px-6 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full px-6 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                 disabled={status === 'success'}
               >
                 {status === 'success' ? 'Message Sent!' : 'Send Message'}

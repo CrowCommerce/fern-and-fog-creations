@@ -57,7 +57,7 @@ export default function Lightbox({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute -top-12 right-4 p-2 text-parchment hover:text-gold transition-colors"
+              className="absolute -top-12 right-4 p-2 text-parchment hover:text-gold transition-colors cursor-pointer"
               aria-label="Close lightbox"
             >
               <XMarkIcon className="h-8 w-8" />
@@ -87,14 +87,14 @@ export default function Lightbox({
               <>
                 <button
                   onClick={onPrevious}
-                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-bark/50 hover:bg-bark/70 text-parchment rounded-full transition-colors"
+                  className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-bark/50 hover:bg-bark/70 text-parchment rounded-full transition-colors cursor-pointer"
                   aria-label="Previous image"
                 >
                   <ChevronLeftIcon className="h-6 w-6" />
                 </button>
                 <button
                   onClick={onNext}
-                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-bark/50 hover:bg-bark/70 text-parchment rounded-full transition-colors"
+                  className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-bark/50 hover:bg-bark/70 text-parchment rounded-full transition-colors cursor-pointer"
                   aria-label="Next image"
                 >
                   <ChevronRightIcon className="h-6 w-6" />

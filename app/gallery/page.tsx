@@ -57,7 +57,7 @@ export default function GalleryPage() {
             <button
               key={filter.id}
               onClick={() => setActiveFilter(filter.id as 'all' | 'earrings' | 'resin' | 'driftwood' | 'wall-hangings')}
-              className={`px-6 py-2 rounded-full text-sm font-medium transition-all ${
+              className={`px-6 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                 activeFilter === filter.id
                   ? 'bg-fern text-parchment ring-2 ring-fern'
                   : 'bg-mist text-bark hover:bg-fern/20 ring-1 ring-bark/20'

@@ -145,7 +145,7 @@ export default function ProductsClient({
             <p className="text-lg text-bark/60">No products match your filters</p>
             <button
               onClick={() => handleFilterChange({})}
-              className="mt-4 text-fern hover:text-moss underline"
+              className="mt-4 text-fern hover:text-moss underline cursor-pointer"
             >
               Clear all filters
             </button>

@@ -44,7 +44,7 @@ export function MobileFilterDrawer({
       {/* Trigger button */}
       <button
         onClick={() => setOpen(true)}
-        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-bark bg-parchment border border-mist rounded-md hover:bg-mist transition-colors"
+        className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-bark bg-parchment border border-mist rounded-md hover:bg-mist transition-colors cursor-pointer"
       >
         <AdjustmentsHorizontalIcon className="h-5 w-5" />
         Filters
@@ -139,7 +139,7 @@ export function MobileFilterDrawer({
                       {hasActiveFilters > 0 && (
                         <button
                           onClick={clearAllFilters}
-                          className="text-fern hover:text-moss transition-colors underline"
+                          className="text-fern hover:text-moss transition-colors underline cursor-pointer"
                         >
                           Clear all
                         </button>
@@ -147,7 +147,7 @@ export function MobileFilterDrawer({
                     </div>
                     <button
                       onClick={() => setOpen(false)}
-                      className="w-full px-4 py-3 text-sm font-medium text-parchment bg-moss hover:bg-fern transition-colors rounded-md"
+                      className="w-full px-4 py-3 text-sm font-medium text-parchment bg-moss hover:bg-fern transition-colors rounded-md cursor-pointer"
                     >
                       View Results
                     </button>
