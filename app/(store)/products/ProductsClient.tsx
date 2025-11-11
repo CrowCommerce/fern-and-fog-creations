@@ -172,7 +172,7 @@ export default function ProductsClient({
                   <h3 className="text-base font-medium text-bark group-hover:text-fern transition-colors">
                     {product.name}
                   </h3>
-                  <p className="mt-1 text-sm text-bark/60">{product.category}</p>
+                  <p className="mt-1 text-sm text-bark/60 capitalize">{product.category}</p>
                   <p className="mt-2 text-base font-semibold text-bark">
                     ${product.price.toFixed(2)}
                   </p>

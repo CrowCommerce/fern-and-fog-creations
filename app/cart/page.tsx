@@ -125,7 +125,7 @@ export default function CartPage() {
                           </p>
                           {/* Show variant info if not default */}
                           {item.merchandise.title !== 'Default Title' && (
-                            <p className="mt-1 text-sm text-bark/60">{item.merchandise.title}</p>
+                            <p className="mt-1 text-sm text-bark/60 capitalize">{item.merchandise.title}</p>
                           )}
                         </div>
                         <p className="text-lg font-display font-semibold text-bark">

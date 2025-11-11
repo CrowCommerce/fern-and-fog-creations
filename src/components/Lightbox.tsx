@@ -57,7 +57,7 @@ export default function Lightbox({
             {/* Close Button */}
             <button
               onClick={onClose}
-              className="absolute -top-12 right-0 p-2 text-parchment hover:text-gold transition-colors"
+              className="absolute -top-12 right-4 p-2 text-parchment hover:text-gold transition-colors"
               aria-label="Close lightbox"
             >
               <XMarkIcon className="h-8 w-8" />

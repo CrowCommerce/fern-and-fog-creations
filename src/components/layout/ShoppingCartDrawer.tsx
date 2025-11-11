@@ -177,7 +177,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                     </div>
                                     {/* Show variant info if not default */}
                                     {item.merchandise.title !== 'Default Title' && (
-                                      <p className="mt-1 text-sm text-bark/60">{item.merchandise.title}</p>
+                                      <p className="mt-1 text-sm text-bark/60 capitalize">{item.merchandise.title}</p>
                                     )}
                                   </div>
                                   <div className="flex flex-1 items-end justify-between text-sm">

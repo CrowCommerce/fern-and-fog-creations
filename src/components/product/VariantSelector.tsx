@@ -47,7 +47,7 @@ export function VariantSelector({
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-sm font-medium text-bark">{option.name}</h3>
             {selectedOptions[option.name] && (
-              <span className="text-sm text-bark/70">
+              <span className="text-sm text-bark/70 capitalize">
                 {selectedOptions[option.name]}
               </span>
             )}
@@ -80,7 +80,7 @@ export function VariantSelector({
                       }
                     `}
                   >
-                    {value}
+                    <span className="capitalize">{value}</span>
                     {!isAvailable && (
                       <span className="absolute inset-0 flex items-center justify-center">
                         <span className="sr-only">Out of stock</span>
