@@ -1,11 +1,11 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, Suspense } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-context'
 import { redirectToCheckout } from '@/components/cart/actions'
 
-export default function CheckoutPage() {
+function CheckoutContent() {
   const { cart } = useCart()
   const items = cart?.lines || []
 
@@ -51,5 +51,19 @@ export default function CheckoutPage() {
         </p>
       </div>
     </div>
+  )
+}
+
+export default function CheckoutPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-parchment min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-display font-semibold text-bark">Loading checkout...</h2>
+        </div>
+      </div>
+    }>
+      <CheckoutContent />
+    </Suspense>
   )
 }

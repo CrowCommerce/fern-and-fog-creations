@@ -62,6 +62,92 @@ Remove the loading overlay div or conditionally hide it for quantity updates whi
 
 ## Architecture Overview
 
+### Builder.io Visual CMS Integration ✨
+
+Fern & Fog Creations uses Builder.io as a visual CMS for marketing pages, landing pages, and content pages while preserving all Shopify e-commerce functionality.
+
+**Core Integration Files:**
+- `src/lib/builder/config.ts` - Configuration and reserved path protection
+- `src/lib/builder/resolve-content.ts` - Server-side content fetching
+- `src/components/builder/BuilderComponentClient.tsx` - Client component wrapper
+- `src/components/builder/BuilderInit.tsx` - SDK initialization
+- `src/components/builder/register-components.tsx` - Custom component registration
+- `src/lib/builder/cart-adapter.ts` - Cart integration hooks
+- `app/[...page]/page.tsx` - Catch-all route for CMS pages
+
+**Custom Fern & Fog Components:**
+
+The following branded components are available in Builder.io's visual editor:
+
+1. **HeroBlock** - Full-width hero with background image, heading, description, and dual CTAs
+   - Configurable: background image, heading, description, button labels/links
+   - Location: `src/components/builder/blocks/HeroBlock.tsx`
+
+2. **CategoryGridBlock** - 4-column responsive category grid
+   - Configurable: heading, categories (name, image, description, slug), view all link
+   - Location: `src/components/builder/blocks/CategoryGridBlock.tsx`
+
+3. **FeatureGridBlock** - 3-column feature grid with emoji icons
+   - Configurable: heading, features (name, description, emoji icon), background color
+   - Location: `src/components/builder/blocks/FeatureGridBlock.tsx`
+
+4. **TextBlock** - Flexible rich text content block
+   - Configurable: heading, rich text content, alignment, background, max width
+   - Location: `src/components/builder/blocks/TextBlock.tsx`
+
+5. **CTABlock** - Call-to-action section with buttons
+   - Configurable: heading, description, buttons (labels/links), background color
+   - Location: `src/components/builder/blocks/CTABlock.tsx`
+
+**Route Protection:**
+
+Builder.io's catch-all route (`app/[...page]/page.tsx`) **excludes** these reserved paths:
+- `/products/*` - Product listing/collections
+- `/product/*` - Product detail pages
+- `/cart` - Shopping cart
+- `/checkout` - Shopify checkout
+- `/account/*` - User accounts
+- `/api/*` - API routes
+- `/_next/*` - Next.js internals
+
+**Builder.io Pages Handle:**
+- Marketing landing pages (`/about-us`, `/our-story`)
+- Blog posts (`/blog/*`)
+- Promotional pages
+- Any non-reserved path
+
+**Environment Variables:**
+```bash
+BUILDER_PUBLIC_KEY=your-api-key
+NEXT_PUBLIC_BUILDER_PUBLIC_KEY=your-api-key  # Same value
+```
+
+**Cart Integration:**
+
+Builder.io components can access cart functionality:
+```typescript
+import { useBuilderCart, useCartState } from '@/lib/builder/cart-adapter';
+
+const cart = useBuilderCart();
+const { itemCount, totalAmount, isEmpty } = useCartState();
+```
+
+**Creating Pages in Builder.io:**
+
+1. Go to https://builder.io/content
+2. Create new "page" entry
+3. Set URL path (e.g., `/about-us`)
+4. Drag Fern & Fog components from the left sidebar
+5. Configure component inputs in the right panel
+6. Publish when ready
+7. Visit your URL to see the live page
+
+**Important Notes:**
+- All custom components maintain LOTR/Shire (coastal/woodland) theming
+- Components use brand colors: moss, fern, parchment, bark, mist, gold
+- Shopify e-commerce routes are completely protected
+- Cart, products, checkout are NOT managed by Builder.io
+
 ### App Router Structure
 
 This project uses Next.js 16's App Router with the `app/` directory (not `src/app/`).

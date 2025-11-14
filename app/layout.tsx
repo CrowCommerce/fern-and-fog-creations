@@ -1,9 +1,11 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { Suspense } from "react";
 import Header from "@/components/layout/Header";
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
+import { BuilderInit } from '@/components/builder/BuilderInit';
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -53,11 +55,28 @@ export default async function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
+        <BuilderInit />
         <CartProvider cartPromise={cartPromise}>
           <a href="#main-content" className="skip-to-content">
             Skip to content
           </a>
-          <Header />
+          <Suspense
+            fallback={
+              <header className="sticky top-0 z-50 bg-parchment border-b-2 border-fern">
+                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                  <div className="flex h-16 items-center justify-between">
+                    <div className="flex-1" />
+                    <div className="font-display text-2xl font-semibold text-moss">
+                      Fern & Fog Creations
+                    </div>
+                    <div className="flex-1" />
+                  </div>
+                </div>
+              </header>
+            }
+          >
+            <Header />
+          </Suspense>
           <main id="main-content">
             {children}
           </main>

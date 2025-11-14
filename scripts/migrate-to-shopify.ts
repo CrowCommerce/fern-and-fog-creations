@@ -3,7 +3,7 @@
 /**
  * Automated Migration Script: Local Products → Shopify
  *
- * This script uploads products from src/data/products.ts to Shopify using
+ * This script uploads products from data/products.ts to Shopify using
  * the Admin GraphQL API.
  *
  * Requirements:
@@ -25,8 +25,8 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { products } from '../src/data/products'
-import type { Product } from '../src/data/products'
+import { products } from '../data/products'
+import type { Product } from '../data/products'
 
 // ============================================================================
 // Configuration

@@ -2,12 +2,13 @@
 
 import Link from 'next/link'
 import Image from 'next/image'
+import { Suspense } from 'react'
 import { useCart } from '@/components/cart/cart-context'
 import { MinusIcon, PlusIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { removeItem, updateItemQuantity, redirectToCheckout } from '@/components/cart/actions'
 import { useTransition } from 'react'
 
-export default function CartPage() {
+function CartContent() {
   const { cart, updateCartItem } = useCart()
   const [isPending, startTransition] = useTransition()
 
@@ -247,5 +248,19 @@ export default function CartPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function CartPage() {
+  return (
+    <Suspense fallback={
+      <div className="bg-parchment min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-display font-semibold text-bark">Loading cart...</h2>
+        </div>
+      </div>
+    }>
+      <CartContent />
+    </Suspense>
   )
 }

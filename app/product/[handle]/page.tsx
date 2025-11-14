@@ -1,13 +1,22 @@
 import { notFound } from 'next/navigation'
+import { Suspense } from 'react'
 import type { Metadata } from 'next'
 import { getProduct, getProducts } from '@/lib/data-source'
 import ProductDetailContent from './ProductDetailContent'
-import type { Product } from '@/types/product'
+import type { Product } from '@/data/products'
 
 interface ProductPageProps {
   params: Promise<{
     handle: string
   }>
+}
+
+// Generate static params for all products
+export async function generateStaticParams() {
+  const products = await getProducts()
+  return products.map((product) => ({
+    handle: product.slug,
+  }))
 }
 
 // Generate metadata for SEO
@@ -52,5 +61,15 @@ export default async function ProductDetailPage({ params }: ProductPageProps) {
   // Fetch related products
   const relatedProducts = await getRelatedProducts(product, 4)
 
-  return <ProductDetailContent product={product} relatedProducts={relatedProducts} />
+  return (
+    <Suspense fallback={
+      <div className="bg-parchment min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-display font-semibold text-bark">Loading product...</h2>
+        </div>
+      </div>
+    }>
+      <ProductDetailContent product={product} relatedProducts={relatedProducts} />
+    </Suspense>
+  )
 }

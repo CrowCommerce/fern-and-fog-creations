@@ -20,8 +20,8 @@
 
 import * as fs from 'fs'
 import * as path from 'path'
-import { products } from '../src/data/products'
-import type { Product } from '../src/data/products'
+import { products } from '../data/products'
+import type { Product } from '../data/products'
 
 // ============================================================================
 // CSV Generation Functions
