@@ -95,7 +95,7 @@ export default function Footer() {
         <div className="border-t border-fern/30 py-8">
           <div className="flex flex-col items-center justify-between space-y-4 sm:flex-row sm:space-y-0">
             <p className="text-sm text-mist/80">
-              &copy; 2025 Fern & Fog Creations. All rights reserved.
+              &copy; {new Date().getFullYear()} Fern & Fog Creations. All rights reserved.
             </p>
             <p className="text-xs text-mist/60 italic">
               Each piece tells a story • Gathered, crafted, treasured
