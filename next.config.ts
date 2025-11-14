@@ -23,7 +23,24 @@ const nextConfig: NextConfig = {
         hostname: "tailwindcss.com",
         pathname: "/plus-assets/**",
       },
+      {
+        protocol: "https",
+        hostname: "cdn.builder.io",
+      },
     ],
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "Content-Security-Policy",
+            value: "frame-ancestors 'self' https://*.builder.io https://builder.io http://localhost:1234",
+          },
+        ],
+      },
+    ];
   },
   async redirects() {
     return [

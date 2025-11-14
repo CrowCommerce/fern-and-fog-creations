@@ -2,7 +2,7 @@ import { notFound } from 'next/navigation'
 import type { Metadata } from 'next'
 import { getProduct, getProducts } from '@/lib/data-source'
 import ProductDetailContent from './ProductDetailContent'
-import type { Product } from '@/types/product'
+import type { Product } from '@/data/products'
 
 interface ProductPageProps {
   params: Promise<{

@@ -4,6 +4,7 @@ import Header from "@/components/layout/Header";
 import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
+import { BuilderInit } from '@/components/builder/BuilderInit';
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -53,6 +54,7 @@ export default async function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
+        <BuilderInit />
         <CartProvider cartPromise={cartPromise}>
           <a href="#main-content" className="skip-to-content">
             Skip to content
