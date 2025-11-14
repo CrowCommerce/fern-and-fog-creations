@@ -105,8 +105,6 @@ Builder.io's catch-all route (`app/[...page]/page.tsx`) **excludes** these reser
 - `/products/*` - Product listing/collections
 - `/product/*` - Product detail pages
 - `/cart` - Shopping cart
-- `/checkout` - Shopify checkout
-- `/account/*` - User accounts
 - `/api/*` - API routes
 - `/_next/*` - Next.js internals
 
@@ -157,9 +155,8 @@ This project uses Next.js 16's App Router with the `app/` directory (not `src/ap
 - `/products` - Product listing (route group: `app/(store)/products/page.tsx`)
 - `/products/[collection]` - Collection-specific product pages
 - `/product/[handle]` - Individual product detail pages
-- `/cart` - Shopping cart page
-- `/checkout` - Checkout page (redirects to Shopify checkout)
-- `/categories`, `/gallery`, `/contact`, `/about`, `/account` - Additional pages
+- `/cart` - Shopping cart page (redirects to Shopify checkout on checkout button click)
+- `/gallery`, `/contact`, `/about` - Marketing content pages
 
 **Route Groups:**
 - `app/(store)/` - Route group for product browsing with shared filter layout
@@ -656,7 +653,7 @@ export async function generateMetadata({ params }): Promise<Metadata> {
 
 **Assets:**
 - Product images → `public/stock-assets/products/`
-- Category images → `public/stock-assets/categories/`
+- Category images → `public/stock-assets/categories/` (used in product collection pages)
 - Icons → `public/icons/`
 
 ## Testing & Quality
