@@ -128,11 +128,13 @@ export default async function BuilderPage({ params, searchParams }: PageProps) {
 }
 
 /**
- * Static generation configuration
+ * Runtime configuration
  *
- * With Next.js 16's cacheComponents enabled, Builder.io pages
- * will automatically use appropriate caching strategies.
+ * Builder.io pages use server-side rendering to support:
+ * - On-demand content updates from Builder.io dashboard
+ * - Preview mode for visual editing
+ * - Personalization and A/B testing
  *
- * Content is fetched server-side and cached according to Next.js
- * cache directives. Builder.io's preview mode will work automatically.
+ * Note: With Next.js 16's cacheComponents enabled, pages automatically
+ * use appropriate caching. No need to set revalidate.
  */
