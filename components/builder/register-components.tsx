@@ -18,6 +18,45 @@ const TextBlock = dynamic(() => import('./blocks/TextBlock'));
 const CTABlock = dynamic(() => import('./blocks/CTABlock'));
 
 /**
+ * Register Fern & Fog Design Tokens
+ *
+ * Makes brand colors and typography available as presets in Builder.io visual editor.
+ * Colors will appear as visual swatches instead of plain text.
+ */
+Builder.register('editor.settings', {
+  styleStrictMode: false,
+  allowOverridingTokens: true, // Allow custom values while providing brand presets
+  designTokens: {
+    colors: [
+      {
+        name: 'Moss',
+        value: 'var(--color-moss)',
+      },
+      {
+        name: 'Fern',
+        value: 'var(--color-fern)',
+      },
+      {
+        name: 'Parchment',
+        value: 'var(--color-parchment)',
+      },
+      {
+        name: 'Bark',
+        value: 'var(--color-bark)',
+      },
+      {
+        name: 'Mist',
+        value: 'var(--color-mist)',
+      },
+      {
+        name: 'Gold',
+        value: 'var(--color-gold)',
+      },
+    ],
+  },
+});
+
+/**
  * Initialize custom insert menu for Fern & Fog components
  */
 Builder.register('insertMenu', {
