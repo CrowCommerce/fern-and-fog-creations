@@ -22,6 +22,34 @@ export interface FooterNavigationData {
 }
 
 /**
+ * Type guard to validate NavigationItem
+ */
+function isValidNavigationItem(item: unknown): item is NavigationItem {
+  return (
+    typeof item === 'object' &&
+    item !== null &&
+    'name' in item &&
+    'href' in item &&
+    typeof (item as NavigationItem).name === 'string' &&
+    typeof (item as NavigationItem).href === 'string' &&
+    (item as NavigationItem).name.trim().length > 0 &&
+    (item as NavigationItem).href.trim().length > 0
+  );
+}
+
+/**
+ * Validate and filter an array of navigation items
+ * Returns only valid items, filtering out malformed entries
+ */
+function validateNavigationItems(items: unknown): NavigationItem[] {
+  if (!Array.isArray(items)) {
+    return [];
+  }
+
+  return items.filter(isValidNavigationItem);
+}
+
+/**
  * Fetch navigation items from Builder.io
  * Falls back to default navigation if content doesn't exist
  */
@@ -40,7 +68,8 @@ export async function getNavigation(): Promise<NavigationItem[]> {
     });
 
     if (content?.data?.items) {
-      return content.data.items as NavigationItem[];
+      const validatedItems = validateNavigationItems(content.data.items);
+      return validatedItems.length > 0 ? validatedItems : defaultNavigation;
     }
   } catch (error) {
     console.error('[Builder.io] Error fetching navigation:', error);
@@ -81,10 +110,14 @@ export async function getFooterNavigation(): Promise<FooterNavigationData> {
     });
 
     if (content?.data) {
+      const validatedShop = validateNavigationItems(content.data.shop);
+      const validatedAbout = validateNavigationItems(content.data.about);
+      const validatedPolicies = validateNavigationItems(content.data.policies);
+
       return {
-        shop: content.data.shop || defaultFooter.shop,
-        about: content.data.about || defaultFooter.about,
-        policies: content.data.policies || defaultFooter.policies,
+        shop: validatedShop.length > 0 ? validatedShop : defaultFooter.shop,
+        about: validatedAbout.length > 0 ? validatedAbout : defaultFooter.about,
+        policies: validatedPolicies.length > 0 ? validatedPolicies : defaultFooter.policies,
       };
     }
   } catch (error) {
