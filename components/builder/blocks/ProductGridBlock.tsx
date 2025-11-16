@@ -11,11 +11,28 @@ interface ProductGridBlockProps {
     slug: string;
     category: string;
     price: number;
-    image: string;
+    images: string[] | { url: string }[]; // Support both formats: string array and Builder.io object array
   }[];
   ctaLabel?: string;
   ctaHref?: string;
   backgroundColor?: 'parchment' | 'mist' | 'white';
+}
+
+// Helper function to get image URL from either format
+function getImageUrl(images: string[] | { url: string }[] | undefined): string {
+  if (!images || images.length === 0) {
+    return '/stock-assets/products/placeholder.jpg';
+  }
+
+  const firstImage = images[0];
+
+  // Check if it's a Builder.io object format { url: '...' }
+  if (typeof firstImage === 'object' && firstImage !== null && 'url' in firstImage) {
+    return firstImage.url || '/stock-assets/products/placeholder.jpg';
+  }
+
+  // Otherwise it's a string
+  return typeof firstImage === 'string' ? firstImage : '/stock-assets/products/placeholder.jpg';
 }
 
 export default function ProductGridBlock({
@@ -28,7 +45,7 @@ export default function ProductGridBlock({
       slug: 'sea-glass-earrings',
       category: 'Earrings',
       price: 45.00,
-      image: '/stock-assets/products/earrings-1.jpg',
+      images: ['/stock-assets/products/earrings-1.jpg'],
     },
     {
       id: '2',
@@ -36,7 +53,7 @@ export default function ProductGridBlock({
       slug: 'pressed-flower-pendant',
       category: 'Resin',
       price: 65.00,
-      image: '/stock-assets/products/resin-1.jpg',
+      images: ['/stock-assets/products/resin-1.jpg'],
     },
     {
       id: '3',
@@ -44,7 +61,7 @@ export default function ProductGridBlock({
       slug: 'driftwood-sculpture',
       category: 'Driftwood',
       price: 120.00,
-      image: '/stock-assets/products/driftwood-1.jpg',
+      images: ['/stock-assets/products/driftwood-1.jpg'],
     },
   ],
   ctaLabel = 'View All Products',
@@ -85,7 +102,7 @@ export default function ProductGridBlock({
               <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">
                 <img
                   alt={product.name}
-                  src={product.image}
+                  src={getImageUrl(product.images)}
                   className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
                 />
               </div>

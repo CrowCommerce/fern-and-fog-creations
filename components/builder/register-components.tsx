@@ -430,7 +430,7 @@ Builder.registerComponent(ProductGridBlock, {
           slug: 'sea-glass-earrings',
           category: 'Earrings',
           price: 45.00,
-          image: '/stock-assets/products/earrings-1.jpg',
+          images: ['/stock-assets/products/earrings-1.jpg'],
         },
         {
           id: '2',
@@ -438,7 +438,7 @@ Builder.registerComponent(ProductGridBlock, {
           slug: 'pressed-flower-pendant',
           category: 'Resin',
           price: 65.00,
-          image: '/stock-assets/products/resin-1.jpg',
+          images: ['/stock-assets/products/resin-1.jpg'],
         },
         {
           id: '3',
@@ -446,7 +446,7 @@ Builder.registerComponent(ProductGridBlock, {
           slug: 'driftwood-sculpture',
           category: 'Driftwood',
           price: 120.00,
-          image: '/stock-assets/products/driftwood-1.jpg',
+          images: ['/stock-assets/products/driftwood-1.jpg'],
         },
       ],
       subFields: [
@@ -477,10 +477,19 @@ Builder.registerComponent(ProductGridBlock, {
           required: true,
         },
         {
-          name: 'image',
-          type: 'file',
-          allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
+          name: 'images',
+          type: 'list',
           required: true,
+          helperText: 'Product images (first image used as thumbnail)',
+          defaultValue: ['/stock-assets/products/placeholder.jpg'],
+          subFields: [
+            {
+              name: 'url',
+              type: 'file',
+              allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
+              required: true,
+            },
+          ],
         },
       ],
     },
