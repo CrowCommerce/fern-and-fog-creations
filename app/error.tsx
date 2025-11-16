@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import * as Sentry from '@sentry/nextjs';
 
 export default function Error({
   error,
@@ -11,8 +12,23 @@ export default function Error({
   reset: () => void;
 }) {
   useEffect(() => {
-    // Log the error to an error reporting service
-    console.error('Application error:', error);
+    // Log the error to Sentry (or console if not configured)
+    if (process.env.NEXT_PUBLIC_SENTRY_DSN) {
+      Sentry.captureException(error, {
+        tags: {
+          errorBoundary: 'root',
+          digest: error.digest,
+        },
+        contexts: {
+          errorBoundary: {
+            name: 'Root Error Boundary',
+            componentStack: error.stack,
+          },
+        },
+      });
+    } else {
+      console.error('Application error:', error);
+    }
   }, [error]);
 
   return (

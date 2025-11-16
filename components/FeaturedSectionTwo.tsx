@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { getFeaturedProducts } from '@/data/products'
+import SpotlightCard from '@/components/SpotlightCard'
 
 export default function FeaturedSectionTwo() {
   const featuredProducts = getFeaturedProducts()
@@ -18,32 +19,33 @@ export default function FeaturedSectionTwo() {
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
           {featuredProducts.slice(0, 6).map((product) => (
-            <Link
-              key={product.id}
-              href={`/product/${product.slug}`}
-              className="group"
-            >
-              <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">
-                <img
-                  alt={product.name}
-                  src={product.images[0]}
-                  className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="mt-4 flex items-start justify-between">
-                <div>
-                  <h3 className="text-lg font-medium text-bark group-hover:text-fern transition-colors">
-                    {product.name}
-                  </h3>
-                  <p className="mt-1 text-sm text-bark/60">
-                    {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+            <SpotlightCard key={product.id} className="p-6">
+              <Link
+                href={`/product/${product.slug}`}
+                className="group block"
+              >
+                <div className="aspect-square overflow-hidden rounded-lg">
+                  <img
+                    alt={product.name}
+                    src={product.images[0]}
+                    className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="mt-4 flex items-start justify-between">
+                  <div>
+                    <h3 className="text-lg font-medium text-bark group-hover:text-fern transition-colors">
+                      {product.name}
+                    </h3>
+                    <p className="mt-1 text-sm text-bark/60">
+                      {product.category.charAt(0).toUpperCase() + product.category.slice(1)}
+                    </p>
+                  </div>
+                  <p className="text-lg font-display font-semibold text-bark">
+                    ${product.price.toFixed(2)}
                   </p>
                 </div>
-                <p className="text-lg font-display font-semibold text-bark">
-                  ${product.price.toFixed(2)}
-                </p>
-              </div>
-            </Link>
+              </Link>
+            </SpotlightCard>
           ))}
         </div>
 

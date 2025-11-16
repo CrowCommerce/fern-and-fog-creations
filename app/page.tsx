@@ -1,4 +1,5 @@
 import { Metadata } from 'next';
+import { headers } from 'next/headers';
 import { resolveBuilderContent } from '@/lib/builder/resolve-content';
 import { BuilderComponentClient } from '@/components/builder/BuilderComponentClient';
 
@@ -15,6 +16,10 @@ export const metadata: Metadata = {
 };
 
 export default async function Home() {
+  // Access headers to mark as dynamic - required for Builder.io SDK compatibility
+  // This prevents Math.random() errors during prerendering
+  await headers();
+
   // Try to fetch Builder.io content for the homepage
   const builderContent = await resolveBuilderContent('page', {
     userAttributes: { urlPath: '/' },

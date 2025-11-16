@@ -12,6 +12,9 @@ import { Analytics } from '@/components/analytics/Analytics';
 import '@tailwindplus/elements';
 import "./globals.css";
 
+// Initialize Sentry for client-side error tracking
+import '@/lib/sentry-client';
+
 const cormorant = Cormorant_Garamond({
   variable: "--font-cormorant",
   subsets: ["latin"],
@@ -84,9 +87,13 @@ export default async function RootLayout({
               <HeaderWrapper />
             </Suspense>
             <main id="main-content">
-              {children}
+              <Suspense fallback={<div className="min-h-screen bg-parchment" />}>
+                {children}
+              </Suspense>
             </main>
-            <FooterWrapper />
+            <Suspense fallback={<div className="bg-moss/10 h-64" />}>
+              <FooterWrapper />
+            </Suspense>
           </SearchProvider>
         </CartProvider>
       </body>

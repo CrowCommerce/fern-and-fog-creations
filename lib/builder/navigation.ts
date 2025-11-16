@@ -4,6 +4,7 @@
  * Functions for fetching navigation and footer content from Builder.io
  */
 
+import { headers } from 'next/headers';
 import { resolveBuilderContent } from './resolve-content';
 
 export interface NavigationItem {
@@ -54,6 +55,9 @@ function validateNavigationItems(items: unknown): NavigationItem[] {
  * Falls back to default navigation if content doesn't exist
  */
 export async function getNavigation(): Promise<NavigationItem[]> {
+  // Access headers to mark as dynamic - required for Builder.io SDK compatibility
+  await headers();
+
   const defaultNavigation: NavigationItem[] = [
     { name: 'Home', href: '/' },
     { name: 'Gallery', href: '/gallery' },
@@ -83,6 +87,9 @@ export async function getNavigation(): Promise<NavigationItem[]> {
  * Falls back to default footer navigation if content doesn't exist
  */
 export async function getFooterNavigation(): Promise<FooterNavigationData> {
+  // Access headers to mark as dynamic - required for Builder.io SDK compatibility
+  await headers();
+
   const defaultFooter: FooterNavigationData = {
     shop: [
       { name: 'All Products', href: '/products' },

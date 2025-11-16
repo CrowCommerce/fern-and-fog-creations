@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import { galleryItems } from '@/data/gallery'
+import SpotlightCard from '@/components/SpotlightCard'
 
 export default function CollectionSection() {
   // Get first 3 gallery items
@@ -22,26 +23,28 @@ export default function CollectionSection() {
 
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {previewItems.map((item) => (
-            <div key={item.id} className="group">
-              <div className="aspect-square overflow-hidden rounded-lg ring-2 ring-gold/30">
-                <img
-                  alt={item.title}
-                  src={item.image}
-                  className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-              </div>
-              <div className="mt-4">
-                <h3 className="text-xl font-display font-semibold text-parchment">
-                  {item.title}
-                </h3>
-                <p className="mt-2 text-sm text-mist/80">
-                  {item.materials.join(' • ')}
-                </p>
-                <p className="mt-3 text-sm text-mist leading-relaxed italic line-clamp-3">
-                  &quot;{item.story}&quot;
-                </p>
-              </div>
-            </div>
+            <SpotlightCard key={item.id} className="p-6">
+              <Link href="/gallery" className="group block">
+                <div className="aspect-square overflow-hidden rounded-lg ring-2 ring-gold/30">
+                  <img
+                    alt={item.title}
+                    src={item.image}
+                    className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                </div>
+                <div className="mt-4">
+                  <h3 className="text-xl font-display font-semibold text-bark">
+                    {item.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-bark/60">
+                    {item.materials.join(' • ')}
+                  </p>
+                  <p className="mt-3 text-sm text-bark/80 leading-relaxed italic line-clamp-3">
+                    &quot;{item.story}&quot;
+                  </p>
+                </div>
+              </Link>
+            </SpotlightCard>
           ))}
         </div>
 

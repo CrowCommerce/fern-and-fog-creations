@@ -1,10 +1,10 @@
 /**
- * Price range filter component with dual-handle slider
+ * Price range filter component with simple dual-handle slider
  */
 
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 interface PriceRangeFilterProps {
   min: number;
@@ -12,6 +12,8 @@ interface PriceRangeFilterProps {
   value?: { min: number; max: number };
   onChange: (range: { min: number; max: number }) => void;
 }
+
+const STEP = 5;
 
 export function PriceRangeFilter({
   min,
@@ -21,6 +23,9 @@ export function PriceRangeFilter({
 }: PriceRangeFilterProps) {
   const [localMin, setLocalMin] = useState(value?.min ?? min);
   const [localMax, setLocalMax] = useState(value?.max ?? max);
+  const [activeHandle, setActiveHandle] = useState<'min' | 'max' | null>(null);
+
+  const sliderRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (value) {
@@ -29,21 +34,61 @@ export function PriceRangeFilter({
     }
   }, [value]);
 
-  const handleMinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMin = parseInt(e.target.value);
+  const valueToPosition = (val: number): number => {
+    const percentage = ((val - min) / (max - min)) * 100;
+    return percentage;
+  };
+
+  const positionToValue = (clientXPos: number): number => {
+    if (!sliderRef.current) return min;
+    const { left, width } = sliderRef.current.getBoundingClientRect();
+    const percentage = Math.max(0, Math.min(100, ((clientXPos - left) / width) * 100));
+    const rawValue = min + (percentage / 100) * (max - min);
+    return Math.round(rawValue / STEP) * STEP;
+  };
+
+  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>, handle: 'min' | 'max') => {
+    e.preventDefault();
+    setActiveHandle(handle);
+    e.currentTarget.setPointerCapture(e.pointerId);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (activeHandle && sliderRef.current) {
+      const newValue = positionToValue(e.clientX);
+
+      if (activeHandle === 'min' && newValue <= localMax) {
+        setLocalMin(newValue);
+        onChange({ min: newValue, max: localMax });
+      } else if (activeHandle === 'max' && newValue >= localMin) {
+        setLocalMax(newValue);
+        onChange({ min: localMin, max: newValue });
+      }
+    }
+  };
+
+  const handlePointerUp = () => {
+    setActiveHandle(null);
+  };
+
+  const handleMinInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMin = parseInt(e.target.value) || min;
     setLocalMin(newMin);
     if (newMin <= localMax) {
       onChange({ min: newMin, max: localMax });
     }
   };
 
-  const handleMaxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newMax = parseInt(e.target.value);
+  const handleMaxInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newMax = parseInt(e.target.value) || max;
     setLocalMax(newMax);
     if (newMax >= localMin) {
       onChange({ min: localMin, max: newMax });
     }
   };
+
+  const minPosition = valueToPosition(localMin);
+  const maxPosition = valueToPosition(localMax);
 
   return (
     <div>
@@ -53,32 +98,76 @@ export function PriceRangeFilter({
         {/* Display selected range */}
         <div className="flex items-center justify-between text-sm text-bark font-medium">
           <span>${localMin}</span>
-          <span className="text-sm text-bark/80">to</span>
+          <span className="text-xs text-bark/60">to</span>
           <span>${localMax}</span>
         </div>
 
-        {/* Slider inputs */}
-        <div className="relative pt-1">
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={5}
-            value={localMin}
-            onChange={handleMinChange}
-            className="absolute w-full h-2 bg-transparent appearance-none pointer-events-none [&::-webkit-slider-thumb]:pointer-events-auto [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-fern [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:pointer-events-auto [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-fern [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
-            style={{ zIndex: localMin > max - 20 ? 5 : 3 }}
-          />
-          <input
-            type="range"
-            min={min}
-            max={max}
-            step={5}
-            value={localMax}
-            onChange={handleMaxChange}
-            className="relative w-full h-2 bg-mist rounded-full appearance-none [&::-webkit-slider-thumb]:appearance-none [&::-webkit-slider-thumb]:w-4 [&::-webkit-slider-thumb]:h-4 [&::-webkit-slider-thumb]:rounded-full [&::-webkit-slider-thumb]:bg-moss [&::-webkit-slider-thumb]:cursor-pointer [&::-moz-range-thumb]:w-4 [&::-moz-range-thumb]:h-4 [&::-moz-range-thumb]:rounded-full [&::-moz-range-thumb]:bg-moss [&::-moz-range-thumb]:border-0 [&::-moz-range-thumb]:cursor-pointer"
-            style={{ zIndex: 4 }}
-          />
+        {/* Simple dual-handle slider */}
+        <div className="w-full touch-none select-none py-4">
+          <div
+            ref={sliderRef}
+            className="relative w-full touch-none select-none"
+            onPointerMove={handlePointerMove}
+            onPointerUp={handlePointerUp}
+            onPointerLeave={handlePointerUp}
+          >
+            {/* Track container */}
+            <div className="relative w-full h-1">
+              {/* Background track */}
+              <div className="absolute inset-0 bg-mist rounded-full" />
+
+              {/* Filled range between handles */}
+              <div
+                className="absolute h-full bg-fern rounded-full transition-all duration-150"
+                style={{
+                  left: `${minPosition}%`,
+                  width: `${maxPosition - minPosition}%`,
+                }}
+              />
+            </div>
+
+            {/* Min handle */}
+            <div
+              onPointerDown={(e) => handlePointerDown(e, 'min')}
+              style={{
+                left: `${minPosition}%`,
+              }}
+              className={`
+                absolute top-1/2 -translate-y-1/2 -translate-x-1/2
+                w-3.5 h-3.5 bg-fern rounded-full border-2 border-white shadow-sm
+                cursor-grab active:cursor-grabbing z-10
+                transition-transform duration-150
+                ${activeHandle === 'min' ? 'scale-125' : 'hover:scale-110'}
+              `}
+              role="slider"
+              aria-label="Minimum price"
+              aria-valuemin={min}
+              aria-valuemax={localMax}
+              aria-valuenow={localMin}
+              tabIndex={0}
+            />
+
+            {/* Max handle */}
+            <div
+              onPointerDown={(e) => handlePointerDown(e, 'max')}
+              style={{
+                left: `${maxPosition}%`,
+              }}
+              className={`
+                absolute top-1/2 -translate-y-1/2 -translate-x-1/2
+                w-3.5 h-3.5 bg-fern rounded-full border-2 border-white shadow-sm
+                cursor-grab active:cursor-grabbing z-10
+                transition-transform duration-150
+                ${activeHandle === 'max' ? 'scale-125' : 'hover:scale-110'}
+              `}
+              role="slider"
+              aria-label="Maximum price"
+              aria-valuemin={localMin}
+              aria-valuemax={max}
+              aria-valuenow={localMax}
+              tabIndex={0}
+            />
+          </div>
         </div>
 
         {/* Number inputs for precise control */}
@@ -92,9 +181,10 @@ export function PriceRangeFilter({
               type="number"
               min={min}
               max={localMax}
+              step={STEP}
               value={localMin}
-              onChange={handleMinChange}
-              className="w-full px-3 py-2 text-sm border border-mist rounded-md focus:outline-none focus:ring-2 focus:ring-fern"
+              onChange={handleMinInputChange}
+              className="w-full px-3 py-2 text-sm border border-mist rounded-md focus:outline-none focus:ring-2 focus:ring-fern bg-parchment text-bark"
             />
           </div>
           <div>
@@ -106,9 +196,10 @@ export function PriceRangeFilter({
               type="number"
               min={localMin}
               max={max}
+              step={STEP}
               value={localMax}
-              onChange={handleMaxChange}
-              className="w-full px-3 py-2 text-sm border border-mist rounded-md focus:outline-none focus:ring-2 focus:ring-fern"
+              onChange={handleMaxInputChange}
+              className="w-full px-3 py-2 text-sm border border-mist rounded-md focus:outline-none focus:ring-2 focus:ring-fern bg-parchment text-bark"
             />
           </div>
         </div>

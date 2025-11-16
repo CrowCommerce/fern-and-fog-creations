@@ -107,17 +107,240 @@ const { itemCount, totalAmount, isEmpty } = useCartState();
 
 1. Go to https://builder.io/content
 2. Create new "page" entry
-3. Set URL path (e.g., `/about-us`)
+3. Set URL path (e.g., `/about-us`, `/blog/post-title`, `/landing/summer-sale`)
 4. Drag Fern & Fog components from the left sidebar
 5. Configure component inputs in the right panel
 6. Publish when ready
 7. Visit your URL to see the live page
 
+**Catch-All Route:**
+The app includes a catch-all route (`app/[...page]/page.tsx`) that enables creating arbitrary pages in Builder.io:
+- Homepage (`/`) - Builder.io content with fallback
+- Any custom path (e.g., `/about-us`, `/blog/*`, `/landing/*`)
+- Protected routes (products, cart, checkout) are NOT handled by Builder.io
+
+```typescript
+// app/[...page]/page.tsx
+// Automatically fetches Builder.io content for any non-reserved path
+const builderContent = await resolveBuilderContent('page', {
+  userAttributes: { urlPath: `/${pageSegments.join('/')}` },
+});
+```
+
+**Reserved Paths (Protected from Builder.io):**
+- `/products` - Product listing
+- `/product/*` - Product details
+- `/cart` - Shopping cart
+- `/checkout` - Checkout
+- `/account` - User accounts
+- `/api/*` - API routes
+- `/_next/*` - Next.js internals
+
 **Important Notes:**
-- All custom components maintain LOTR/Shire (coastal/woodland) theming
+- All custom components maintain coastal/woodland theming
 - Components use brand colors: moss, fern, parchment, bark, mist, gold
 - Shopify e-commerce routes are completely protected
 - Cart, products, checkout are NOT managed by Builder.io
+- Create unlimited marketing pages, landing pages, blog posts via Builder.io
+
+### Contact Form (Jotform Integration) ✅
+
+The contact form uses **Jotform** - a no-code form builder with built-in spam protection and email notifications.
+
+**Why Jotform:**
+- Free tier: 100 submissions/month with CAPTCHA included
+- No custom email service setup required (Jotform handles email delivery)
+- Business owners can manage forms without code via Jotform dashboard
+- Built-in spam protection (reCAPTCHA)
+- 24/7 support on all plans
+
+**Implementation:**
+```typescript
+// app/contact/page.tsx
+import dynamic from 'next/dynamic'
+
+const JotformEmbed = dynamic(() => import('react-jotform-embed'), {
+  ssr: false,
+  loading: () => <div>Loading form...</div>
+})
+
+// Embed Jotform via React component
+<JotformEmbed src={`https://form.jotform.com/${formId}`} />
+```
+
+**Configuration:**
+```bash
+# Environment variable required
+NEXT_PUBLIC_JOTFORM_FORM_ID=your-form-id
+```
+
+**Setup Steps:**
+1. Create account at https://www.jotform.com/
+2. Create contact form (use template or build from scratch)
+3. Get form ID from URL (e.g., `jotform.com/241234567890` → `241234567890`)
+4. Add to environment variables
+5. Form auto-loads on `/contact` page
+
+**Managing Submissions:**
+- Business owners log into Jotform dashboard
+- View all submissions in real-time
+- Export to CSV/Excel
+- Email notifications sent automatically
+- No code changes needed to manage form
+
+**See GO_LIVE.md for complete Jotform setup tutorial**
+
+### Error Monitoring (Sentry Integration) ✅
+
+Production error tracking via **Sentry** - automatically captures and reports errors.
+
+**Implementation Files:**
+- `instrumentation.ts` - Server-side error tracking
+- `lib/sentry-client.ts` - Client-side error tracking
+- `app/error.tsx` - Error boundary with Sentry integration
+
+**Server-Side Tracking:**
+```typescript
+// instrumentation.ts
+export async function register() {
+  const Sentry = await import('@sentry/nextjs');
+  Sentry.init({
+    dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
+    tracesSampleRate: 0.1,
+    environment: process.env.NODE_ENV,
+  });
+}
+```
+
+**Error Boundary Integration:**
+```typescript
+// app/error.tsx
+import * as Sentry from '@sentry/nextjs';
+
+useEffect(() => {
+  Sentry.captureException(error, {
+    tags: { errorBoundary: 'root' },
+  });
+}, [error]);
+```
+
+**Configuration:**
+```bash
+# Environment variables (optional - gracefully disabled if not set)
+NEXT_PUBLIC_SENTRY_DSN=your-sentry-dsn
+SENTRY_AUTH_TOKEN=your-auth-token
+```
+
+**Features:**
+- Automatic error capture on client and server
+- Source maps support
+- Stack trace with code context
+- Error replay (session recording)
+- Email alerts on new errors
+- Free tier: 5,000 errors/month
+
+**If not configured:** Falls back to console.error - site works normally without Sentry
+
+### Rate Limiting (Upstash Redis) ✅
+
+Flexible rate limiting utility for API routes and server actions.
+
+**Implementation:**
+```typescript
+// lib/rate-limit.ts
+import { Ratelimit } from '@upstash/ratelimit';
+
+// Pre-configured limiters
+export const apiRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(10, '10 s'), // 10 req/10s
+});
+
+export const contactFormRateLimiter = new Ratelimit({
+  redis,
+  limiter: Ratelimit.slidingWindow(5, '10 m'), // 5 req/10m
+});
+```
+
+**Usage in API Routes:**
+```typescript
+// app/api/example/route.ts
+import { rateLimit, createRateLimitHeaders } from '@/lib/rate-limit';
+
+export async function POST(request: Request) {
+  const rateLimitResult = await rateLimit(request);
+
+  if (!rateLimitResult.success) {
+    return NextResponse.json(
+      { error: 'Too Many Requests' },
+      {
+        status: 429,
+        headers: createRateLimitHeaders(rateLimitResult)
+      }
+    );
+  }
+
+  // Handle request...
+}
+```
+
+**Configuration:**
+```bash
+# Optional - gracefully disabled if not configured
+UPSTASH_REDIS_REST_URL=your-upstash-url
+UPSTASH_REDIS_REST_TOKEN=your-upstash-token
+```
+
+**Current Usage:**
+- Contact form uses Jotform's built-in CAPTCHA (no rate limiting needed)
+- Rate limiting utility ready for future API routes
+- Example implementation in `app/api/example-rate-limited/route.ts`
+
+**If not configured:** Rate limiting is bypassed - requests allowed through without limits
+
+### Image Optimization ✅
+
+All hero images use Next.js Image component for automatic optimization.
+
+**Implementation:**
+```typescript
+// components/builder/blocks/HeroBlock.tsx
+import Image from 'next/image'
+
+<Image
+  src={backgroundImage}
+  fill
+  priority
+  sizes="100vw"
+  className="object-cover object-center"
+  quality={90}
+/>
+```
+
+**Benefits:**
+- Automatic WebP/AVIF conversion
+- Lazy loading (except priority images)
+- Responsive image sizes
+- Blur placeholder (if configured)
+- CDN delivery via Vercel
+
+**Configured Remote Patterns:**
+```javascript
+// next.config.ts
+images: {
+  formats: ['image/avif', 'image/webp'],
+  remotePatterns: [
+    { hostname: 'cdn.shopify.com' },      // Shopify product images
+    { hostname: 'via.placeholder.com' },   // Placeholders
+    { hostname: 'tailwindcss.com' },       // TailwindUI assets
+  ],
+}
+```
+
+**Components Using Optimized Images:**
+- `HeroBlock` - Builder.io hero component
+- `HeroSection` - Hardcoded fallback hero
+- Product images (via Shopify) - Automatically optimized
 
 ### App Router Structure
 

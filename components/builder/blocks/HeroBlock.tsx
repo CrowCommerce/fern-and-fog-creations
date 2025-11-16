@@ -11,6 +11,7 @@
  */
 
 import Link from 'next/link';
+import Image from 'next/image';
 
 export interface HeroBlockProps {
   backgroundImage?: string;
@@ -37,10 +38,14 @@ export default function HeroBlock({
     <div className="relative bg-moss">
       {/* Background Image */}
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
-        <img
+        <Image
           alt=""
           src={backgroundImage}
-          className="size-full object-cover object-center"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+          quality={90}
         />
       </div>
 

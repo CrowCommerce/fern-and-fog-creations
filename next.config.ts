@@ -6,8 +6,16 @@ const nextConfig: NextConfig = {
     inlineCss: true,
     useCache: true,
   },
+  // Transpile Sentry and OpenTelemetry packages to avoid externalization warnings
+  transpilePackages: [
+    '@sentry/nextjs',
+    '@sentry/node',
+    '@sentry/core',
+    '@opentelemetry/instrumentation',
+  ],
   images: {
     formats: ["image/avif", "image/webp"],
+    qualities: [75, 90], // Support both default (75) and high quality (90) images
     remotePatterns: [
       {
         protocol: "https",

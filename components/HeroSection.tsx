@@ -1,13 +1,18 @@
 import Link from 'next/link'
+import Image from 'next/image'
 
 export default function HeroSection() {
   return (
     <div className="relative bg-moss">
       <div aria-hidden="true" className="absolute inset-0 overflow-hidden">
-        <img
+        <Image
           alt=""
           src="/stock-assets/hero/coastal-shells.jpg"
-          className="size-full object-cover object-center"
+          fill
+          priority
+          sizes="100vw"
+          className="object-cover object-center"
+          quality={90}
         />
       </div>
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-moss/70 via-moss/50 to-moss/70" />
