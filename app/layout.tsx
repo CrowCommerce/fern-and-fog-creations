@@ -6,6 +6,8 @@ import Footer from '@/components/layout/Footer'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
 import { BuilderInit } from '@/components/builder/BuilderInit';
+import { SearchProvider } from '@/components/search/SearchProvider';
+import { SearchDialog } from '@/components/search/SearchDialog';
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -57,30 +59,33 @@ export default async function RootLayout({
       >
         <BuilderInit />
         <CartProvider cartPromise={cartPromise}>
-          <a href="#main-content" className="skip-to-content">
-            Skip to content
-          </a>
-          <Suspense
-            fallback={
-              <header className="sticky top-0 z-50 bg-parchment border-b-2 border-fern">
-                <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-                  <div className="flex h-16 items-center justify-between">
-                    <div className="flex-1" />
-                    <div className="font-display text-2xl font-semibold text-moss">
-                      Fern & Fog Creations
+          <SearchProvider>
+            <SearchDialog />
+            <a href="#main-content" className="skip-to-content">
+              Skip to content
+            </a>
+            <Suspense
+              fallback={
+                <header className="sticky top-0 z-50 bg-parchment border-b-2 border-fern">
+                  <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="flex h-16 items-center justify-between">
+                      <div className="flex-1" />
+                      <div className="font-display text-2xl font-semibold text-moss">
+                        Fern & Fog Creations
+                      </div>
+                      <div className="flex-1" />
                     </div>
-                    <div className="flex-1" />
                   </div>
-                </div>
-              </header>
-            }
-          >
-            <Header />
-          </Suspense>
-          <main id="main-content">
-            {children}
-          </main>
-          <Footer />
+                </header>
+              }
+            >
+              <Header />
+            </Suspense>
+            <main id="main-content">
+              {children}
+            </main>
+            <Footer />
+          </SearchProvider>
         </CartProvider>
       </body>
     </html>

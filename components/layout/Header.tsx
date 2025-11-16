@@ -10,6 +10,7 @@ import {
 import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
+import { SearchButton } from '@/components/search/SearchButton'
 
 const navigation = [
   { name: 'Home', href: '/' },
@@ -80,8 +81,8 @@ export default function Header() {
       <header className="sticky top-0 z-50 bg-parchment border-b-2 border-bark/20">
         <nav aria-label="Top" className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
           <div className="flex h-20 items-center justify-between lg:grid lg:grid-cols-3 lg:gap-8">
-            {/* Mobile menu button */}
-            <div className="flex items-center lg:hidden">
+            {/* Mobile menu button and search */}
+            <div className="flex items-center gap-2 lg:hidden">
               <button
                 type="button"
                 onClick={() => setMobileMenuOpen(true)}
@@ -90,6 +91,7 @@ export default function Header() {
                 <span className="sr-only">Open menu</span>
                 <Bars3Icon aria-hidden="true" className="size-6" />
               </button>
+              <SearchButton className="rounded-md p-2 text-bark hover:text-moss cursor-pointer transition-colors" />
             </div>
 
             {/* Desktop Navigation - Left side */}
@@ -127,6 +129,9 @@ export default function Header() {
                   {item.name}
                 </Link>
               ))}
+
+              {/* Search */}
+              <SearchButton className="rounded-md p-2 text-bark hover:text-fern cursor-pointer transition-colors" />
 
               {/* Cart */}
               <button
