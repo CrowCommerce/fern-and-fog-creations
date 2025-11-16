@@ -14,6 +14,11 @@ export const metadata: Metadata = {
   description: 'Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches on the coast.',
 };
 
+/**
+ * Render the homepage using Builder.io content when available, otherwise render the static fallback sections.
+ *
+ * @returns A JSX element for the homepage: Builder.io-rendered page content if available, or the hardcoded HeroSection, CategorySection, FeaturedSectionOne, FeaturedSectionTwo, and CollectionSection fallback layout.
+ */
 export default async function Home() {
   // Try to fetch Builder.io content for the homepage
   const builderContent = await resolveBuilderContent('page', {

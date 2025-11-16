@@ -40,25 +40,11 @@ export interface ResolveContentOptions {
 }
 
 /**
- * Fetch Builder.io content for a given model
+ * Retrieve Builder.io content for the specified model.
  *
- * @param modelName - Builder.io model name (e.g., 'page', 'product-page')
- * @param options - Additional options for content fetching
- * @returns Builder.io content or null if not found
- *
- * @example
- * ```typescript
- * // Fetch a page by URL path
- * const content = await resolveBuilderContent('page', {
- *   userAttributes: { urlPath: '/about-us' }
- * });
- *
- * // Fetch with locale
- * const content = await resolveBuilderContent('page', {
- *   userAttributes: { urlPath: '/about-us' },
- *   locale: 'fr-FR'
- * });
- * ```
+ * @param modelName - Builder.io model name (for example, "page" or "product-page")
+ * @param options - Optional fetch controls; may include `userAttributes` (targeting/personalization like `{ urlPath: '/about' }`), `locale`, `enrich`, and `cachebust`
+ * @returns The fetched `BuilderContent` for the model, or `null` if no content is found, the Builder API key is not configured, or an error occurs
  */
 export async function resolveBuilderContent(
   modelName: string,

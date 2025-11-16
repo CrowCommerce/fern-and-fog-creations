@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   description: 'Terms of service for Fern & Fog Creations - Learn about the terms and conditions governing your use of our website and services.',
 };
 
+/**
+ * Renders the Terms of Service page for the site, including policy sections and a Shopify management note.
+ *
+ * @returns The React element for the Terms of Service page
+ */
 export default function TermsOfServicePage() {
   return (
     <div className="bg-parchment min-h-screen">

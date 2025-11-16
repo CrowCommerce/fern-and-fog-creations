@@ -3,6 +3,15 @@
 import { useEffect } from 'react';
 import Link from 'next/link';
 
+/**
+ * Renders a full-screen error UI that informs the user, logs the error, and offers recovery actions.
+ *
+ * Logs the provided error to the console when the component mounts or when the `error` changes.
+ *
+ * @param error - The caught error to display information for; if `error.digest` is present it is shown as an Error ID.
+ * @param reset - Callback invoked when the user requests a retry (connected to the "Try again" button).
+ * @returns A centered, responsive error page containing a message, optional error ID, a "Try again" button, and a "Return home" link.
+ */
 export default function Error({
   error,
   reset,

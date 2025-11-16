@@ -5,6 +5,16 @@ export const metadata: Metadata = {
   description: 'Privacy policy for Fern & Fog Creations - Learn how we collect, use, and protect your personal information.',
 };
 
+/**
+ * Render the Privacy Policy page for the storefront.
+ *
+ * Returns a structured React element containing the privacy policy content:
+ * a "Last updated" timestamp, sections for Introduction, Information We Collect,
+ * How We Use Your Information, Data Security, Your Rights, Cookies,
+ * Third-Party Services, and Contact Us, plus a Shopify integration note.
+ *
+ * @returns The React element for the Privacy Policy page
+ */
 export default function PrivacyPolicyPage() {
   return (
     <div className="bg-parchment min-h-screen">

@@ -30,6 +30,12 @@ export const metadata: Metadata = {
   description: "Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches on the coast.",
 };
 
+/**
+ * Renders the application's root HTML layout with global providers, analytics, header chrome, main content area, and footer.
+ *
+ * @param children - The page content to render inside the layout's main content area.
+ * @returns The root HTML element that composes global providers (cart and search), analytics, header, main content, and footer.
+ */
 export default async function RootLayout({
   children,
 }: Readonly<{

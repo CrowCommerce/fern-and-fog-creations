@@ -6,6 +6,11 @@ export const metadata: Metadata = {
   description: 'The page you are looking for could not be found.',
 };
 
+/**
+ * Render a styled 404 Not Found page for the application.
+ *
+ * @returns A JSX element containing the 404 status, explanatory message, primary action links ("Go home", "Browse products"), and a list of popular page links.
+ */
 export default function NotFound() {
   return (
     <div className="bg-parchment min-h-screen flex items-center justify-center px-4 py-16">
