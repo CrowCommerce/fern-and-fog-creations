@@ -11,11 +11,7 @@ import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outli
 import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
 import { SearchButton } from '@/components/search/SearchButton'
-
-interface NavigationItem {
-  name: string;
-  href: string;
-}
+import type { NavigationItem } from '@/lib/builder/navigation'
 
 interface HeaderProps {
   navigation: NavigationItem[];

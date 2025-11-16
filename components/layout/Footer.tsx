@@ -1,15 +1,5 @@
 import Link from 'next/link';
-
-interface NavigationItem {
-  name: string;
-  href: string;
-}
-
-interface FooterNavigationData {
-  shop: NavigationItem[];
-  about: NavigationItem[];
-  policies: NavigationItem[];
-}
+import type { FooterNavigationData } from '@/lib/builder/navigation';
 
 interface FooterProps {
   footerNavigation: FooterNavigationData;

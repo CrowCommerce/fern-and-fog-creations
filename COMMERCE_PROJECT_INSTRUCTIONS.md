@@ -211,7 +211,13 @@ export default async function ProductPage({ params }) {
 }
 ```
 
-### Caching Strategy (Next.js 16)
+### Caching Strategy (Next.js 16 - ⚠️ EXPERIMENTAL)
+
+> **⚠️ Warning:** The `'use cache'`, `cacheTag()`, and `cacheLife()` APIs are **experimental** in Next.js 16 canary.
+> These APIs may have breaking changes in future releases. For production use:
+> - Lock your Next.js version to a specific canary build
+> - Monitor Next.js release notes for breaking changes
+> - Consider using traditional Next.js caching (`unstable_cache`) for stable production apps
 
 ```typescript
 'use cache';
@@ -227,6 +233,19 @@ export async function getProducts() {
 // Revalidate on-demand
 import { revalidateTag } from 'next/cache';
 revalidateTag('products');
+```
+
+**Alternative (Stable API):**
+```typescript
+import { unstable_cache } from 'next/cache';
+
+export const getProducts = unstable_cache(
+  async () => {
+    // Fetch data
+  },
+  ['products'],
+  { tags: ['products'], revalidate: 86400 } // 1 day
+);
 ```
 
 ### Error Handling
