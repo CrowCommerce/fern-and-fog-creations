@@ -22,7 +22,7 @@ export default function TermsOfServicePage() {
           */}
 
           <p className="text-sm text-bark/60 italic mb-8">
-            Last updated: {new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            Last updated: November 16, 2025
           </p>
 
           <section className="mb-8">
