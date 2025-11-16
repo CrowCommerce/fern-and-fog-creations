@@ -11,16 +11,13 @@ import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outli
 import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
 import { SearchButton } from '@/components/search/SearchButton'
+import type { NavigationItem } from '@/lib/builder/navigation'
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Gallery', href: '/gallery' },
-  { name: 'Shop', href: '/products' },
-  { name: 'Contact', href: '/contact' },
-  { name: 'About', href: '/about' },
-]
+interface HeaderProps {
+  navigation: NavigationItem[];
+}
 
-export default function Header() {
+export default function Header({ navigation }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const { cart } = useCart()

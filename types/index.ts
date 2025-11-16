@@ -18,6 +18,9 @@ export type {
   FilterState,
 } from './filter'
 
+// Re-export Product from data layer for convenience
+export type { Product } from '@/data/products'
+
 // Cart types are defined in @/components/cart/cart-context.tsx
 // export type {
 //   CartItem,
