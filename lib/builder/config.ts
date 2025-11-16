@@ -8,9 +8,9 @@
  */
 
 if (!process.env.NEXT_PUBLIC_BUILDER_PUBLIC_KEY) {
-  throw new Error(
-    'Missing NEXT_PUBLIC_BUILDER_PUBLIC_KEY environment variable. ' +
-    'Please add it to your .env.local file. ' +
+  console.warn(
+    '[Builder.io] Warning: Missing NEXT_PUBLIC_BUILDER_PUBLIC_KEY environment variable. ' +
+    'Builder.io features will be disabled. ' +
     'Get your API key from: https://builder.io/account/organization'
   );
 }
@@ -20,7 +20,7 @@ export const builderConfig = {
    * Builder.io Public API Key
    * This is safe to expose in client-side code
    */
-  apiKey: process.env.NEXT_PUBLIC_BUILDER_PUBLIC_KEY,
+  apiKey: process.env.NEXT_PUBLIC_BUILDER_PUBLIC_KEY || '',
 
   /**
    * Builder.io Model Definitions
