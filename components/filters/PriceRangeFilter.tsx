@@ -51,9 +51,9 @@ export function PriceRangeFilter({
 
       <div className="space-y-4">
         {/* Display selected range */}
-        <div className="flex items-center justify-between text-sm text-bark/70">
+        <div className="flex items-center justify-between text-sm text-bark font-medium">
           <span>${localMin}</span>
-          <span className="text-xs">to</span>
+          <span className="text-sm text-bark/80">to</span>
           <span>${localMax}</span>
         </div>
 

@@ -25,7 +25,7 @@ export function useVariantSelection({
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(defaultVariant);
 
-  // Initialize from URL params or default variant
+  // Initialize from URL params or default variant (only once on mount)
   useEffect(() => {
     const initialOptions: Record<string, string> = {};
 
@@ -54,7 +54,8 @@ export function useVariantSelection({
     }
 
     setSelectedOptions(initialOptions);
-  }, [searchParams, options, defaultVariant]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Only run on mount
 
   // Find matching variant when options change
   useEffect(() => {
@@ -69,21 +70,23 @@ export function useVariantSelection({
       const newOptions = { ...selectedOptions, [optionName]: value };
       setSelectedOptions(newOptions);
 
-      // Update URL params
-      const params = new URLSearchParams(searchParams?.toString() || '');
-      params.set(optionName.toLowerCase(), value);
+      // Update URL with ALL selected options to ensure they're preserved
+      const params = new URLSearchParams();
+
+      // Add all current options
+      Object.entries(newOptions).forEach(([key, val]) => {
+        params.set(key.toLowerCase(), val);
+      });
 
       // Add variant ID if found
       const variant = findVariantByOptions(variants, newOptions);
       if (variant) {
         params.set('variant', variant.id);
-      } else {
-        params.delete('variant');
       }
 
       router.replace(`?${params.toString()}`, { scroll: false });
     },
-    [selectedOptions, searchParams, router, variants]
+    [selectedOptions, router, variants]
   );
 
   // Check if an option value is available given current selections

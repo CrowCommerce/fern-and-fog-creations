@@ -95,7 +95,7 @@ export function FilterPanel({
 
       {/* Result count */}
       <div className="border-t border-mist pt-4">
-        <p className="text-sm text-bark/70">
+        <p className="text-sm text-bark/90 font-medium">
           {resultCount} {resultCount === 1 ? 'product' : 'products'} found
         </p>
       </div>

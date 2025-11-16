@@ -222,7 +222,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                       >
                         −
                       </button>
-                      <span className="px-4 py-1 bg-mist text-bark rounded-md font-medium">
+                      <span className="min-w-[3rem] px-4 py-1 bg-mist text-bark rounded-md font-medium text-center">
                         {quantity}
                       </span>
                       <button

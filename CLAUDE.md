@@ -33,33 +33,6 @@ pnpm lint
 
 Development server runs on `http://localhost:3000`
 
-## Known Issues & TODOs
-
-### 🔧 Cart Drawer - Remove Loading Overlay During Quantity Updates
-
-**Issue:** When users click the +/- buttons to adjust item quantities in the cart drawer, a loading overlay appears even though the cart updates optimistically. This creates a janky UX compared to 4mula-shop-tailwindui which updates instantly without any loading state.
-
-**Current Behavior:**
-- ShoppingCartDrawer.tsx (lines 78-87) shows a loading overlay when `isPending` is true
-- The overlay appears during the `updateItemQuantity` server action
-- Users see "Updating..." spinner even though the UI already updated optimistically
-
-**Expected Behavior:**
-- Quantity should update instantly (already working via `updateCartItem()` optimistic update)
-- No loading overlay should appear since the change is already reflected
-- Server action should happen silently in the background
-
-**Files Involved:**
-- `src/components/layout/ShoppingCartDrawer.tsx` (lines 78-87)
-- `handleUpdateQuantity` function uses both `updateCartItem()` (optimistic) and `updateItemQuantity()` (server)
-
-**Fix:**
-Remove the loading overlay div or conditionally hide it for quantity updates while keeping it for remove actions. The optimistic update already provides instant feedback, so the loading state is redundant.
-
-**Reference:** See 4mula-shop-tailwindui cart implementation for comparison of smooth, instant quantity updates.
-
----
-
 ## Architecture Overview
 
 ### Builder.io Visual CMS Integration ✨

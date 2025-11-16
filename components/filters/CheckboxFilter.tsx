@@ -47,7 +47,7 @@ export function CheckboxFilter({
               {option.label}
             </span>
             {option.count !== undefined && (
-              <span className="text-xs text-bark/50">({option.count})</span>
+              <span className="text-xs text-bark/70 font-medium">({option.count})</span>
             )}
           </label>
         ))}

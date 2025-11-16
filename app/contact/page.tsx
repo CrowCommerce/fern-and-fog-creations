@@ -1,7 +1,10 @@
 'use client'
 
-import { useState, useEffect, Suspense } from 'react'
+import { useState, useEffect, Suspense, Fragment } from 'react'
 import { useSearchParams } from 'next/navigation'
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react'
+import { CheckIcon, ChevronUpDownIcon } from '@heroicons/react/20/solid'
+import { classNames } from '@/lib/utils'
 
 const productInterests = [
   'General Inquiry',
@@ -140,19 +143,57 @@ function ContactForm() {
               <label htmlFor="productInterest" className="block text-sm font-medium text-bark mb-2">
                 What are you interested in?
               </label>
-              <select
-                id="productInterest"
+              <Listbox
                 value={formData.productInterest}
-                onChange={(e) => setFormData({ ...formData, productInterest: e.target.value })}
-                className="w-full px-4 py-3 bg-white border border-bark/20 rounded-md text-bark focus:outline-none focus:ring-2 focus:ring-fern"
+                onChange={(value) => setFormData({ ...formData, productInterest: value })}
               >
-                <option value="">Select an option</option>
-                {productInterests.map((interest) => (
-                  <option key={interest} value={interest}>
-                    {interest}
-                  </option>
-                ))}
-              </select>
+                <Fragment>
+                    <ListboxButton
+                      id="productInterest"
+                      aria-label="What are you interested in?"
+                      className="w-full inline-flex items-center justify-between gap-2 rounded-md border border-mist bg-parchment px-4 py-3 text-sm text-bark shadow-sm transition-colors hover:bg-mist focus:outline-none focus:ring-2 focus:ring-fern"
+                    >
+                      <span className={classNames('truncate capitalize', !formData.productInterest && 'text-bark/60')}>
+                        {formData.productInterest || 'Select an option'}
+                      </span>
+                      <ChevronUpDownIcon aria-hidden="true" className="h-5 w-5 text-bark/50 flex-shrink-0" />
+                    </ListboxButton>
+
+                    <ListboxOptions
+                      anchor="bottom start"
+                      className="mt-2 w-[var(--button-width)] rounded-md border border-mist bg-parchment p-1 shadow-lg ring-1 ring-bark/10 focus:outline-none z-10"
+                    >
+                      {productInterests.map((interest) => {
+                        const isSelected = formData.productInterest === interest
+
+                        return (
+                          <ListboxOption
+                            key={interest}
+                            value={interest}
+                            className={({ focus }) =>
+                              classNames(
+                                'group flex cursor-pointer items-center justify-between rounded-[6px] px-3 py-2 text-sm',
+                                focus && 'bg-mist',
+                                isSelected ? 'text-fern' : 'text-bark'
+                              )
+                            }
+                          >
+                            {({ selected }) => (
+                              <>
+                                <span className={classNames('truncate capitalize', selected && 'font-medium')}>
+                                  {interest}
+                                </span>
+                                {selected && (
+                                  <CheckIcon aria-hidden="true" className="ml-3 h-4 w-4 text-fern flex-shrink-0" />
+                                )}
+                              </>
+                            )}
+                          </ListboxOption>
+                        )
+                      })}
+                    </ListboxOptions>
+                </Fragment>
+              </Listbox>
             </div>
 
             {/* Message */}
