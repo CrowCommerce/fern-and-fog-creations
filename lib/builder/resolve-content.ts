@@ -64,6 +64,12 @@ export async function resolveBuilderContent(
   modelName: string,
   options: ResolveContentOptions = {}
 ): Promise<BuilderContent | null> {
+  // Skip Builder.io calls entirely if no API key is configured
+  // This prevents both SDK errors and Next.js prerender issues with Math.random()
+  if (!builderConfig.apiKey) {
+    return null;
+  }
+
   const {
     userAttributes = {},
     locale = 'en-US',
@@ -104,6 +110,10 @@ export async function resolveBuilderContent(
  * @returns true if content exists
  */
 export async function hasBuilderContent(urlPath: string): Promise<boolean> {
+  if (!builderConfig.apiKey) {
+    return false;
+  }
+
   const content = await resolveBuilderContent('page', {
     userAttributes: { urlPath },
     enrich: false, // Don't need full content, just checking existence
