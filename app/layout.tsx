@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Suspense } from "react";
-import Header from "@/components/layout/Header";
-import Footer from '@/components/layout/Footer'
+import HeaderWrapper from "@/components/layout/HeaderWrapper";
+import FooterWrapper from '@/components/layout/FooterWrapper'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
 import { BuilderInit } from '@/components/builder/BuilderInit';
 import { SearchProvider } from '@/components/search/SearchProvider';
 import { SearchDialog } from '@/components/search/SearchDialog';
+import { Analytics } from '@/components/analytics/Analytics';
 import '@tailwindplus/elements';
 import "./globals.css";
 
@@ -57,6 +58,7 @@ export default async function RootLayout({
       <body
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
+        <Analytics />
         <BuilderInit />
         <CartProvider cartPromise={cartPromise}>
           <SearchProvider>
@@ -79,12 +81,12 @@ export default async function RootLayout({
                 </header>
               }
             >
-              <Header />
+              <HeaderWrapper />
             </Suspense>
             <main id="main-content">
               {children}
             </main>
-            <Footer />
+            <FooterWrapper />
           </SearchProvider>
         </CartProvider>
       </body>

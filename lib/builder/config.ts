@@ -32,6 +32,8 @@ export const builderConfig = {
     collectionPage: 'collection-page',
     theme: 'theme',
     announcementBar: 'announcement-bar',
+    navigation: 'navigation',
+    footer: 'footer',
   },
 
   /**

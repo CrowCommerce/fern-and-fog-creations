@@ -14,6 +14,8 @@ import dynamic from 'next/dynamic';
 const HeroBlock = dynamic(() => import('./blocks/HeroBlock'));
 const CategoryGridBlock = dynamic(() => import('./blocks/CategoryGridBlock'));
 const FeatureGridBlock = dynamic(() => import('./blocks/FeatureGridBlock'));
+const ProductGridBlock = dynamic(() => import('./blocks/ProductGridBlock'));
+const GalleryPreviewBlock = dynamic(() => import('./blocks/GalleryPreviewBlock'));
 const TextBlock = dynamic(() => import('./blocks/TextBlock'));
 const CTABlock = dynamic(() => import('./blocks/CTABlock'));
 
@@ -65,6 +67,8 @@ Builder.register('insertMenu', {
     { name: 'HeroBlock' },
     { name: 'CategoryGridBlock' },
     { name: 'FeatureGridBlock' },
+    { name: 'ProductGridBlock' },
+    { name: 'GalleryPreviewBlock' },
     { name: 'TextBlock' },
     { name: 'CTABlock' },
   ],
@@ -392,6 +396,207 @@ Builder.registerComponent(CTABlock, {
       name: 'backgroundColor',
       type: 'text',
       enum: ['moss', 'fern', 'gold', 'parchment'],
+      defaultValue: 'moss',
+    },
+  ],
+});
+
+/**
+ * Register ProductGridBlock - Product grid with featured items
+ */
+Builder.registerComponent(ProductGridBlock, {
+  name: 'ProductGridBlock',
+  image: 'https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F4c7c3b7b7f5a4c7c9f5a4c7c9f5a4c7c',
+  description: 'Grid of featured products with images, names, categories, and prices',
+  inputs: [
+    {
+      name: 'heading',
+      type: 'text',
+      defaultValue: 'Featured Treasures',
+    },
+    {
+      name: 'subheading',
+      type: 'text',
+      defaultValue: 'Handpicked pieces available now',
+    },
+    {
+      name: 'products',
+      type: 'list',
+      required: true,
+      defaultValue: [
+        {
+          id: '1',
+          name: 'Sea Glass Earrings',
+          slug: 'sea-glass-earrings',
+          category: 'Earrings',
+          price: 45.00,
+          image: '/stock-assets/products/earrings-1.jpg',
+        },
+        {
+          id: '2',
+          name: 'Pressed Flower Pendant',
+          slug: 'pressed-flower-pendant',
+          category: 'Resin',
+          price: 65.00,
+          image: '/stock-assets/products/resin-1.jpg',
+        },
+        {
+          id: '3',
+          name: 'Driftwood Sculpture',
+          slug: 'driftwood-sculpture',
+          category: 'Driftwood',
+          price: 120.00,
+          image: '/stock-assets/products/driftwood-1.jpg',
+        },
+      ],
+      subFields: [
+        {
+          name: 'id',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'name',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'slug',
+          type: 'text',
+          required: true,
+          helperText: 'URL slug (e.g., "sea-glass-earrings")',
+        },
+        {
+          name: 'category',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'price',
+          type: 'number',
+          required: true,
+        },
+        {
+          name: 'image',
+          type: 'file',
+          allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'ctaLabel',
+      type: 'text',
+      defaultValue: 'View All Products',
+    },
+    {
+      name: 'ctaHref',
+      type: 'text',
+      defaultValue: '/products',
+    },
+    {
+      name: 'backgroundColor',
+      type: 'text',
+      enum: ['parchment', 'mist', 'white'],
+      defaultValue: 'parchment',
+    },
+  ],
+});
+
+/**
+ * Register GalleryPreviewBlock - Gallery preview with stories
+ */
+Builder.registerComponent(GalleryPreviewBlock, {
+  name: 'GalleryPreviewBlock',
+  image: 'https://cdn.builder.io/api/v1/image/assets%2FYJIGb4i01jvw0SRdL5Bt%2F5c7c3b7b7f5a4c7c9f5a4c7c9f5a4c7c',
+  description: 'Gallery preview grid with images, materials, and stories',
+  inputs: [
+    {
+      name: 'heading',
+      type: 'text',
+      defaultValue: 'Stories in Every Piece',
+    },
+    {
+      name: 'subheading',
+      type: 'longText',
+      defaultValue: 'Each creation begins with a moment—a walk along the shore, a discovery in the forest, a spark of inspiration',
+    },
+    {
+      name: 'items',
+      type: 'list',
+      required: true,
+      defaultValue: [
+        {
+          id: '1',
+          title: 'Coastal Morning',
+          image: '/stock-assets/gallery/gallery-1.jpg',
+          materials: ['Sea Glass', 'Driftwood', 'Sterling Silver'],
+          story: 'Found on a misty morning walk, these pieces of weathered glass tell stories of journeys across the sea.',
+        },
+        {
+          id: '2',
+          title: 'Forest Treasures',
+          image: '/stock-assets/gallery/gallery-2.jpg',
+          materials: ['Pressed Flowers', 'Resin', 'Gold Leaf'],
+          story: 'Wildflowers preserved in time, capturing the fleeting beauty of a woodland spring.',
+        },
+        {
+          id: '3',
+          title: 'Driftwood Dreams',
+          image: '/stock-assets/gallery/gallery-3.jpg',
+          materials: ['Driftwood', 'Copper Wire', 'Natural Fiber'],
+          story: 'Shaped by wind and waves, this wood carries the spirit of the Pacific Northwest coast.',
+        },
+      ],
+      subFields: [
+        {
+          name: 'id',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'title',
+          type: 'text',
+          required: true,
+        },
+        {
+          name: 'image',
+          type: 'file',
+          allowedFileTypes: ['jpeg', 'jpg', 'png', 'webp'],
+          required: true,
+        },
+        {
+          name: 'materials',
+          type: 'list',
+          required: true,
+          subFields: [
+            {
+              name: 'material',
+              type: 'text',
+            },
+          ],
+        },
+        {
+          name: 'story',
+          type: 'longText',
+          required: true,
+        },
+      ],
+    },
+    {
+      name: 'ctaLabel',
+      type: 'text',
+      defaultValue: 'View Full Gallery',
+    },
+    {
+      name: 'ctaHref',
+      type: 'text',
+      defaultValue: '/gallery',
+    },
+    {
+      name: 'backgroundColor',
+      type: 'text',
+      enum: ['moss', 'fern', 'parchment'],
       defaultValue: 'moss',
     },
   ],

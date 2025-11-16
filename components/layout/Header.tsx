@@ -12,15 +12,16 @@ import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
 import { SearchButton } from '@/components/search/SearchButton'
 
-const navigation = [
-  { name: 'Home', href: '/' },
-  { name: 'Gallery', href: '/gallery' },
-  { name: 'Shop', href: '/products' },
-  { name: 'Contact', href: '/contact' },
-  { name: 'About', href: '/about' },
-]
+interface NavigationItem {
+  name: string;
+  href: string;
+}
 
-export default function Header() {
+interface HeaderProps {
+  navigation: NavigationItem[];
+}
+
+export default function Header({ navigation }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)
   const { cart } = useCart()

@@ -1,26 +1,21 @@
-import Link from 'next/link'
+import Link from 'next/link';
 
-const footerNavigation = {
-  shop: [
-    { name: 'All Products', href: '/products' },
-    { name: 'Earrings', href: '/products/earrings' },
-    { name: 'Resin Art', href: '/products/resin' },
-    { name: 'Driftwood', href: '/products/driftwood' },
-    { name: 'Wall Hangings', href: '/products/wall-hangings' },
-  ],
-  about: [
-    { name: 'Our Story', href: '/about' },
-    { name: 'Gallery', href: '/gallery' },
-    { name: 'Contact', href: '/contact' },
-  ],
-  policies: [
-    { name: 'Shipping', href: '#' },
-    { name: 'Returns', href: '#' },
-    { name: 'Privacy', href: '#' },
-  ],
+interface NavigationItem {
+  name: string;
+  href: string;
 }
 
-export default function Footer() {
+interface FooterNavigationData {
+  shop: NavigationItem[];
+  about: NavigationItem[];
+  policies: NavigationItem[];
+}
+
+interface FooterProps {
+  footerNavigation: FooterNavigationData;
+}
+
+export default function Footer({ footerNavigation }: FooterProps) {
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">
       <h2 id="footer-heading" className="sr-only">
