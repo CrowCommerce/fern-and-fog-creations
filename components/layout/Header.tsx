@@ -17,6 +17,12 @@ interface HeaderProps {
   navigation: NavigationItem[];
 }
 
+/**
+ * Render the responsive site header with navigation links, search, and shopping cart.
+ *
+ * @param navigation - Array of navigation items to display as header links; order determines placement (first two shown on the desktop left, remaining shown on the desktop right and in the mobile list)
+ * @returns The header React element containing navigation, logo/wordmark, search control, and shopping cart UI
+ */
 export default function Header({ navigation }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [cartOpen, setCartOpen] = useState(false)

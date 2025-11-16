@@ -17,6 +17,17 @@ interface GalleryPreviewBlockProps {
   backgroundColor?: 'moss' | 'fern' | 'parchment';
 }
 
+/**
+ * Renders a themed gallery preview section with an optional heading/subheading, a responsive grid of gallery cards, and an optional call-to-action.
+ *
+ * @param heading - Section heading text.
+ * @param subheading - Section subheading text.
+ * @param items - Array of gallery items; each item must include `id`, `title`, `image`, `materials`, and `story`.
+ * @param ctaLabel - Label for the call-to-action button; when omitted the CTA is not rendered.
+ * @param ctaHref - Href for the call-to-action button; when omitted the CTA is not rendered.
+ * @param backgroundColor - Background theme for the section; one of `'moss'`, `'fern'`, or `'parchment'`.
+ * @returns The gallery preview section as a React element.
+ */
 export default function GalleryPreviewBlock({
   heading = 'Stories in Every Piece',
   subheading = 'Each creation begins with a moment—a walk along the shore, a discovery in the forest, a spark of inspiration',

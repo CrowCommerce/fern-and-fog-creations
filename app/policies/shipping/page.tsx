@@ -5,6 +5,13 @@ export const metadata: Metadata = {
   description: 'Shipping policy for Fern & Fog Creations - Learn about our shipping methods, rates, and delivery times.',
 };
 
+/**
+ * Renders the Shipping Policy page displaying the store's shipping methods, rates, processing times,
+ * tracking and restrictions, claims and address-change instructions, contact email, and a Shopify
+ * integration note.
+ *
+ * @returns The Shipping Policy page as a JSX element.
+ */
 export default function ShippingPolicyPage() {
   return (
     <div className="bg-parchment min-h-screen">

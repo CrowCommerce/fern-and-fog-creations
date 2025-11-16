@@ -5,6 +5,11 @@ export const metadata: Metadata = {
   description: 'Return and refund policy for Fern & Fog Creations - Learn about our return process, eligibility, and refund timelines.',
 };
 
+/**
+ * Renders the "Return & Refund Policy" page containing structured policy sections, a last-updated timestamp, and a Shopify integration note.
+ *
+ * @returns The React element representing the Returns & Refund Policy page.
+ */
 export default function ReturnsPolicyPage() {
   return (
     <div className="bg-parchment min-h-screen">

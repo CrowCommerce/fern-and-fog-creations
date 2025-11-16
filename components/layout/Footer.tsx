@@ -5,6 +5,14 @@ interface FooterProps {
   footerNavigation: FooterNavigationData;
 }
 
+/**
+ * Render the site footer with brand information and navigation lists.
+ *
+ * Renders the brand block, shop links, about and policy link groups, and the bottom copyright area using the provided navigation data.
+ *
+ * @param footerNavigation - Navigation groups used to populate lists; expected to include `shop`, `about`, and `policies` arrays with `name` and `href` fields
+ * @returns A React element representing the footer
+ */
 export default function Footer({ footerNavigation }: FooterProps) {
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">

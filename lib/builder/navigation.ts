@@ -38,8 +38,10 @@ function isValidNavigationItem(item: unknown): item is NavigationItem {
 }
 
 /**
- * Validate and filter an array of navigation items
- * Returns only valid items, filtering out malformed entries
+ * Filter an input value to produce only valid navigation items.
+ *
+ * @param items - The value to validate; expected to be an array of potential navigation items.
+ * @returns An array containing only valid NavigationItem objects; returns an empty array if `items` is not an array or contains no valid entries.
  */
 function validateNavigationItems(items: unknown): NavigationItem[] {
   if (!Array.isArray(items)) {
@@ -50,8 +52,12 @@ function validateNavigationItems(items: unknown): NavigationItem[] {
 }
 
 /**
- * Fetch navigation items from Builder.io
- * Falls back to default navigation if content doesn't exist
+ * Load site navigation items from Builder.io with a default fallback.
+ *
+ * Attempts to load the main navigation content and return its validated items.
+ * If Builder.io content is missing, invalid, or yields no valid items, returns the built-in default navigation.
+ *
+ * @returns Validated navigation items from Builder.io when available; default navigation otherwise.
  */
 export async function getNavigation(): Promise<NavigationItem[]> {
   const defaultNavigation: NavigationItem[] = [
@@ -79,8 +85,11 @@ export async function getNavigation(): Promise<NavigationItem[]> {
 }
 
 /**
- * Fetch footer navigation from Builder.io
- * Falls back to default footer navigation if content doesn't exist
+ * Load footer navigation data from Builder.io and return the footer sections.
+ *
+ * Uses validated navigation arrays from Builder.io for the `shop`, `about`, and `policies` sections. If a section is missing or contains no valid items, the function falls back to the corresponding default section. On error while fetching content, the default footer data is returned.
+ *
+ * @returns The footer navigation grouped into `shop`, `about`, and `policies` sections, each populated with validated Builder.io items when available or with default items otherwise.
  */
 export async function getFooterNavigation(): Promise<FooterNavigationData> {
   const defaultFooter: FooterNavigationData = {

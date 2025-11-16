@@ -2,6 +2,15 @@ import type { MetadataRoute } from 'next';
 import { getProducts } from '@/lib/data-source';
 import { baseUrl } from '@/lib/utils';
 
+/**
+ * Builds sitemap entries for static pages, product collections, and dynamic product pages.
+ *
+ * The sitemap combines predefined static routes, collection (category) pages derived from a fixed list,
+ * and product pages fetched from the data source. If fetching products fails, product entries are omitted
+ * and the sitemap still returns static and collection entries.
+ *
+ * @returns An array of sitemap entries (MetadataRoute.Sitemap) containing URLs with `lastModified`, `changeFrequency`, and `priority`. If product fetching fails, product entries are not included.
+ */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   // Static pages

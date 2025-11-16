@@ -18,7 +18,12 @@ interface ProductGridBlockProps {
   backgroundColor?: 'parchment' | 'mist' | 'white';
 }
 
-// Helper function to get image URL from either format
+/**
+ * Derives a usable image URL from a product images value that may be an array of strings or Builder.io `{ url }` objects.
+ *
+ * @param images - An array containing either image URL strings or objects with a `url` property; may be `undefined` or empty.
+ * @returns The URL of the first valid image, or the placeholder '/stock-assets/products/placeholder.jpg' if no valid image is available.
+ */
 function getImageUrl(images: string[] | { url: string }[] | undefined): string {
   if (!images || images.length === 0) {
     return '/stock-assets/products/placeholder.jpg';
@@ -35,6 +40,17 @@ function getImageUrl(images: string[] | { url: string }[] | undefined): string {
   return typeof firstImage === 'string' ? firstImage : '/stock-assets/products/placeholder.jpg';
 }
 
+/**
+ * Renders a responsive product grid section with an optional heading, subheading, and call-to-action.
+ *
+ * @param heading - Optional section heading displayed as a large title
+ * @param subheading - Optional section subheading displayed below the heading
+ * @param products - Array of product objects to display; each product should include id, name, slug, category, price, and images (supports string URLs or `{ url }` objects)
+ * @param ctaLabel - Optional label for the call-to-action button; button is rendered only when this and `ctaHref` are provided
+ * @param ctaHref - Optional href for the call-to-action button; button is rendered only when this and `ctaLabel` are provided
+ * @param backgroundColor - Background theme for the section; one of `'parchment' | 'mist' | 'white'`
+ * @returns The ProductGridBlock React element
+ */
 export default function ProductGridBlock({
   heading = 'Featured Treasures',
   subheading = 'Handpicked pieces available now',
