@@ -132,13 +132,6 @@ export default function ProductsClient({
           </div>
         </div>
 
-        {/* Data source indicator (only visible in development) */}
-        {process.env.NODE_ENV === 'development' && (
-          <p className="mb-4 text-xs text-bark/40 text-center">
-            Data source: {dataMode === 'shopify' ? '🛍️ Shopify' : '💾 Local'}
-          </p>
-        )}
-
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
           <div className="text-center py-12">
