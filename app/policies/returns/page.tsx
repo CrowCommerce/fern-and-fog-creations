@@ -13,12 +13,22 @@ export default function ReturnsPolicyPage() {
 
         <div className="prose prose-lg max-w-none text-bark">
           {/*
-            NOTE: This content can be managed via Shopify Admin:
-            1. Go to Settings > Policies in your Shopify admin
-            2. Edit your Refund Policy
-            3. The content will automatically sync here if using Shopify's legal pages API
+            CURRENT IMPLEMENTATION: Static placeholder content rendered from JSX.
 
-            For now, this is placeholder content that should be replaced with your actual return policy.
+            MAINTENANCE: To update this policy, manually edit this file and commit changes.
+
+            TODO: Integrate with Shopify Legal Pages API for dynamic content management.
+            This would allow non-technical users to update policies via Shopify Admin
+            (Settings > Policies) without code deployments.
+
+            Implementation plan:
+            1. Add Shopify GraphQL query for shop.refundPolicy in lib/shopify/queries/
+            2. Create getShopPolicy(type: 'privacy' | 'shipping' | 'refund' | 'terms') in lib/shopify/
+            3. Fetch policy content server-side in this page component
+            4. Render policy.body HTML if available, fallback to static content below
+            5. Add cache tags for policy content revalidation
+
+            Reference: https://shopify.dev/docs/api/storefront/latest/queries/shop#field-shop-refundpolicy
           */}
 
           <p className="text-sm text-bark/60 italic mb-8">
@@ -142,9 +152,12 @@ export default function ReturnsPolicyPage() {
 
           <div className="mt-12 p-6 bg-mist/50 rounded-lg border border-mist">
             <p className="text-sm text-bark/70">
-              <strong>Note for Shopify Integration:</strong> This return policy can be managed and updated
-              directly from your Shopify admin panel under Settings → Policies. Changes made there will
-              automatically be reflected on your storefront.
+              <strong>Current Status:</strong> This return policy is static content. To update it, edit this file
+              directly in the codebase and redeploy.
+            </p>
+            <p className="text-sm text-bark/70 mt-2">
+              <strong>Future Enhancement:</strong> Shopify's Legal Pages API can be integrated to allow
+              policy management via Settings → Policies in Shopify Admin, eliminating the need for code changes.
             </p>
           </div>
         </div>
