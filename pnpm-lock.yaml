@@ -24,8 +24,8 @@ importers:
         specifier: ^2.2.0
         version: 2.2.0(react@19.1.0)
       '@next/third-parties':
-        specifier: ^16.0.3
-        version: 16.0.3(next@16.0.1-canary.5(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
+        specifier: 16.0.1-canary.5
+        version: 16.0.1-canary.5(next@16.0.1-canary.5(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)
       '@tailwindplus/elements':
         specifier: ^1.0.17
         version: 1.0.18
@@ -487,8 +487,8 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@next/third-parties@16.0.3':
-    resolution: {integrity: sha512-QjTRQ4ydXguFkpMCUMl5oSslxmh8mAtmnzc9DEtLkZcGmAuQcZg2M3lswMn62sdID+F06crS3IQ58X3sjjBLVA==}
+  '@next/third-parties@16.0.1-canary.5':
+    resolution: {integrity: sha512-Rb9R2HUdz1KdF58y8wjCYQE8tDpXYBJUWLmMqomxr4vJ//6zUaWotSKgPJvBUEd8ORodBXLmMIwKXV+VnFGkag==}
     peerDependencies:
       next: ^13.0.0 || ^14.0.0 || ^15.0.0 || ^16.0.0-beta.0
       react: ^18.2.0 || 19.0.0-rc-de68d2f4-20241204 || ^19.0.0
@@ -2733,7 +2733,7 @@ snapshots:
   '@next/swc-win32-x64-msvc@16.0.1-canary.5':
     optional: true
 
-  '@next/third-parties@16.0.3(next@16.0.1-canary.5(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
+  '@next/third-parties@16.0.1-canary.5(next@16.0.1-canary.5(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)':
     dependencies:
       next: 16.0.1-canary.5(@babel/core@7.28.5)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       react: 19.1.0
