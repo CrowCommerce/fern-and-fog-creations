@@ -26,6 +26,7 @@ import {
 } from './queries/collection';
 import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
+import { getPoliciesQuery } from './queries/policies';
 import {
   getProductQuery,
   getProductRecommendationsQuery,
@@ -38,7 +39,9 @@ import {
   Image,
   Menu,
   Page,
+  Policies,
   Product,
+  ShopPolicy,
   ShopifyAddToCartOperation,
   ShopifyCart,
   ShopifyCartOperation,
@@ -50,6 +53,7 @@ import {
   ShopifyMenuOperation,
   ShopifyPageOperation,
   ShopifyPagesOperation,
+  ShopifyPoliciesOperation,
   ShopifyProduct,
   ShopifyProductOperation,
   ShopifyProductRecommendationsOperation,
@@ -410,6 +414,37 @@ export async function getPages(): Promise<Page[]> {
   });
 
   return removeEdgesAndNodes(res.body.data.pages);
+}
+
+export async function getPolicies(): Promise<Policies> {
+  'use cache';
+  cacheTag(TAGS.collections);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyPoliciesOperation>({
+    query: getPoliciesQuery
+  });
+
+  return res.body.data.shop;
+}
+
+export async function getPolicy(
+  type: 'privacy' | 'refund' | 'shipping' | 'terms'
+): Promise<ShopPolicy | null> {
+  'use cache';
+  cacheTag(TAGS.collections);
+  cacheLife('days');
+
+  const policies = await getPolicies();
+
+  const policyMap: Record<string, ShopPolicy | null> = {
+    privacy: policies.privacyPolicy,
+    refund: policies.refundPolicy,
+    shipping: policies.shippingPolicy,
+    terms: policies.termsOfService
+  };
+
+  return policyMap[type] || null;
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
