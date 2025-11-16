@@ -1,8 +1,8 @@
 import type { MetadataRoute } from 'next';
 import { getProducts } from '@/lib/data-source';
+import { baseUrl } from '@/lib/utils';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://fernandfogcreations.com';
 
   // Static pages
   const staticPages: MetadataRoute.Sitemap = [
