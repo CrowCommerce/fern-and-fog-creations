@@ -290,3 +290,54 @@ export type ShopifyPoliciesOperation = {
     shop: Policies;
   };
 };
+
+// Metaobject types for gallery items
+export type ShopifyMetaobjectReference = {
+  id: string;
+  handle: string;
+  type: string;
+  fields: Array<{
+    key: string;
+    value: string | null;
+  }>;
+};
+
+export type ShopifyMetaobjectField = {
+  key: string;
+  value: string | null;
+  reference?: {
+    image?: Image;
+    id?: string;
+    handle?: string;
+    type?: string;
+    fields?: Array<{
+      key: string;
+      value: string | null;
+    }>;
+  };
+};
+
+export type ShopifyMetaobject = {
+  id: string;
+  handle: string;
+  fields: ShopifyMetaobjectField[];
+};
+
+export type ShopifyGalleryItemsOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
+export type ShopifyGalleryPageSettingsOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};

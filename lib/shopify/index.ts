@@ -24,6 +24,7 @@ import {
   getCollectionQuery,
   getCollectionsQuery
 } from './queries/collection';
+import { getGalleryItemsQuery, getGalleryPageSettingsQuery } from './queries/gallery';
 import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
 import { getPoliciesQuery } from './queries/policies';
@@ -50,7 +51,9 @@ import {
   ShopifyCollectionProductsOperation,
   ShopifyCollectionsOperation,
   ShopifyCreateCartOperation,
+  ShopifyGalleryItemsOperation,
   ShopifyMenuOperation,
+  ShopifyMetaobject,
   ShopifyPageOperation,
   ShopifyPagesOperation,
   ShopifyPoliciesOperation,
@@ -59,8 +62,10 @@ import {
   ShopifyProductRecommendationsOperation,
   ShopifyProductsOperation,
   ShopifyRemoveFromCartOperation,
-  ShopifyUpdateCartOperation
+  ShopifyUpdateCartOperation,
+  ShopifyGalleryPageSettingsOperation
 } from './types';
+import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/gallery';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, 'https://')
@@ -502,6 +507,156 @@ export async function getProducts({
   });
 
   return reshapeProducts(removeEdgesAndNodes(res.body.data.products));
+}
+
+// ----- Gallery Items Functions -----
+
+const reshapeGalleryItem = (metaobject: ShopifyMetaobject): GalleryItem | null => {
+  // Helper to get field value by key
+  const getField = (key: string): string => {
+    const field = metaobject.fields.find((f) => f.key === key);
+    return field?.value || '';
+  };
+
+  // Helper to get image URL from reference field
+  const getImageField = (key: string): string => {
+    const field = metaobject.fields.find((f) => f.key === key);
+    return field?.reference?.image?.url || '';
+  };
+
+  // Helper to get metaobject reference field
+  const getMetaobjectReference = (key: string) => {
+    const field = metaobject.fields.find((f) => f.key === key);
+    if (!field?.reference?.id || !field?.reference?.fields) {
+      return null;
+    }
+    return field.reference;
+  };
+
+  // Parse materials from JSON string or comma-separated string
+  const materialsString = getField('materials');
+  let materials: string[] = [];
+
+  if (materialsString) {
+    try {
+      // Try parsing as JSON array first (e.g., '["Sea glass","Copper wire"]')
+      materials = JSON.parse(materialsString);
+    } catch {
+      // Fallback to comma-separated (e.g., 'Sea glass, Copper wire')
+      materials = materialsString.split(',').map((m) => m.trim()).filter(Boolean);
+    }
+  }
+
+  // Extract category metaobject reference (required)
+  const categoryRef = getMetaobjectReference('category');
+  if (!categoryRef || !categoryRef.fields) {
+    console.warn(`No category reference found for gallery item ${metaobject.id}`);
+    return null;
+  }
+
+  // Helper to get value from metaobject reference fields
+  const getCategoryField = (key: string): string => {
+    const field = categoryRef.fields?.find((f) => f.key === key);
+    return field?.value || '';
+  };
+
+  // Build category object from metaobject reference
+  const category: GalleryCategory = {
+    id: categoryRef.id || '',
+    name: getCategoryField('name'),
+    slug: getCategoryField('slug'),
+    description: getCategoryField('description'),
+    sortOrder: getCategoryField('sort_order') ? parseInt(getCategoryField('sort_order')) : undefined,
+  };
+
+  // Validate category has required fields
+  if (!category.name || !category.slug) {
+    console.warn(`Invalid category reference for gallery item ${metaobject.id}`);
+    return null;
+  }
+
+  const image = getImageField('image');
+  if (!image) {
+    console.warn(`No image found for gallery item ${metaobject.id}`);
+    return null;
+  }
+
+  return {
+    id: metaobject.id,
+    title: getField('title'),
+    category,
+    image,
+    materials,
+    story: getField('story'),
+    forSale: false,
+    createdDate: getField('created_date'),
+  };
+};
+
+const reshapeGalleryItems = (metaobjects: ShopifyMetaobject[]): GalleryItem[] => {
+  return metaobjects
+    .map(reshapeGalleryItem)
+    .filter((item): item is GalleryItem => item !== null);
+};
+
+export async function getGalleryItems(): Promise<GalleryItem[]> {
+  // TEMP: Disable cache for debugging
+  // 'use cache';
+  // cacheTag(TAGS.gallery);
+  // cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyGalleryItemsOperation>({
+    query: getGalleryItemsQuery,
+    variables: {
+      first: 100 // Fetch up to 100 gallery items
+    }
+  });
+
+  // Add null safety to prevent crashes if Shopify returns unexpected data
+  if (!res.body.data?.metaobjects?.nodes) {
+    console.error('Gallery items query returned invalid data structure:', res.body);
+    return [];
+  }
+
+  return reshapeGalleryItems(res.body.data.metaobjects.nodes);
+}
+
+export async function getGalleryPageSettings(): Promise<GalleryPageSettings> {
+  // TEMP: Disable cache for debugging
+  // 'use cache';
+  // cacheTag(TAGS.gallery);
+  // cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyGalleryPageSettingsOperation>({
+    query: getGalleryPageSettingsQuery,
+  });
+
+  // Add null safety to prevent crashes if Shopify returns unexpected data
+  // Note: Query returns array of nodes, we take the first one (should only be one entry)
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  // Fallback to defaults if not configured
+  if (!metaobject) {
+    console.warn('Gallery page settings not found, using defaults');
+    return {
+      heading: 'Gallery of Past Work',
+      description:
+        'A collection of treasures that have found their homes. Each piece represents a moment in time, a story preserved in natural materials.',
+    };
+  }
+
+  // Helper to get field value by key
+  const getField = (key: string): string => {
+    const field = metaobject.fields.find((f) => f.key === key);
+    return field?.value || '';
+  };
+
+  return {
+    heading: getField('heading') || 'Gallery of Past Work',
+    description:
+      getField('description') ||
+      'A collection of treasures that have found their homes.',
+  };
 }
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.

@@ -18,6 +18,9 @@ export type {
   FilterState,
 } from './filter'
 
+export type { GalleryItem, GalleryCategory, GalleryCategoryFilter, GalleryPageSettings } from './gallery'
+export { GALLERY_CATEGORIES } from './gallery'
+
 // Re-export Product from data layer for convenience
 export type { Product } from '@/data/products'
 
