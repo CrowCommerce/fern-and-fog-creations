@@ -49,18 +49,6 @@ export async function register() {
         'NetworkError',
         'Network request failed',
       ],
-
-      // Filter out Builder.io Math.random() prerender noise
-      beforeSend(event, hint) {
-        // Ignore Builder.io's Math.random() errors during prerendering
-        if (
-          event.exception?.values?.[0]?.value?.includes('Math.random') ||
-          event.exception?.values?.[0]?.value?.includes('builder.io')
-        ) {
-          return null;
-        }
-        return event;
-      },
     });
 
     console.log('[Sentry] Server-side error monitoring initialized');

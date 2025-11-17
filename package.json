@@ -19,9 +19,6 @@
     "setup:metadata:dry": "tsx scripts/setup-page-metadata.ts --dry-run"
   },
   "dependencies": {
-    "@builder.io/react": "^8.2.9",
-    "@builder.io/sdk": "^6.1.3",
-    "@builder.io/utils": "^1.1.25",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@next/third-parties": "16.0.1-canary.5",

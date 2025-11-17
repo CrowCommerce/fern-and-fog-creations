@@ -40,18 +40,6 @@ if (typeof window !== 'undefined' && process.env.NEXT_PUBLIC_SENTRY_DSN) {
       'ResizeObserver loop limit exceeded',
       'ResizeObserver loop completed with undelivered notifications',
     ],
-
-    // Filter out Builder.io noise
-    beforeSend(event, hint) {
-      // Ignore Builder.io's Math.random() errors during prerendering
-      if (
-        event.exception?.values?.[0]?.value?.includes('Math.random') ||
-        event.exception?.values?.[0]?.value?.includes('builder.io')
-      ) {
-        return null;
-      }
-      return event;
-    },
   });
 
   console.log('[Sentry] Client-side error monitoring initialized');
