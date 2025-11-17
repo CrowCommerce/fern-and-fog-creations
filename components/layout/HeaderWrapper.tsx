@@ -1,8 +1,8 @@
-import { getNavigation } from '@/lib/builder/navigation';
+import { getMenu } from '@/lib/shopify';
 import Header from './Header';
 
 export default async function HeaderWrapper() {
-  const navigation = await getNavigation();
+  const menu = await getMenu('fern-fog-header-menu');
 
-  return <Header navigation={navigation} />;
+  return <Header navigation={menu} />;
 }

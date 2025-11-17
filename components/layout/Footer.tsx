@@ -1,11 +1,11 @@
 import Link from 'next/link';
-import type { FooterNavigationData } from '@/lib/builder/navigation';
+import type { Menu } from '@/lib/shopify/types';
 
 interface FooterProps {
-  footerNavigation: FooterNavigationData;
+  menu: Menu[];
 }
 
-export default function Footer({ footerNavigation }: FooterProps) {
+export default function Footer({ menu }: FooterProps) {
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">
       <h2 id="footer-heading" className="sr-only">
@@ -33,46 +33,18 @@ export default function Footer({ footerNavigation }: FooterProps) {
               </p>
             </div>
 
-            {/* Shop Links */}
+            {/* Footer Links */}
             <div>
-              <h3 className="text-sm font-medium text-parchment font-display">Shop</h3>
+              <h3 className="text-sm font-medium text-parchment font-display">Quick Links</h3>
               <ul role="list" className="mt-4 space-y-3">
-                {footerNavigation.shop.map((item) => (
-                  <li key={item.name} className="text-sm">
-                    <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                      {item.name}
+                {menu.map((item) => (
+                  <li key={item.title} className="text-sm">
+                    <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                      {item.title}
                     </Link>
                   </li>
                 ))}
               </ul>
-            </div>
-
-            {/* About & Policies */}
-            <div className="grid grid-cols-2 gap-8 md:grid-cols-1 md:gap-0 md:space-y-12">
-              <div>
-                <h3 className="text-sm font-medium text-parchment font-display">About</h3>
-                <ul role="list" className="mt-4 space-y-3">
-                  {footerNavigation.about.map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <h3 className="text-sm font-medium text-parchment font-display">Policies</h3>
-                <ul role="list" className="mt-4 space-y-3">
-                  {footerNavigation.policies.map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                        {item.name}
-                      </Link>
-                    </li>
-                  ))}
-                </ul>
-              </div>
             </div>
           </div>
         </div>

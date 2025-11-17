@@ -383,7 +383,7 @@ export async function getCollections(): Promise<Collection[]> {
 
 export async function getMenu(handle: string): Promise<Menu[]> {
   'use cache';
-  cacheTag(TAGS.collections);
+  cacheTag(TAGS.menus);
   cacheLife('days');
 
   const res = await shopifyFetch<ShopifyMenuOperation>({

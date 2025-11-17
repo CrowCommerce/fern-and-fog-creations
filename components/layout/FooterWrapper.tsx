@@ -1,8 +1,8 @@
-import { getFooterNavigation } from '@/lib/builder/navigation';
+import { getMenu } from '@/lib/shopify';
 import Footer from './Footer';
 
 export default async function FooterWrapper() {
-  const footerNavigation = await getFooterNavigation();
+  const menu = await getMenu('fern-fog-footer-menu');
 
-  return <Footer footerNavigation={footerNavigation} />;
+  return <Footer menu={menu} />;
 }

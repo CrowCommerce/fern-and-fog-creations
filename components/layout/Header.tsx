@@ -11,10 +11,10 @@ import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outli
 import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
 import { SearchButton } from '@/components/search/SearchButton'
-import type { NavigationItem } from '@/lib/builder/navigation'
+import type { Menu } from '@/lib/shopify/types'
 
 interface HeaderProps {
-  navigation: NavigationItem[];
+  navigation: Menu[];
 }
 
 export default function Header({ navigation }: HeaderProps) {
@@ -55,12 +55,12 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="mt-8 space-y-2 px-4">
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block rounded-md px-3 py-3 text-base font-medium text-bark hover:bg-mist hover:text-moss transition-colors"
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
             </div>
@@ -95,11 +95,11 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="hidden lg:flex lg:items-center lg:space-x-8">
               {navigation.slice(0, 2).map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   className="text-sm font-medium text-bark hover:text-fern transition-colors"
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
             </div>
@@ -119,11 +119,11 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="hidden lg:flex lg:items-center lg:justify-end lg:space-x-8">
               {navigation.slice(2).map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   className="text-sm font-medium text-bark hover:text-fern transition-colors"
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
 
