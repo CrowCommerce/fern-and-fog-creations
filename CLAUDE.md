@@ -35,113 +35,33 @@ Development server runs on `http://localhost:3000`
 
 ## Architecture Overview
 
-### Builder.io Visual CMS Integration ✨
+### Shopify-Only CMS Strategy
 
-Fern & Fog Creations uses Builder.io as a visual CMS for marketing pages, landing pages, and content pages while preserving all Shopify e-commerce functionality.
+Fern & Fog Creations uses **Shopify metaobjects as the single source of truth for all content management**. This provides a unified platform for managing products, collections, menus, page metadata, and custom page content.
 
-**Core Integration Files:**
-- `src/lib/builder/config.ts` - Configuration and reserved path protection
-- `src/lib/builder/resolve-content.ts` - Server-side content fetching
-- `src/components/builder/BuilderComponentClient.tsx` - Client component wrapper
-- `src/components/builder/BuilderInit.tsx` - SDK initialization
-- `src/components/builder/register-components.tsx` - Custom component registration
-- `src/lib/builder/cart-adapter.ts` - Cart integration hooks
-- `app/[...page]/page.tsx` - Catch-all route for CMS pages
+**Content managed via Shopify:**
+- Product catalog (Shopify Products API)
+- Navigation menus (Shopify Menu API)
+- Page SEO metadata (custom metaobjects: `page_metadata`)
+- Gallery items (custom metaobjects: `gallery_item`)
+- Custom page content (TBD: `contact_page`, `about_page`, `homepage_hero`, etc.)
 
-**Custom Fern & Fog Components:**
+**Key Benefits:**
+- Single platform for all content management
+- No external CMS dependencies
+- Unified admin experience in Shopify
+- Automatic cache invalidation via webhooks
+- Type-safe GraphQL queries
 
-The following branded components are available in Builder.io's visual editor:
+**Homepage Implementation:**
+The homepage currently uses hardcoded React components as an interim solution:
+- `components/HeroSection.tsx` - Hero banner
+- `components/CategorySection.tsx` - Category grid
+- `components/FeaturedSectionOne.tsx` - Feature highlights
+- `components/FeaturedSectionTwo.tsx` - Secondary features
+- `components/CollectionSection.tsx` - Product showcase
 
-1. **HeroBlock** - Full-width hero with background image, heading, description, and dual CTAs
-   - Configurable: background image, heading, description, button labels/links
-   - Location: `src/components/builder/blocks/HeroBlock.tsx`
-
-2. **CategoryGridBlock** - 4-column responsive category grid
-   - Configurable: heading, categories (name, image, description, slug), view all link
-   - Location: `src/components/builder/blocks/CategoryGridBlock.tsx`
-
-3. **FeatureGridBlock** - 3-column feature grid with emoji icons
-   - Configurable: heading, features (name, description, emoji icon), background color
-   - Location: `src/components/builder/blocks/FeatureGridBlock.tsx`
-
-4. **TextBlock** - Flexible rich text content block
-   - Configurable: heading, rich text content, alignment, background, max width
-   - Location: `src/components/builder/blocks/TextBlock.tsx`
-
-5. **CTABlock** - Call-to-action section with buttons
-   - Configurable: heading, description, buttons (labels/links), background color
-   - Location: `src/components/builder/blocks/CTABlock.tsx`
-
-**Route Protection:**
-
-Builder.io's catch-all route (`app/[...page]/page.tsx`) **excludes** these reserved paths:
-- `/products/*` - Product listing/collections
-- `/product/*` - Product detail pages
-- `/cart` - Shopping cart
-- `/api/*` - API routes
-- `/_next/*` - Next.js internals
-
-**Builder.io Pages Handle:**
-- Marketing landing pages (`/about-us`, `/our-story`)
-- Blog posts (`/blog/*`)
-- Promotional pages
-- Any non-reserved path
-
-**Environment Variables:**
-```bash
-BUILDER_PUBLIC_KEY=your-api-key
-NEXT_PUBLIC_BUILDER_PUBLIC_KEY=your-api-key  # Same value
-```
-
-**Cart Integration:**
-
-Builder.io components can access cart functionality:
-```typescript
-import { useBuilderCart, useCartState } from '@/lib/builder/cart-adapter';
-
-const cart = useBuilderCart();
-const { itemCount, totalAmount, isEmpty } = useCartState();
-```
-
-**Creating Pages in Builder.io:**
-
-1. Go to https://builder.io/content
-2. Create new "page" entry
-3. Set URL path (e.g., `/about-us`, `/blog/post-title`, `/landing/summer-sale`)
-4. Drag Fern & Fog components from the left sidebar
-5. Configure component inputs in the right panel
-6. Publish when ready
-7. Visit your URL to see the live page
-
-**Catch-All Route:**
-The app includes a catch-all route (`app/[...page]/page.tsx`) that enables creating arbitrary pages in Builder.io:
-- Homepage (`/`) - Builder.io content with fallback
-- Any custom path (e.g., `/about-us`, `/blog/*`, `/landing/*`)
-- Protected routes (products, cart, checkout) are NOT handled by Builder.io
-
-```typescript
-// app/[...page]/page.tsx
-// Automatically fetches Builder.io content for any non-reserved path
-const builderContent = await resolveBuilderContent('page', {
-  userAttributes: { urlPath: `/${pageSegments.join('/')}` },
-});
-```
-
-**Reserved Paths (Protected from Builder.io):**
-- `/products` - Product listing
-- `/product/*` - Product details
-- `/cart` - Shopping cart
-- `/checkout` - Checkout
-- `/account` - User accounts
-- `/api/*` - API routes
-- `/_next/*` - Next.js internals
-
-**Important Notes:**
-- All custom components maintain coastal/woodland theming
-- Components use brand colors: moss, fern, parchment, bark, mist, gold
-- Shopify e-commerce routes are completely protected
-- Cart, products, checkout are NOT managed by Builder.io
-- Create unlimited marketing pages, landing pages, blog posts via Builder.io
+**Future:** These components will be converted to Shopify metaobjects (Task 3.1 in roadmap) to enable business owner editing via Shopify Admin.
 
 ### Contact Form (Jotform Integration) ✅
 
@@ -304,7 +224,7 @@ All hero images use Next.js Image component for automatic optimization.
 
 **Implementation:**
 ```typescript
-// components/builder/blocks/HeroBlock.tsx
+// components/HeroSection.tsx
 import Image from 'next/image'
 
 <Image
@@ -338,9 +258,9 @@ images: {
 ```
 
 **Components Using Optimized Images:**
-- `HeroBlock` - Builder.io hero component
-- `HeroSection` - Hardcoded fallback hero
+- `HeroSection` - Homepage hero component
 - Product images (via Shopify) - Automatically optimized
+- Gallery images (via Shopify metaobjects) - Automatically optimized
 
 ### App Router Structure
 

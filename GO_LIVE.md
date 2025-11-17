@@ -14,22 +14,20 @@ Status: **100% Production Ready**
 1. [Quick Start Summary](#quick-start-summary)
 2. [Environment Variables Configuration](#environment-variables-configuration)
 3. [Shopify API Setup](#shopify-api-setup)
-4. [Builder.io CMS Configuration](#builderio-cms-configuration)
-5. [Jotform Contact Form Setup](#jotform-contact-form-setup)
-6. [Sentry Error Monitoring Setup](#sentry-error-monitoring-setup)
-7. [Analytics Configuration](#analytics-configuration)
-8. [Vercel Deployment](#vercel-deployment)
-9. [DNS & Domain Setup](#dns--domain-setup)
-10. [Performance Testing](#performance-testing)
-11. [Production Verification Checklist](#production-verification-checklist)
+4. [Jotform Contact Form Setup](#jotform-contact-form-setup)
+5. [Sentry Error Monitoring Setup](#sentry-error-monitoring-setup)
+6. [Analytics Configuration](#analytics-configuration)
+7. [Vercel Deployment](#vercel-deployment)
+8. [DNS & Domain Setup](#dns--domain-setup)
+9. [Performance Testing](#performance-testing)
+10. [Production Verification Checklist](#production-verification-checklist)
 
 ### Part B: Business Owner Instructions
-12. [Builder.io Visual Editor Tutorial](#builderio-visual-editor-tutorial)
-13. [Managing Navigation & Footer](#managing-navigation--footer)
-14. [Managing Jotform Submissions](#managing-jotform-submissions)
-15. [Shopify Admin Integration](#shopify-admin-integration)
-16. [Common Troubleshooting](#common-troubleshooting)
-17. [Optional Post-Launch Enhancements](#optional-post-launch-enhancements)
+11. [Managing Navigation & Footer](#managing-navigation--footer)
+12. [Managing Jotform Submissions](#managing-jotform-submissions)
+13. [Shopify Admin Integration](#shopify-admin-integration)
+14. [Common Troubleshooting](#common-troubleshooting)
+15. [Optional Post-Launch Enhancements](#optional-post-launch-enhancements)
 
 ---
 
@@ -37,13 +35,12 @@ Status: **100% Production Ready**
 
 ## Quick Start Summary
 
-**Critical Path (30-45 minutes):**
+**Critical Path (20-30 minutes):**
 1. Configure environment variables → 10 min
 2. Deploy to Vercel → 5 min
 3. Configure Shopify API → 10 min
-4. Configure Builder.io → 10 min
-5. Configure Jotform → 5 min
-6. Verification testing → 10 min
+4. Configure Jotform → 5 min
+5. Verification testing → 10 min
 
 **Optional (Additional 20-30 minutes):**
 - Sentry error monitoring → 10 min
@@ -69,13 +66,6 @@ SHOPIFY_REVALIDATION_SECRET=your-secret-here
 
 # CRITICAL: Must be "true" for production
 NEXT_PUBLIC_USE_SHOPIFY=true
-
-# ============================================
-# REQUIRED: Builder.io CMS
-# ============================================
-# Get from: https://builder.io/account/organization
-BUILDER_PUBLIC_KEY=your-builder-public-key
-NEXT_PUBLIC_BUILDER_PUBLIC_KEY=your-builder-public-key
 
 # ============================================
 # REQUIRED: Jotform Contact Form
@@ -211,92 +201,6 @@ For automatic cache invalidation when products change:
    - `collections/delete` → `https://your-domain.com/api/revalidate?secret=YOUR_SECRET`
 
 **⚠️ Important:** Replace `YOUR_SECRET` with your `SHOPIFY_REVALIDATION_SECRET`
-
----
-
-## Builder.io CMS Configuration
-
-### Step 1: Create Builder.io Account
-
-1. **Sign up at https://builder.io/**
-   - Use your business email
-   - Free plan: 100,000 API calls/month (plenty for small stores)
-
-2. **Create an Organization**
-   - Name: "Fern & Fog Creations"
-   - Click "Create organization"
-
-### Step 2: Get API Key
-
-1. **Navigate to Account Settings**
-   - Click your profile icon (top right)
-   - Select "Account" → "Organization"
-
-2. **Copy Public API Key**
-   - Find "Public API Keys" section
-   - Copy the key
-   - Save as both:
-     - `BUILDER_PUBLIC_KEY`
-     - `NEXT_PUBLIC_BUILDER_PUBLIC_KEY`
-
-### Step 3: Register Custom Components
-
-**⚠️ IMPORTANT:** The following custom components are already registered in the codebase (`src/components/builder/register-components.tsx`). You just need to load them in Builder.io:
-
-1. **Open Builder.io Dashboard**
-   - Click "Models" in the left sidebar
-
-2. **Create the "page" Model**
-   - Click "+ New Model"
-   - Choose "Page"
-   - Name: `page`
-   - Click "Create"
-
-3. **Connect Your Site**
-   - When prompted for "Site URL", enter: `https://your-domain.com`
-   - Click "Connect"
-
-4. **Load Custom Components**
-   - Builder.io will automatically detect your 7 custom components:
-     1. **HeroBlock** - Full-width hero with background image
-     2. **CategoryGridBlock** - 4-column category grid
-     3. **FeatureGridBlock** - 3-column feature grid with emoji icons
-     4. **TextBlock** - Flexible rich text content
-     5. **CTABlock** - Call-to-action section
-     6. **ProductGridBlock** - Product showcase grid
-     7. **GalleryPreviewBlock** - Gallery showcase
-
-### Step 4: Create Additional Models
-
-Create these models for full CMS control:
-
-1. **Navigation Model**
-   - Click "+ New Model"
-   - Choose "Section"
-   - Name: `navigation`
-   - Click "Create"
-
-2. **Footer Model**
-   - Click "+ New Model"
-   - Choose "Section"
-   - Name: `footer`
-   - Click "Create"
-
-### Step 5: Initial Content Setup
-
-**Create your first page:**
-
-1. **Go to Content tab**
-2. **Click "+ New" → "page"**
-3. **Set URL Path:** `/` (for homepage)
-4. **Drag components from left sidebar:**
-   - Add HeroBlock at top
-   - Add CategoryGridBlock below
-   - Add FeatureGridBlock
-   - Customize text and images in right panel
-5. **Click "Publish"**
-
-**✅ Your homepage is now editable in Builder.io!**
 
 ---
 
@@ -706,13 +610,6 @@ Copy this checklist to a task tracker and verify each item:
 - [ ] Checkout redirects to Shopify checkout
 - [ ] Inventory levels are accurate
 
-#### Builder.io CMS
-- [ ] Homepage loads Builder.io content
-- [ ] All 7 custom blocks visible in Builder.io editor
-- [ ] Changes in Builder.io reflect on site (refresh after publish)
-- [ ] Navigation editable via Builder.io
-- [ ] Footer editable via Builder.io
-
 #### Contact Form
 - [ ] Form loads on `/contact` page
 - [ ] Form submission succeeds
@@ -774,219 +671,66 @@ Copy this checklist to a task tracker and verify each item:
 
 # Part B: Business Owner Instructions
 
-## Builder.io Visual Editor Tutorial
-
-### Getting Started
-
-**What is Builder.io?**
-Builder.io is a visual content management system that lets you edit your website without writing code. Think of it like a drag-and-drop website builder for specific pages.
-
-### Accessing Builder.io
-
-1. **Go to:** https://builder.io/login
-2. **Email:** your-email@fernandfogcreations.com
-3. **Password:** (your password)
-
-### Creating a New Page
-
-**Example: Create an "About Us" page**
-
-1. **Click "+ New" button** (top right)
-2. **Select "page" model**
-3. **Set URL Path:** `/about-us`
-4. **Click "Create"**
-
-### Building Your Page
-
-**The Builder.io interface has 3 sections:**
-
-```
-┌──────────────┬────────────────────┬──────────────┐
-│              │                    │              │
-│  Components  │    Live Preview    │   Settings   │
-│   (Left)     │      (Center)      │    (Right)   │
-│              │                    │              │
-└──────────────┴────────────────────┴──────────────┘
-```
-
-### Your 7 Custom Fern & Fog Components
-
-#### 1. HeroBlock - Full-Width Hero Section
-
-**When to use:** Top of homepage or landing pages
-
-**How to add:**
-1. Drag "HeroBlock" from left sidebar
-2. Configure in right panel:
-   - **Background Image:** Click "Choose image" → Upload coastal photo
-   - **Heading:** "Handmade Coastal Treasures"
-   - **Description:** Your tagline/intro text
-   - **Primary CTA:** Label: "View Gallery" | Link: `/gallery`
-   - **Secondary CTA:** Label: "Shop Now" | Link: `/products`
-
-**Preview:** Hero will show full-width with your image as background
-
----
-
-#### 2. CategoryGridBlock - 4-Column Grid
-
-**When to use:** Showcase product categories
-
-**How to add:**
-1. Drag "CategoryGridBlock" from left sidebar
-2. Configure each category:
-   - **Category 1:**
-     - Name: "Earrings"
-     - Image: Upload earring photo
-     - Description: "Sea glass and resin earrings"
-     - Slug: "earrings"
-   - **Category 2, 3, 4:** Repeat for other categories
-
-**Preview:** 4 clickable category cards in a grid
-
----
-
-#### 3. FeatureGridBlock - 3-Column Features
-
-**When to use:** Highlight your unique value propositions
-
-**How to add:**
-1. Drag "FeatureGridBlock" from left sidebar
-2. Configure features:
-   - **Feature 1:**
-     - Icon: 🌊 (emoji picker)
-     - Name: "Coastal Materials"
-     - Description: "Gathered from Pacific Northwest shores"
-   - **Feature 2:**
-     - Icon: 🤲
-     - Name: "Handcrafted"
-     - Description: "Each piece is unique"
-   - **Feature 3:**
-     - Icon: 🌿
-     - Name: "Eco-Friendly"
-     - Description: "Sustainable & natural materials"
-
-**Preview:** 3 feature cards with emoji icons
-
----
-
-#### 4. TextBlock - Rich Text Content
-
-**When to use:** Any text-heavy section (story, about, details)
-
-**How to add:**
-1. Drag "TextBlock" from left sidebar
-2. Configure:
-   - **Heading:** "Our Story"
-   - **Content:** Click to edit (supports bold, italic, lists, links)
-   - **Alignment:** Left/Center/Right
-   - **Background:** Choose color
-   - **Max Width:** 3xl (for readability)
-
-**Preview:** Formatted text section
-
----
-
-#### 5. CTABlock - Call to Action
-
-**When to use:** Encourage specific actions (subscribe, shop, contact)
-
-**How to add:**
-1. Drag "CTABlock" from left sidebar
-2. Configure:
-   - **Heading:** "Ready to Shop?"
-   - **Description:** "Explore our handcrafted collection"
-   - **Primary Button:** Label: "Shop Collection" | Link: `/products`
-   - **Secondary Button:** Label: "View Gallery" | Link: `/gallery`
-   - **Background Color:** Choose brand color
-
-**Preview:** Centered CTA with 2 buttons
-
----
-
-#### 6. ProductGridBlock - Product Showcase
-
-**When to use:** Feature specific products on landing pages
-
-**How to add:**
-1. Drag "ProductGridBlock" from left sidebar
-2. Add products:
-   - **Product 1:**
-     - Image: Upload product photo
-     - Name: "Sea Glass Earrings"
-     - Category: "Earrings"
-     - Price: "$45.00"
-   - **Add more products** with "+" button
-
-**Preview:** Grid of featured products
-
----
-
-#### 7. GalleryPreviewBlock - Gallery Showcase
-
-**When to use:** Showcase your best work with stories
-
-**How to add:**
-1. Drag "GalleryPreviewBlock" from left sidebar
-2. Add gallery items:
-   - **Item 1:**
-     - Image: Upload photo
-     - Title: "Coastal Driftwood Frame"
-     - Materials: ["Driftwood", "Sea Glass", "Resin"]
-     - Story: "Found on a misty morning..."
-
-**Preview:** Gallery grid with hover storytelling
-
----
-
-### Publishing Your Page
-
-1. **Preview your changes** (Click "Preview" in top bar)
-2. **Click "Publish"** (top right)
-3. **Visit your URL** (e.g., `https://fernandfogcreations.com/about-us`)
-4. **Refresh browser** to see changes
-
-⏱️ **Changes appear within 1-2 seconds** of publishing
-
----
 
 ## Managing Navigation & Footer
 
-### Editing Navigation Menu
+Navigation and footer menus are managed via **Shopify Admin**, giving you full control without code changes.
 
-**The site has TWO navigation systems:**
-1. **Builder.io Managed** (if you create content in Builder.io)
-2. **Hardcoded Fallback** (default if no Builder.io content)
+### Editing Header Navigation
 
-**To enable Builder.io navigation:**
+**Current header menu:** `fern-fog-header-menu`
 
-1. **Go to Builder.io → Content**
-2. **Click "+ New" → Select "navigation" model**
-3. **Build your navigation:**
-   - Add Link components
-   - Set text and URLs
-   - Arrange in desired order
-4. **Publish**
+**To edit:**
 
-**Current default navigation:**
+1. **Go to Shopify Admin**
+2. **Navigate to:** Online Store → Navigation
+3. **Click:** "fern-fog-header-menu"
+4. **Edit menu items:**
+   - Add new items with "Add menu item" button
+   - Drag to reorder
+   - Click item to edit title/link
+   - Delete items with trash icon
+5. **Click "Save"**
+
+**Menu updates appear within seconds** (automatic cache revalidation via webhook)
+
+**Current navigation:**
 - Home (`/`)
-- Products (`/products`)
+- Shop (`/products`)
 - Gallery (`/gallery`)
 - About (`/about`)
 - Contact (`/contact`)
 
-**⚠️ Note:** Navigation requires custom component setup. For now, navigation links are managed in code. Contact your developer to modify.
+### Editing Footer Menus
 
-### Editing Footer
+**The footer has 3 separate menus:**
 
-**Same as navigation** - Footer can be managed via Builder.io with the "footer" model.
+1. **Shop Menu:** `fern-fog-footer-shop-menu`
+   - All Products
+   - Earrings
+   - Resin
+   - Driftwood
+   - Wall Hangings
 
-**Current default footer sections:**
-- Shop: Products, Gallery
-- About: Our Story, Contact
-- Policies: Privacy, Shipping, Returns, Terms
+2. **About Menu:** `fern-fog-footer-about-menu`
+   - About
+   - Gallery
+   - Contact
 
-**⚠️ Note:** Footer requires custom component setup. Contact your developer to modify.
+3. **Policies Menu:** `fern-fog-footer-policies-menu`
+   - Shipping
+   - Returns
+   - Privacy
+   - Terms
+
+**To edit any footer menu:**
+
+1. **Go to:** Shopify Admin → Online Store → Navigation
+2. **Select the menu** you want to edit
+3. **Make changes** (add, remove, reorder items)
+4. **Click "Save"**
+
+**Changes appear immediately** after webhook cache revalidation
 
 ---
 
@@ -1135,25 +879,6 @@ Each submission shows:
 
 ## Common Troubleshooting
 
-### Issue: Builder.io Changes Not Appearing
-
-**Symptoms:** You published changes but site still shows old content
-
-**Solutions:**
-1. **Wait 5-10 seconds** - Builder.io cache clears gradually
-2. **Hard refresh browser:**
-   - Mac: Cmd + Shift + R
-   - Windows: Ctrl + Shift + R
-3. **Check you published:**
-   - Builder.io shows "Published" badge
-   - Not "Draft" or "Scheduled"
-4. **Verify URL path matches:**
-   - Builder.io URL: `/about-us`
-   - Browser URL: `yoursite.com/about-us`
-   - Must match exactly (case-sensitive!)
-
----
-
 ### Issue: Products Not Loading
 
 **Symptoms:** Product pages show "No products found"
@@ -1205,7 +930,7 @@ Each submission shows:
    - Supported: JPG, PNG, WebP, AVIF, GIF
    - Not supported: TIFF, BMP, PSD
 3. **Check image URL:**
-   - Builder.io: Use Builder.io's image uploader
+   - Shopify: Upload images to Shopify Files
    - Don't link to external sites (may break)
 4. **Re-upload:**
    - Delete image
@@ -1238,9 +963,9 @@ Each submission shows:
 **Symptoms:** Site looks broken on phone/tablet
 
 **Solutions:**
-1. **Preview in Builder.io:**
-   - Click device icons (top bar)
-   - Test desktop, tablet, mobile views
+1. **Test on actual devices:**
+   - Use Chrome DevTools device emulation
+   - Test on real mobile devices
 2. **Check text size:**
    - Avoid font sizes >60px
    - Long headings may wrap awkwardly
@@ -1363,10 +1088,10 @@ Each submission shows:
 
 **Enhancement:** Add blog for SEO and storytelling
 
-**Use Builder.io:**
-- Create "blog-post" model
-- Write posts in visual editor
-- Automatic SEO optimization
+**Future Implementation:**
+- Use Shopify metaobjects for blog posts
+- Create `blog_post` metaobject definition
+- Display posts on `/blog` page
 
 **Benefit:**
 - Improve SEO rankings
@@ -1403,13 +1128,6 @@ Each submission shows:
 - Email: your-developer@example.com
 - Include: Screenshots, error messages, steps to reproduce
 
-### Builder.io Support
-
-**For CMS questions:**
-- Documentation: https://www.builder.io/c/docs/intro
-- Community: https://forum.builder.io/
-- Support: support@builder.io (Pro plans only)
-
 ### Jotform Support
 
 **For form issues:**
@@ -1432,7 +1150,7 @@ Each submission shows:
 
 | Page | URL | Editable Via |
 |------|-----|--------------|
-| Homepage | `/` | Builder.io |
+| Homepage | `/` | Code (hardcoded components) |
 | Products | `/products` | Shopify |
 | Product Detail | `/product/[handle]` | Shopify |
 | Cart | `/cart` | Shopify (headless) |
@@ -1444,7 +1162,7 @@ Each submission shows:
 | Returns Policy | `/policies/returns` | Code |
 | Terms of Service | `/policies/terms` | Code |
 
-### Brand Colors (for Builder.io)
+### Brand Colors
 
 | Color | Hex Code | Use |
 |-------|----------|-----|
@@ -1459,7 +1177,7 @@ Each submission shows:
 
 - **Website Down:** Contact Vercel Support + Developer
 - **Shopify Issues:** Shopify Support Chat
-- **Builder.io Issues:** Refresh browser, wait 5 min, then contact developer
+- **Menu/Content Issues:** Check Shopify Admin → Online Store → Navigation
 - **Form Issues:** Jotform Support
 - **Payment Issues:** Shopify Support
 
@@ -1467,7 +1185,7 @@ Each submission shows:
 
 **🎉 Congratulations! Your site is production-ready.**
 
-**Next:** Create your first Builder.io page and start selling!
+**Next:** Start managing your content via Shopify Admin and begin selling!
 
 **Questions?** Contact your developer or refer to this guide.
 

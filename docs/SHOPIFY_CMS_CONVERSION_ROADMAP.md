@@ -19,12 +19,31 @@
 ## Overview
 
 ### Current State
-- Gallery page uses Shopify metaobjects (✅ Complete)
-- Products use Shopify Storefront API
-- Header/Footer menus are hardcoded
-- Page metadata is static
-- Homepage content is hardcoded
+- Gallery page uses Shopify metaobjects (✅ Complete - Phase 0)
+- Products use Shopify Storefront API (✅ Complete - Core)
+- Header/Footer menus use Shopify Menu API (✅ Complete - Phase 1)
+- Page metadata managed via Shopify metaobjects (✅ Complete - Phase 1)
+- Webhook integration for cache revalidation (✅ Complete - Phase 1)
+- Homepage content is hardcoded (interim solution)
 - About/Contact pages are static
+
+### Builder.io Removal Status
+
+**Decision:** Builder.io CMS has been removed in favor of Shopify-only strategy
+
+**Rationale:**
+- Simplifies tech stack (one CMS instead of two)
+- Reduces external dependencies and monthly costs
+- All content managed in single platform (Shopify Admin)
+- Metaobjects provide sufficient flexibility for business needs
+- Eliminates confusion about which CMS to use
+
+**Completion:** Builder.io fully removed as of November 2025
+- ✅ 15 Builder.io files deleted
+- ✅ 3 npm dependencies removed (~2,600 lines of code removed)
+- ✅ Catch-all route removed
+- ✅ Homepage converted to hardcoded components (interim)
+- ⏳ Next step: Convert homepage to Shopify metaobjects (Task 3.1)
 
 ### Target State
 - **All menus** managed via Shopify Menu API
