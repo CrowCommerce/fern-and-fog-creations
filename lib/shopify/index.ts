@@ -3,7 +3,14 @@ import {
   SHOPIFY_GRAPHQL_API_ENDPOINT,
   TAGS
 } from '@/lib/constants';
-import { isShopifyError } from '@/lib/type-guards';
+import {
+  isShopifyError,
+  isGraphQLError,
+  isNetworkError,
+  isRateLimitError,
+  isRetryableError,
+  type ShopifyAPIError,
+} from '@/lib/type-guards';
 import { ensureStartsWith } from '@/lib/utils';
 import {
   revalidateTag,
@@ -92,6 +99,23 @@ type ExtractVariables<T> = T extends { variables: object }
   ? T['variables']
   : never;
 
+// Helper to extract operation name from GraphQL query
+function extractOperationName(query: string): string | undefined {
+  const match = query.match(/(query|mutation)\s+(\w+)/);
+  return match?.[2];
+}
+
+// Helper for exponential backoff delay
+function getRetryDelay(attempt: number, baseDelay: number = 1000): number {
+  // Exponential backoff: 1s, 2s, 4s
+  return baseDelay * Math.pow(2, attempt);
+}
+
+// Helper to sleep for retry delay
+function sleep(ms: number): Promise<void> {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
 export async function shopifyFetch<T>({
   headers,
   query,
@@ -101,45 +125,142 @@ export async function shopifyFetch<T>({
   query: string;
   variables?: ExtractVariables<T>;
 }): Promise<{ status: number; body: T } | never> {
-  try {
-    const result = await fetch(endpoint, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-Shopify-Storefront-Access-Token': key,
-        ...headers
-      },
-      body: JSON.stringify({
-        ...(query && { query }),
-        ...(variables && { variables })
-      })
-    });
+  const operationName = extractOperationName(query);
+  const maxRetries = 3;
+  let lastError: unknown;
 
-    const body = await result.json();
+  // Retry loop for transient errors
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const result = await fetch(endpoint, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Shopify-Storefront-Access-Token': key,
+          ...headers
+        },
+        body: JSON.stringify({
+          ...(query && { query }),
+          ...(variables && { variables })
+        })
+      });
 
-    if (body.errors) {
-      throw body.errors[0];
-    }
+      const body = await result.json();
 
-    return {
-      status: result.status,
-      body
-    };
-  } catch (e) {
-    if (isShopifyError(e)) {
-      throw {
-        cause: e.cause?.toString() || 'unknown',
-        status: e.status || 500,
-        message: e.message,
-        query
+      // Check for GraphQL errors
+      if (body.errors) {
+        const error: ShopifyAPIError = {
+          type: 'graphql',
+          message: body.errors[0]?.message || 'GraphQL error',
+          status: result.status,
+          operation: operationName,
+          query,
+          variables,
+          graphqlErrors: body.errors,
+          retryable: false, // GraphQL errors are usually not retryable
+        };
+
+        console.error('[Shopify API] GraphQL Error:', {
+          operation: operationName,
+          message: error.message,
+          errors: body.errors,
+        });
+
+        throw error;
+      }
+
+      // Check for rate limiting
+      if (result.status === 429) {
+        const retryAfter = parseInt(result.headers.get('Retry-After') || '5', 10);
+        const error: ShopifyAPIError = {
+          type: 'rate_limit',
+          message: `Rate limited. Retry after ${retryAfter}s`,
+          status: 429,
+          operation: operationName,
+          query,
+          variables,
+          retryable: true,
+        };
+
+        console.warn('[Shopify API] Rate Limited:', {
+          operation: operationName,
+          retryAfter,
+          attempt: attempt + 1,
+        });
+
+        lastError = error;
+
+        // Wait for rate limit reset if not the last attempt
+        if (attempt < maxRetries - 1) {
+          await sleep(retryAfter * 1000);
+          continue;
+        }
+
+        throw error;
+      }
+
+      // Successful response
+      return {
+        status: result.status,
+        body
       };
-    }
+    } catch (e) {
+      lastError = e;
 
-    throw {
-      error: e,
-      query
-    };
+      // If error is retryable and we haven't exhausted retries
+      if (isRetryableError(e) && attempt < maxRetries - 1) {
+        const delay = getRetryDelay(attempt);
+
+        console.warn('[Shopify API] Retryable error, attempt', attempt + 1, 'of', maxRetries, {
+          operation: operationName,
+          error: e instanceof Error ? e.message : String(e),
+          retryDelay: delay,
+        });
+
+        await sleep(delay);
+        continue;
+      }
+
+      // Not retryable or exhausted retries - format and throw error
+      const error: ShopifyAPIError = {
+        type: isNetworkError(e) ? 'network' : isGraphQLError(e) ? 'graphql' : 'unknown',
+        message: e instanceof Error ? e.message : String(e),
+        status: (e as any).status,
+        operation: operationName,
+        query,
+        variables,
+        cause: e instanceof Error ? e : undefined,
+        retryable: false,
+      };
+
+      console.error('[Shopify API] Error:', {
+        operation: operationName,
+        type: error.type,
+        message: error.message,
+        attempt: attempt + 1,
+      });
+
+      throw error;
+    }
   }
+
+  // Exhausted all retries
+  const error: ShopifyAPIError = {
+    type: 'unknown',
+    message: 'Max retries exceeded',
+    operation: operationName,
+    query,
+    variables,
+    cause: lastError instanceof Error ? lastError : undefined,
+    retryable: false,
+  };
+
+  console.error('[Shopify API] Max retries exceeded:', {
+    operation: operationName,
+    attempts: maxRetries,
+  });
+
+  throw error;
 }
 
 const removeEdgesAndNodes = <T>(array: Connection<T>): T[] => {
