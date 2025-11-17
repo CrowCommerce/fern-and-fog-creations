@@ -1,6 +1,8 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
-import { getProducts, getDataSourceMode } from '@/lib/data-source';
+import type { Metadata } from 'next';
+import { getProducts, getDataSourceMode, isShopifyEnabled } from '@/lib/data-source';
+import { getCollection } from '@/lib/shopify';
 import ProductsClient from '../ProductsClient';
 
 // Valid collection slugs (map to category values)
@@ -17,6 +19,72 @@ interface CollectionPageProps {
   params: Promise<{
     collection: string;
   }>;
+}
+
+// Helper function to get friendly collection names
+function getCollectionDisplayName(handle: string): string {
+  const names: Record<string, string> = {
+    'earrings': 'Earrings',
+    'resin': 'Resin Art',
+    'driftwood': 'Driftwood Decor',
+    'wall-hangings': 'Wall Hangings',
+    'pressed-flowers': 'Pressed Flowers',
+    'all': 'All Products',
+  };
+  return names[handle] || handle.charAt(0).toUpperCase() + handle.slice(1);
+}
+
+// Generate metadata for SEO
+export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
+  const { collection } = await params;
+
+  // Validate collection
+  if (!VALID_COLLECTIONS.includes(collection)) {
+    return {
+      title: 'Collection Not Found | Fern & Fog Creations',
+    };
+  }
+
+  // If using Shopify, fetch collection data for SEO
+  if (isShopifyEnabled()) {
+    try {
+      const collectionData = await getCollection(collection);
+
+      if (collectionData) {
+        return {
+          title: collectionData.seo?.title || collectionData.title || getCollectionDisplayName(collection),
+          description: collectionData.seo?.description || collectionData.description || `Browse our ${getCollectionDisplayName(collection)} collection`,
+          robots: {
+            index: true,
+            follow: true,
+          },
+          openGraph: {
+            title: collectionData.seo?.title || collectionData.title,
+            description: collectionData.seo?.description || collectionData.description,
+            type: 'website',
+          },
+        };
+      }
+    } catch (error) {
+      console.error(`Failed to fetch collection metadata for ${collection}:`, error);
+    }
+  }
+
+  // Fallback metadata for local mode or when collection not found
+  const displayName = getCollectionDisplayName(collection);
+  return {
+    title: `${displayName} | Fern & Fog Creations`,
+    description: `Browse our handmade ${displayName.toLowerCase()} collection. Each piece is crafted with care using materials gathered from the Pacific Northwest shores.`,
+    robots: {
+      index: true,
+      follow: true,
+    },
+    openGraph: {
+      title: displayName,
+      description: `Browse our handmade ${displayName.toLowerCase()} collection`,
+      type: 'website',
+    },
+  };
 }
 
 async function CollectionData({ collection }: { collection: string }) {
