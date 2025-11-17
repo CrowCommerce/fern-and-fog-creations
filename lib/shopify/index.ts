@@ -396,30 +396,35 @@ export async function getMenu(handle: string): Promise<Menu[]> {
     }
   });
 
-  return (
-    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => {
-      try {
-        // Parse the URL to extract pathname
-        const url = new URL(item.url);
-        let path = url.pathname;
+  if (!res.body?.data?.menu) {
+    console.warn(`Menu not found for handle: ${handle}`);
+    return [];
+  }
 
-        // Apply path transformations for Next.js routing
-        path = path.replace('/collections', '/search');
-        path = path.replace('/pages', '');
+  const items = res.body.data.menu.items || [];
 
-        return {
-          title: item.title,
-          path
-        };
-      } catch (e) {
-        // If URL parsing fails (relative URL), use as-is
-        return {
-          title: item.title,
-          path: item.url
-        };
-      }
-    }) || []
-  );
+  return items.map((item: { title: string; url: string }) => {
+    try {
+      // Parse the URL to extract pathname
+      const url = new URL(item.url);
+      let path = url.pathname;
+
+      // Apply path transformations for Next.js routing
+      path = path.replace('/collections', '/search');
+      path = path.replace('/pages', '');
+
+      return {
+        title: item.title,
+        path
+      };
+    } catch (e) {
+      // If URL parsing fails (relative URL), use as-is
+      return {
+        title: item.title,
+        path: item.url
+      };
+    }
+  });
 }
 
 export async function getPage(handle: string): Promise<Page> {

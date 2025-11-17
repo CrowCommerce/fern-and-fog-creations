@@ -8,7 +8,7 @@ interface FooterProps {
 }
 
 export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProps) {
-  console.log(shopMenu, aboutMenu, policiesMenu)
+ 
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">
       <h2 id="footer-heading" className="sr-only">
