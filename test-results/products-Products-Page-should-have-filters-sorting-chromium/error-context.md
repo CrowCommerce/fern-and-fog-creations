@@ -1,0 +1,368 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e4]:
+    - navigation "Top" [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Home" [ref=e8] [cursor=pointer]:
+            - /url: /
+          - link "Shop" [ref=e9] [cursor=pointer]:
+            - /url: /products
+        - link "Fern & Fog Creations" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: Fern & Fog Creations
+        - generic [ref=e15]:
+          - link "Gallery" [ref=e16] [cursor=pointer]:
+            - /url: /gallery
+          - link "About" [ref=e17] [cursor=pointer]:
+            - /url: /about
+          - link "Contact" [ref=e18] [cursor=pointer]:
+            - /url: /contact
+          - button "Search products" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - button "items in cart, view bag" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+            - generic [ref=e25]: items in cart, view bag
+  - main [ref=e26]:
+    - generic [ref=e28]:
+      - generic [ref=e29]:
+        - heading "Shop All Handmade Crafts" [level=1] [ref=e30]
+        - paragraph [ref=e31]: Discover one-of-a-kind pieces crafted from natural materials gathered from the Pacific Northwest
+      - generic [ref=e32]:
+        - complementary [ref=e33]:
+          - generic [ref=e34]:
+            - heading "Filters" [level=2] [ref=e36]
+            - generic [ref=e37]:
+              - generic [ref=e38]:
+                - heading "Category" [level=3] [ref=e39]
+                - generic [ref=e40]:
+                  - generic [ref=e41] [cursor=pointer]:
+                    - checkbox "Earrings (30)" [ref=e42]
+                    - img [ref=e44]
+                    - generic [ref=e46]: Earrings
+                    - generic [ref=e47]: (30)
+                  - generic [ref=e48] [cursor=pointer]:
+                    - checkbox "Resin Art (0)" [ref=e49]
+                    - img [ref=e51]
+                    - generic [ref=e53]: Resin Art
+                    - generic [ref=e54]: (0)
+                  - generic [ref=e55] [cursor=pointer]:
+                    - checkbox "Driftwood (0)" [ref=e56]
+                    - img [ref=e58]
+                    - generic [ref=e60]: Driftwood
+                    - generic [ref=e61]: (0)
+                  - generic [ref=e62] [cursor=pointer]:
+                    - checkbox "Wall Hangings (0)" [ref=e63]
+                    - img [ref=e65]
+                    - generic [ref=e67]: Wall Hangings
+                    - generic [ref=e68]: (0)
+              - generic [ref=e69]:
+                - heading "Price Range" [level=3] [ref=e70]
+                - generic [ref=e71]:
+                  - generic [ref=e72]:
+                    - generic [ref=e73]: $10
+                    - generic [ref=e74]: to
+                    - generic [ref=e75]: $300
+                  - generic [ref=e77]:
+                    - slider "Minimum price" [ref=e81]
+                    - slider "Maximum price" [ref=e82]
+                  - generic [ref=e83]:
+                    - generic [ref=e84]:
+                      - generic [ref=e85]: Minimum price
+                      - spinbutton "Minimum price" [ref=e86]: "10"
+                    - generic [ref=e87]:
+                      - generic [ref=e88]: Maximum price
+                      - spinbutton "Maximum price" [ref=e89]: "300"
+              - generic [ref=e90]:
+                - heading "Materials" [level=3] [ref=e91]
+                - generic [ref=e93] [cursor=pointer]:
+                  - checkbox "Handcrafted (30)" [ref=e94]
+                  - img [ref=e96]
+                  - generic [ref=e98]: Handcrafted
+                  - generic [ref=e99]: (30)
+            - paragraph [ref=e101]: 30 products found
+        - generic [ref=e102]:
+          - button "Sort products" [ref=e106]:
+            - generic [ref=e107]: "Sort:"
+            - generic [ref=e108]: Featured
+            - img [ref=e109]
+          - generic [ref=e111]:
+            - link "VANS |AUTHENTIC | LO PRO | BURGANDY/WHITE VANS |AUTHENTIC | LO PRO | BURGANDY/WHITE earrings $29.00" [ref=e112] [cursor=pointer]:
+              - /url: /product/vans-authentic-lo-pro-burgandy-white
+              - img "VANS |AUTHENTIC | LO PRO | BURGANDY/WHITE" [ref=e114]
+              - generic [ref=e115]:
+                - heading "VANS |AUTHENTIC | LO PRO | BURGANDY/WHITE" [level=3] [ref=e116]
+                - paragraph [ref=e117]: earrings
+                - paragraph [ref=e118]: $29.00
+            - link "VANS | AUTHENTIC | (MULTI EYELETS) | GRADIENT/CRIMSON VANS | AUTHENTIC | (MULTI EYELETS) | GRADIENT/CRIMSON earrings $99.95" [ref=e119] [cursor=pointer]:
+              - /url: /product/vans-authentic-multi-eyelets-gradient-crimson
+              - img "VANS | AUTHENTIC | (MULTI EYELETS) | GRADIENT/CRIMSON" [ref=e121]
+              - generic [ref=e122]:
+                - heading "VANS | AUTHENTIC | (MULTI EYELETS) | GRADIENT/CRIMSON" [level=3] [ref=e123]
+                - paragraph [ref=e124]: earrings
+                - paragraph [ref=e125]: $99.95
+            - link "VANS | AUTHENTIC (BUTTERFLY) TRUE | WHITE / BLACK VANS | AUTHENTIC (BUTTERFLY) TRUE | WHITE / BLACK earrings $109.95" [ref=e126] [cursor=pointer]:
+              - /url: /product/vans-authentic-butterfly-true-white-black
+              - img "VANS | AUTHENTIC (BUTTERFLY) TRUE | WHITE / BLACK" [ref=e128]
+              - generic [ref=e129]:
+                - heading "VANS | AUTHENTIC (BUTTERFLY) TRUE | WHITE / BLACK" [level=3] [ref=e130]
+                - paragraph [ref=e131]: earrings
+                - paragraph [ref=e132]: $109.95
+            - link "VANS | ERA 59 MOROCCAN | GEO/DRESS BLUES VANS | ERA 59 MOROCCAN | GEO/DRESS BLUES earrings $119.95" [ref=e133] [cursor=pointer]:
+              - /url: /product/vans-era-59-moroccan-geo-dress-blues
+              - img "VANS | ERA 59 MOROCCAN | GEO/DRESS BLUES" [ref=e135]
+              - generic [ref=e136]:
+                - heading "VANS | ERA 59 MOROCCAN | GEO/DRESS BLUES" [level=3] [ref=e137]
+                - paragraph [ref=e138]: earrings
+                - paragraph [ref=e139]: $119.95
+            - link "VANS | SK8-HI DECON (CUTOUT)| LEAVES/WHITE VANS | SK8-HI DECON (CUTOUT)| LEAVES/WHITE earrings $179.95" [ref=e140] [cursor=pointer]:
+              - /url: /product/vans-sk8-hi-decon-cutout-leaves-white
+              - img "VANS | SK8-HI DECON (CUTOUT)| LEAVES/WHITE" [ref=e142]
+              - generic [ref=e143]:
+                - heading "VANS | SK8-HI DECON (CUTOUT)| LEAVES/WHITE" [level=3] [ref=e144]
+                - paragraph [ref=e145]: earrings
+                - paragraph [ref=e146]: $179.95
+            - link "PALLADIUM | PALLATECH HI TX | CHEVRON PALLADIUM | PALLATECH HI TX | CHEVRON earrings $159.95" [ref=e147] [cursor=pointer]:
+              - /url: /product/palladium-pallatech-hi-tx-chevron
+              - img "PALLADIUM | PALLATECH HI TX | CHEVRON" [ref=e149]
+              - generic [ref=e150]:
+                - heading "PALLADIUM | PALLATECH HI TX | CHEVRON" [level=3] [ref=e151]
+                - paragraph [ref=e152]: earrings
+                - paragraph [ref=e153]: $159.95
+            - link "ASICS TIGER | GEL-LYTE V '30 YEARS OF GEL' PACK ASICS TIGER | GEL-LYTE V '30 YEARS OF GEL' PACK earrings $220.00" [ref=e154] [cursor=pointer]:
+              - /url: /product/asics-tiger-gel-lyte-v-30-years-of-gel-pack
+              - img "ASICS TIGER | GEL-LYTE V '30 YEARS OF GEL' PACK" [ref=e156]
+              - generic [ref=e157]:
+                - heading "ASICS TIGER | GEL-LYTE V '30 YEARS OF GEL' PACK" [level=3] [ref=e158]
+                - paragraph [ref=e159]: earrings
+                - paragraph [ref=e160]: $220.00
+            - link "PUMA | SUEDE CLASSIC REGAL PUMA | SUEDE CLASSIC REGAL earrings $110.00" [ref=e161] [cursor=pointer]:
+              - /url: /product/puma-suede-classic-regal
+              - img "PUMA | SUEDE CLASSIC REGAL" [ref=e163]
+              - generic [ref=e164]:
+                - heading "PUMA | SUEDE CLASSIC REGAL" [level=3] [ref=e165]
+                - paragraph [ref=e166]: earrings
+                - paragraph [ref=e167]: $110.00
+            - link "SUPRA | MENS VAIDER SUPRA | MENS VAIDER earrings $169.95" [ref=e168] [cursor=pointer]:
+              - /url: /product/supra-mens-vaider
+              - img "SUPRA | MENS VAIDER" [ref=e170]
+              - generic [ref=e171]:
+                - heading "SUPRA | MENS VAIDER" [level=3] [ref=e172]
+                - paragraph [ref=e173]: earrings
+                - paragraph [ref=e174]: $169.95
+            - link "ADIDAS | SUPERSTAR 80S ADIDAS | SUPERSTAR 80S earrings $170.00" [ref=e175] [cursor=pointer]:
+              - /url: /product/adidas-superstar-80s
+              - img "ADIDAS | SUPERSTAR 80S" [ref=e177]
+              - generic [ref=e178]:
+                - heading "ADIDAS | SUPERSTAR 80S" [level=3] [ref=e179]
+                - paragraph [ref=e180]: earrings
+                - paragraph [ref=e181]: $170.00
+            - link "VANS | ERA 59 (DESERT COWBOY) VANS | ERA 59 (DESERT COWBOY) earrings $109.95" [ref=e182] [cursor=pointer]:
+              - /url: /product/vans-era-59-desert-cowboy
+              - img "VANS | ERA 59 (DESERT COWBOY)" [ref=e184]
+              - generic [ref=e185]:
+                - heading "VANS | ERA 59 (DESERT COWBOY)" [level=3] [ref=e186]
+                - paragraph [ref=e187]: earrings
+                - paragraph [ref=e188]: $109.95
+            - link "VANS | SH-8 HI VANS | SH-8 HI earrings $129.95" [ref=e189] [cursor=pointer]:
+              - /url: /product/vans-sh-8-hi
+              - img "VANS | SH-8 HI" [ref=e191]
+              - generic [ref=e192]:
+                - heading "VANS | SH-8 HI" [level=3] [ref=e193]
+                - paragraph [ref=e194]: earrings
+                - paragraph [ref=e195]: $129.95
+            - link "VANS | OLD SKOOL (BUTTERFLY) TRUE WHITE | BLACK VANS | OLD SKOOL (BUTTERFLY) TRUE WHITE | BLACK earrings $129.95" [ref=e196] [cursor=pointer]:
+              - /url: /product/vans-old-skool-butterfly-true-white-black
+              - img "VANS | OLD SKOOL (BUTTERFLY) TRUE WHITE | BLACK" [ref=e198]
+              - generic [ref=e199]:
+                - heading "VANS | OLD SKOOL (BUTTERFLY) TRUE WHITE | BLACK" [level=3] [ref=e200]
+                - paragraph [ref=e201]: earrings
+                - paragraph [ref=e202]: $129.95
+            - link "VANS | CLASSIC SLIP-ON (PERFORATED SUEDE) VANS | CLASSIC SLIP-ON (PERFORATED SUEDE) earrings $119.95" [ref=e203] [cursor=pointer]:
+              - /url: /product/vans-classic-slip-on-perforated-suede
+              - img "VANS | CLASSIC SLIP-ON (PERFORATED SUEDE)" [ref=e205]
+              - generic [ref=e206]:
+                - heading "VANS | CLASSIC SLIP-ON (PERFORATED SUEDE)" [level=3] [ref=e207]
+                - paragraph [ref=e208]: earrings
+                - paragraph [ref=e209]: $119.95
+            - link "TIMBERLAND | MENS 6 INCH PREMIUM BOOT TIMBERLAND | MENS 6 INCH PREMIUM BOOT earrings $299.95" [ref=e210] [cursor=pointer]:
+              - /url: /product/timberland-mens-6-inch-premium-boot
+              - img "TIMBERLAND | MENS 6 INCH PREMIUM BOOT" [ref=e212]
+              - generic [ref=e213]:
+                - heading "TIMBERLAND | MENS 6 INCH PREMIUM BOOT" [level=3] [ref=e214]
+                - paragraph [ref=e215]: earrings
+                - paragraph [ref=e216]: $299.95
+            - link "NIKE | CRACKLE PRINT TB TEE NIKE | CRACKLE PRINT TB TEE earrings $40.00" [ref=e217] [cursor=pointer]:
+              - /url: /product/nike-crackle-print-tb-tee
+              - img "NIKE | CRACKLE PRINT TB TEE" [ref=e219]
+              - generic [ref=e220]:
+                - heading "NIKE | CRACKLE PRINT TB TEE" [level=3] [ref=e221]
+                - paragraph [ref=e222]: earrings
+                - paragraph [ref=e223]: $40.00
+            - link "DR MARTENS | 1461 DMC 3-EYE SHOE | BLACK SMOOTH DR MARTENS | 1461 DMC 3-EYE SHOE | BLACK SMOOTH earrings $229.00" [ref=e224] [cursor=pointer]:
+              - /url: /product/dr-martens-1461-dmc-3-eye-shoe-black-smooth
+              - img "DR MARTENS | 1461 DMC 3-EYE SHOE | BLACK SMOOTH" [ref=e226]
+              - generic [ref=e227]:
+                - heading "DR MARTENS | 1461 DMC 3-EYE SHOE | BLACK SMOOTH" [level=3] [ref=e228]
+                - paragraph [ref=e229]: earrings
+                - paragraph [ref=e230]: $229.00
+            - link "DR MARTENS | CAVENDISH 3-EYE SHOE BLACK DR MARTENS | CAVENDISH 3-EYE SHOE BLACK earrings $229.00" [ref=e231] [cursor=pointer]:
+              - /url: /product/dr-martens-cavendish-3-eye-shoe-black
+              - img "DR MARTENS | CAVENDISH 3-EYE SHOE BLACK" [ref=e233]
+              - generic [ref=e234]:
+                - heading "DR MARTENS | CAVENDISH 3-EYE SHOE BLACK" [level=3] [ref=e235]
+                - paragraph [ref=e236]: earrings
+                - paragraph [ref=e237]: $229.00
+            - link "DR MARTENS | 1460Z DMC 8-EYE BOOT | CHERRY SMOOTH DR MARTENS | 1460Z DMC 8-EYE BOOT | CHERRY SMOOTH earrings $249.00" [ref=e238] [cursor=pointer]:
+              - /url: /product/dr-martens-1460z-dmc-8-eye-boot-cherry-smooth
+              - img "DR MARTENS | 1460Z DMC 8-EYE BOOT | CHERRY SMOOTH" [ref=e240]
+              - generic [ref=e241]:
+                - heading "DR MARTENS | 1460Z DMC 8-EYE BOOT | CHERRY SMOOTH" [level=3] [ref=e242]
+                - paragraph [ref=e243]: earrings
+                - paragraph [ref=e244]: $249.00
+            - link "CONVERSE | CHUCK TAYLOR ALL STAR LO CONVERSE | CHUCK TAYLOR ALL STAR LO earrings $100.00" [ref=e245] [cursor=pointer]:
+              - /url: /product/converse-chuck-taylor-all-star-lo
+              - img "CONVERSE | CHUCK TAYLOR ALL STAR LO" [ref=e247]
+              - generic [ref=e248]:
+                - heading "CONVERSE | CHUCK TAYLOR ALL STAR LO" [level=3] [ref=e249]
+                - paragraph [ref=e250]: earrings
+                - paragraph [ref=e251]: $100.00
+            - link "CONVERSE | CHUCK TAYLOR ALL STAR II HI CONVERSE | CHUCK TAYLOR ALL STAR II HI earrings $140.00" [ref=e252] [cursor=pointer]:
+              - /url: /product/converse-chuck-taylor-all-star-ii-hi
+              - img "CONVERSE | CHUCK TAYLOR ALL STAR II HI" [ref=e254]
+              - generic [ref=e255]:
+                - heading "CONVERSE | CHUCK TAYLOR ALL STAR II HI" [level=3] [ref=e256]
+                - paragraph [ref=e257]: earrings
+                - paragraph [ref=e258]: $140.00
+            - link "CONVERSE | TODDLER CHUCK TAYLOR ALL STAR AXEL MID CONVERSE | TODDLER CHUCK TAYLOR ALL STAR AXEL MID earrings $70.00" [ref=e259] [cursor=pointer]:
+              - /url: /product/converse-toddler-chuck-taylor-all-star-axel-mid
+              - img "CONVERSE | TODDLER CHUCK TAYLOR ALL STAR AXEL MID" [ref=e261]
+              - generic [ref=e262]:
+                - heading "CONVERSE | TODDLER CHUCK TAYLOR ALL STAR AXEL MID" [level=3] [ref=e263]
+                - paragraph [ref=e264]: earrings
+                - paragraph [ref=e265]: $70.00
+            - link "NIKE | TODDLER ROSHE ONE NIKE | TODDLER ROSHE ONE earrings $70.00" [ref=e266] [cursor=pointer]:
+              - /url: /product/nike-toddler-roshe-one
+              - img "NIKE | TODDLER ROSHE ONE" [ref=e268]
+              - generic [ref=e269]:
+                - heading "NIKE | TODDLER ROSHE ONE" [level=3] [ref=e270]
+                - paragraph [ref=e271]: earrings
+                - paragraph [ref=e272]: $70.00
+            - link "ADIDAS | KID'S STAN SMITH ADIDAS | KID'S STAN SMITH earrings $90.00" [ref=e273] [cursor=pointer]:
+              - /url: /product/adidas-kids-stan-smith
+              - img "ADIDAS | KID'S STAN SMITH" [ref=e275]
+              - generic [ref=e276]:
+                - heading "ADIDAS | KID'S STAN SMITH" [level=3] [ref=e277]
+                - paragraph [ref=e278]: earrings
+                - paragraph [ref=e279]: $90.00
+            - link "VANS APPAREL AND ACCESSORIES | CLASSIC SUPER NO SHOW SOCKS 3 PACK WHITE VANS APPAREL AND ACCESSORIES | CLASSIC SUPER NO SHOW SOCKS 3 PACK WHITE earrings $19.95" [ref=e280] [cursor=pointer]:
+              - /url: /product/vans-apparel-and-accessories-classic-super-no-show-socks-3-pack-white
+              - img "VANS APPAREL AND ACCESSORIES | CLASSIC SUPER NO SHOW SOCKS 3 PACK WHITE" [ref=e282]
+              - generic [ref=e283]:
+                - heading "VANS APPAREL AND ACCESSORIES | CLASSIC SUPER NO SHOW SOCKS 3 PACK WHITE" [level=3] [ref=e284]
+                - paragraph [ref=e285]: earrings
+                - paragraph [ref=e286]: $19.95
+            - link "HERSCHEL | IONA HERSCHEL | IONA earrings $119.95" [ref=e287] [cursor=pointer]:
+              - /url: /product/herschel-iona
+              - img "HERSCHEL | IONA" [ref=e289]
+              - generic [ref=e290]:
+                - heading "HERSCHEL | IONA" [level=3] [ref=e291]
+                - paragraph [ref=e292]: earrings
+                - paragraph [ref=e293]: $119.95
+            - link "FLEX FIT | MINI OTTOMAN BLACK FLEX FIT | MINI OTTOMAN BLACK earrings $29.99" [ref=e294] [cursor=pointer]:
+              - /url: /product/flex-fit-mini-ottoman-black
+              - img "FLEX FIT | MINI OTTOMAN BLACK" [ref=e296]
+              - generic [ref=e297]:
+                - heading "FLEX FIT | MINI OTTOMAN BLACK" [level=3] [ref=e298]
+                - paragraph [ref=e299]: earrings
+                - paragraph [ref=e300]: $29.99
+            - link "NIKE | SWOOSH PRO FLAT PEAK CAP NIKE | SWOOSH PRO FLAT PEAK CAP earrings $30.00" [ref=e301] [cursor=pointer]:
+              - /url: /product/nike-swoosh-pro-flat-peak-cap
+              - img "NIKE | SWOOSH PRO FLAT PEAK CAP" [ref=e303]
+              - generic [ref=e304]:
+                - heading "NIKE | SWOOSH PRO FLAT PEAK CAP" [level=3] [ref=e305]
+                - paragraph [ref=e306]: earrings
+                - paragraph [ref=e307]: $30.00
+            - link "ADIDAS | CLASSIC BACKPACK ADIDAS | CLASSIC BACKPACK earrings $70.00" [ref=e308] [cursor=pointer]:
+              - /url: /product/adidas-classic-backpack
+              - img "ADIDAS | CLASSIC BACKPACK" [ref=e310]
+              - generic [ref=e311]:
+                - heading "ADIDAS | CLASSIC BACKPACK" [level=3] [ref=e312]
+                - paragraph [ref=e313]: earrings
+                - paragraph [ref=e314]: $70.00
+            - link "ADIDAS | CLASSIC BACKPACK | LEGEND INK MULTICOLOUR ADIDAS | CLASSIC BACKPACK | LEGEND INK MULTICOLOUR earrings $50.00" [ref=e315] [cursor=pointer]:
+              - /url: /product/adidas-classic-backpack-legend-ink-multicolour
+              - img "ADIDAS | CLASSIC BACKPACK | LEGEND INK MULTICOLOUR" [ref=e317]
+              - generic [ref=e318]:
+                - heading "ADIDAS | CLASSIC BACKPACK | LEGEND INK MULTICOLOUR" [level=3] [ref=e319]
+                - paragraph [ref=e320]: earrings
+                - paragraph [ref=e321]: $50.00
+          - generic [ref=e322]: Showing 30 of 30 products
+  - contentinfo "Footer" [ref=e323]:
+    - heading "Footer" [level=2] [ref=e324]
+    - generic [ref=e325]:
+      - generic [ref=e327]:
+        - generic [ref=e328]:
+          - generic [ref=e329]:
+            - img [ref=e330]
+            - generic [ref=e333]: Fern & Fog Creations
+          - paragraph [ref=e334]: Handmade coastal and woodland treasures. Each piece is crafted with care using natural materials gathered from the Pacific Northwest shores.
+          - paragraph [ref=e335]: Handmade on the coast • Est. 2021
+        - generic [ref=e336]:
+          - heading "Shop" [level=3] [ref=e337]
+          - list [ref=e338]:
+            - listitem [ref=e339]:
+              - link "All Products" [ref=e340] [cursor=pointer]:
+                - /url: /products
+            - listitem [ref=e341]:
+              - link "Earrings" [ref=e342] [cursor=pointer]:
+                - /url: /products/earrings
+            - listitem [ref=e343]:
+              - link "Resin" [ref=e344] [cursor=pointer]:
+                - /url: /products/resin
+            - listitem [ref=e345]:
+              - link "Driftwood" [ref=e346] [cursor=pointer]:
+                - /url: /products/driftwood
+            - listitem [ref=e347]:
+              - link "Wall Hangings" [ref=e348] [cursor=pointer]:
+                - /url: /products/wall-hangings
+        - generic [ref=e349]:
+          - generic [ref=e350]:
+            - heading "About" [level=3] [ref=e351]
+            - list [ref=e352]:
+              - listitem [ref=e353]:
+                - link "About" [ref=e354] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e355]:
+                - link "Gallery" [ref=e356] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=e357]:
+                - link "Contact" [ref=e358] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e359]:
+            - heading "Policies" [level=3] [ref=e360]
+            - list [ref=e361]:
+              - listitem [ref=e362]:
+                - link "Shipping" [ref=e363] [cursor=pointer]:
+                  - /url: /policies/shipping
+              - listitem [ref=e364]:
+                - link "Returns" [ref=e365] [cursor=pointer]:
+                  - /url: /policies/returns
+              - listitem [ref=e366]:
+                - link "Privacy" [ref=e367] [cursor=pointer]:
+                  - /url: /policies/privacy
+              - listitem [ref=e368]:
+                - link "Terms" [ref=e369] [cursor=pointer]:
+                  - /url: /policies/terms
+      - generic [ref=e371]:
+        - paragraph [ref=e372]: © 2025 Fern & Fog Creations. All rights reserved.
+        - paragraph [ref=e373]: Each piece tells a story • Gathered, crafted, treasured
+  - button "Open Next.js Dev Tools" [ref=e379] [cursor=pointer]:
+    - img [ref=e380]
+  - alert [ref=e383]
+```

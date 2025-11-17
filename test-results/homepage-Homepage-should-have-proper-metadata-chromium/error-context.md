@@ -1,0 +1,258 @@
+# Page snapshot
+
+```yaml
+- generic [active] [ref=e1]:
+  - link "Skip to content" [ref=e2] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e4]:
+    - navigation "Top" [ref=e5]:
+      - generic [ref=e6]:
+        - generic [ref=e7]:
+          - link "Home" [ref=e8] [cursor=pointer]:
+            - /url: /
+          - link "Shop" [ref=e9] [cursor=pointer]:
+            - /url: /products
+        - link "Fern & Fog Creations" [ref=e10] [cursor=pointer]:
+          - /url: /
+          - img [ref=e11]
+          - generic [ref=e14]: Fern & Fog Creations
+        - generic [ref=e15]:
+          - link "Gallery" [ref=e16] [cursor=pointer]:
+            - /url: /gallery
+          - link "About" [ref=e17] [cursor=pointer]:
+            - /url: /about
+          - link "Contact" [ref=e18] [cursor=pointer]:
+            - /url: /contact
+          - button "Search products" [ref=e19] [cursor=pointer]:
+            - img [ref=e20]
+          - button "items in cart, view bag" [ref=e22] [cursor=pointer]:
+            - img [ref=e23]
+            - generic [ref=e25]: items in cart, view bag
+  - main [ref=e26]:
+    - generic [ref=e27]:
+      - generic [ref=e31]:
+        - heading "Handmade Coastal & Woodland Treasures" [level=1] [ref=e32]
+        - paragraph [ref=e33]: Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches with materials gathered from the Pacific Northwest shores.
+        - generic [ref=e34]:
+          - link "View Gallery" [ref=e35] [cursor=pointer]:
+            - /url: /gallery
+          - link "Shop New Arrivals" [ref=e36] [cursor=pointer]:
+            - /url: /products
+        - generic [ref=e39]: ❖
+      - region "Explore Our Collections" [ref=e41]:
+        - generic [ref=e42]:
+          - generic [ref=e43]:
+            - heading "Explore Our Collections" [level=2] [ref=e44]
+            - paragraph [ref=e45]: Each piece is one-of-a-kind, crafted from natural materials
+          - generic [ref=e46]:
+            - link "Sea Glass Earrings Sea Glass Earrings Found along rocky shores, tumbled by the sea. Explore" [ref=e48] [cursor=pointer]:
+              - /url: /products/earrings
+              - img "Sea Glass Earrings" [ref=e50]
+              - generic [ref=e52]:
+                - heading "Sea Glass Earrings" [level=3] [ref=e53]
+                - paragraph [ref=e54]: Found along rocky shores, tumbled by the sea.
+                - generic [ref=e55]:
+                  - text: Explore
+                  - img [ref=e56]
+            - link "Pressed Flower Resin Pressed Flower Resin Tiny botanicals preserved in crystal-clear resin. Explore" [ref=e59] [cursor=pointer]:
+              - /url: /products/resin
+              - img "Pressed Flower Resin" [ref=e61]
+              - generic [ref=e63]:
+                - heading "Pressed Flower Resin" [level=3] [ref=e64]
+                - paragraph [ref=e65]: Tiny botanicals preserved in crystal-clear resin.
+                - generic [ref=e66]:
+                  - text: Explore
+                  - img [ref=e67]
+            - link "Driftwood Magnets Driftwood Magnets Sun-bleached, sea-worn, and one-of-a-kind. Explore" [ref=e70] [cursor=pointer]:
+              - /url: /products/driftwood
+              - img "Driftwood Magnets" [ref=e72]
+              - generic [ref=e74]:
+                - heading "Driftwood Magnets" [level=3] [ref=e75]
+                - paragraph [ref=e76]: Sun-bleached, sea-worn, and one-of-a-kind.
+                - generic [ref=e77]:
+                  - text: Explore
+                  - img [ref=e78]
+            - link "Wall Hangings Wall Hangings Natural textures for cozy, story-filled spaces. Explore" [ref=e81] [cursor=pointer]:
+              - /url: /products/wall-hangings
+              - img "Wall Hangings" [ref=e83]
+              - generic [ref=e85]:
+                - heading "Wall Hangings" [level=3] [ref=e86]
+                - paragraph [ref=e87]: Natural textures for cozy, story-filled spaces.
+                - generic [ref=e88]:
+                  - text: Explore
+                  - img [ref=e89]
+          - link "View all categories" [ref=e92] [cursor=pointer]:
+            - /url: /categories
+            - text: View all categories
+            - generic [ref=e93]: →
+      - region "Why Handmade Matters" [ref=e94]:
+        - generic [ref=e95]:
+          - generic [ref=e96]:
+            - heading "Why Handmade Matters" [level=2] [ref=e97]
+            - paragraph [ref=e98]: Every piece tells a story of the land, the maker, and the moment of creation
+          - generic [ref=e99]:
+            - generic [ref=e100]:
+              - img [ref=e102]
+              - heading "Gathered" [level=3] [ref=e105]
+              - paragraph [ref=e106]: Each material is mindfully collected from Pacific Northwest shores and forests, respecting the natural world.
+            - generic [ref=e107]:
+              - img [ref=e109]
+              - heading "Crafted" [level=3] [ref=e113]
+              - paragraph [ref=e114]: Handmade with care and attention to detail, every piece is shaped by skilled hands and creative intention.
+            - generic [ref=e115]:
+              - img [ref=e117]
+              - heading "Treasured" [level=3] [ref=e121]
+              - paragraph [ref=e122]: Designed to become heirlooms, these one-of-a-kind pieces carry stories that grow with time.
+          - generic [ref=e125]: ❖
+      - region "Featured Treasures" [ref=e127]:
+        - generic [ref=e128]:
+          - generic [ref=e129]:
+            - heading "Featured Treasures" [level=2] [ref=e130]
+            - paragraph [ref=e131]: Handpicked pieces available now
+          - generic [ref=e132]:
+            - link "Seafoam Glass Earrings Seafoam Glass Earrings Earrings $38.00" [ref=e134] [cursor=pointer]:
+              - /url: /product/seafoam-glass-earrings
+              - img "Seafoam Glass Earrings" [ref=e136]
+              - generic [ref=e137]:
+                - generic [ref=e138]:
+                  - heading "Seafoam Glass Earrings" [level=3] [ref=e139]
+                  - paragraph [ref=e140]: Earrings
+                - paragraph [ref=e141]: $38.00
+            - link "Amber Wildflower Pendant Amber Wildflower Pendant Resin $45.00" [ref=e143] [cursor=pointer]:
+              - /url: /product/amber-resin-pendant
+              - img "Amber Wildflower Pendant" [ref=e145]
+              - generic [ref=e146]:
+                - generic [ref=e147]:
+                  - heading "Amber Wildflower Pendant" [level=3] [ref=e148]
+                  - paragraph [ref=e149]: Resin
+                - paragraph [ref=e150]: $45.00
+            - link "Driftwood Garden Markers (Set of 6) Driftwood Garden Markers (Set of 6) Driftwood $32.00" [ref=e152] [cursor=pointer]:
+              - /url: /product/driftwood-herb-garden-markers
+              - img "Driftwood Garden Markers (Set of 6)" [ref=e154]
+              - generic [ref=e155]:
+                - generic [ref=e156]:
+                  - heading "Driftwood Garden Markers (Set of 6)" [level=3] [ref=e157]
+                  - paragraph [ref=e158]: Driftwood
+                - paragraph [ref=e159]: $32.00
+            - link "Coastal Shell Wind Chime Coastal Shell Wind Chime Wall-hangings $65.00" [ref=e161] [cursor=pointer]:
+              - /url: /product/shell-wind-chime
+              - img "Coastal Shell Wind Chime" [ref=e163]
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - heading "Coastal Shell Wind Chime" [level=3] [ref=e166]
+                  - paragraph [ref=e167]: Wall-hangings
+                - paragraph [ref=e168]: $65.00
+            - link "Sunset Macramé Wall Hanging Sunset Macramé Wall Hanging Wall-hangings $78.00" [ref=e170] [cursor=pointer]:
+              - /url: /product/sunset-macrame-hanging
+              - img "Sunset Macramé Wall Hanging" [ref=e172]
+              - generic [ref=e173]:
+                - generic [ref=e174]:
+                  - heading "Sunset Macramé Wall Hanging" [level=3] [ref=e175]
+                  - paragraph [ref=e176]: Wall-hangings
+                - paragraph [ref=e177]: $78.00
+            - link "Woodland Memory Shadow Box Woodland Memory Shadow Box Wall-hangings $95.00" [ref=e179] [cursor=pointer]:
+              - /url: /product/woodland-shadow-box
+              - img "Woodland Memory Shadow Box" [ref=e181]
+              - generic [ref=e182]:
+                - generic [ref=e183]:
+                  - heading "Woodland Memory Shadow Box" [level=3] [ref=e184]
+                  - paragraph [ref=e185]: Wall-hangings
+                - paragraph [ref=e186]: $95.00
+          - link "View All Products" [ref=e188] [cursor=pointer]:
+            - /url: /products
+            - text: View All Products
+            - generic [ref=e189]: →
+      - region "Stories in Every Piece" [ref=e190]:
+        - generic [ref=e191]:
+          - generic [ref=e192]:
+            - heading "Stories in Every Piece" [level=2] [ref=e193]
+            - paragraph [ref=e194]: Each creation begins with a moment—a walk along the shore, a discovery in the forest, a spark of inspiration
+          - generic [ref=e195]:
+            - link "First Light Sea Glass Collection First Light Sea Glass Collection Sea glass • Copper wire • Vintage beads \"My very first collection, made from glass found on a foggy morning at Cannon Beach. Each piece seemed to glow with its own inner light.\"" [ref=e197] [cursor=pointer]:
+              - /url: /gallery
+              - img "First Light Sea Glass Collection" [ref=e199]
+              - generic [ref=e200]:
+                - heading "First Light Sea Glass Collection" [level=3] [ref=e201]
+                - paragraph [ref=e202]: Sea glass • Copper wire • Vintage beads
+                - paragraph [ref=e203]: "\"My very first collection, made from glass found on a foggy morning at Cannon Beach. Each piece seemed to glow with its own inner light.\""
+            - link "Meadow Memory Pendant Meadow Memory Pendant Wild forget-me-nots • Resin • Silver chain \"Created from flowers picked during a spring hike in the Cascades. The blues remind me of that perfect alpine sky.\"" [ref=e205] [cursor=pointer]:
+              - /url: /gallery
+              - img "Meadow Memory Pendant" [ref=e207]
+              - generic [ref=e208]:
+                - heading "Meadow Memory Pendant" [level=3] [ref=e209]
+                - paragraph [ref=e210]: Wild forget-me-nots • Resin • Silver chain
+                - paragraph [ref=e211]: "\"Created from flowers picked during a spring hike in the Cascades. The blues remind me of that perfect alpine sky.\""
+            - link "Storm-Tossed Welcome Sign Storm-Tossed Welcome Sign Large driftwood plank • Carved letters • Natural oil finish \"This piece washed up after a particularly fierce winter storm. The grain patterns looked like waves, so I carved \"Welcome\" following their flow.\"" [ref=e213] [cursor=pointer]:
+              - /url: /gallery
+              - img "Storm-Tossed Welcome Sign" [ref=e215]
+              - generic [ref=e216]:
+                - heading "Storm-Tossed Welcome Sign" [level=3] [ref=e217]
+                - paragraph [ref=e218]: Large driftwood plank • Carved letters • Natural oil finish
+                - paragraph [ref=e219]: "\"This piece washed up after a particularly fierce winter storm. The grain patterns looked like waves, so I carved \"Welcome\" following their flow.\""
+          - link "View Full Gallery" [ref=e221] [cursor=pointer]:
+            - /url: /gallery
+            - text: View Full Gallery
+            - generic [ref=e222]: →
+  - contentinfo "Footer" [ref=e223]:
+    - heading "Footer" [level=2] [ref=e224]
+    - generic [ref=e225]:
+      - generic [ref=e227]:
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - img [ref=e230]
+            - generic [ref=e233]: Fern & Fog Creations
+          - paragraph [ref=e234]: Handmade coastal and woodland treasures. Each piece is crafted with care using natural materials gathered from the Pacific Northwest shores.
+          - paragraph [ref=e235]: Handmade on the coast • Est. 2021
+        - generic [ref=e236]:
+          - heading "Shop" [level=3] [ref=e237]
+          - list [ref=e238]:
+            - listitem [ref=e239]:
+              - link "All Products" [ref=e240] [cursor=pointer]:
+                - /url: /products
+            - listitem [ref=e241]:
+              - link "Earrings" [ref=e242] [cursor=pointer]:
+                - /url: /products/earrings
+            - listitem [ref=e243]:
+              - link "Resin" [ref=e244] [cursor=pointer]:
+                - /url: /products/resin
+            - listitem [ref=e245]:
+              - link "Driftwood" [ref=e246] [cursor=pointer]:
+                - /url: /products/driftwood
+            - listitem [ref=e247]:
+              - link "Wall Hangings" [ref=e248] [cursor=pointer]:
+                - /url: /products/wall-hangings
+        - generic [ref=e249]:
+          - generic [ref=e250]:
+            - heading "About" [level=3] [ref=e251]
+            - list [ref=e252]:
+              - listitem [ref=e253]:
+                - link "About" [ref=e254] [cursor=pointer]:
+                  - /url: /about
+              - listitem [ref=e255]:
+                - link "Gallery" [ref=e256] [cursor=pointer]:
+                  - /url: /gallery
+              - listitem [ref=e257]:
+                - link "Contact" [ref=e258] [cursor=pointer]:
+                  - /url: /contact
+          - generic [ref=e259]:
+            - heading "Policies" [level=3] [ref=e260]
+            - list [ref=e261]:
+              - listitem [ref=e262]:
+                - link "Shipping" [ref=e263] [cursor=pointer]:
+                  - /url: /policies/shipping
+              - listitem [ref=e264]:
+                - link "Returns" [ref=e265] [cursor=pointer]:
+                  - /url: /policies/returns
+              - listitem [ref=e266]:
+                - link "Privacy" [ref=e267] [cursor=pointer]:
+                  - /url: /policies/privacy
+              - listitem [ref=e268]:
+                - link "Terms" [ref=e269] [cursor=pointer]:
+                  - /url: /policies/terms
+      - generic [ref=e271]:
+        - paragraph [ref=e272]: © 2025 Fern & Fog Creations. All rights reserved.
+        - paragraph [ref=e273]: Each piece tells a story • Gathered, crafted, treasured
+  - button "Open Next.js Dev Tools" [ref=e279] [cursor=pointer]:
+    - img [ref=e280]
+  - alert [ref=e283]
+```
