@@ -394,13 +394,28 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   });
 
   return (
-    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => ({
-      title: item.title,
-      path: item.url
-        .replace(domain, '')
-        .replace('/collections', '/search')
-        .replace('/pages', '')
-    })) || []
+    res.body?.data?.menu?.items.map((item: { title: string; url: string }) => {
+      try {
+        // Parse the URL to extract pathname
+        const url = new URL(item.url);
+        let path = url.pathname;
+
+        // Apply path transformations for Next.js routing
+        path = path.replace('/collections', '/search');
+        path = path.replace('/pages', '');
+
+        return {
+          title: item.title,
+          path
+        };
+      } catch (e) {
+        // If URL parsing fails (relative URL), use as-is
+        return {
+          title: item.title,
+          path: item.url
+        };
+      }
+    }) || []
   );
 }
 
