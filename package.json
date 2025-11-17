@@ -20,7 +20,9 @@
     "setup:contact": "tsx scripts/setup-contact-page.ts",
     "setup:contact:dry": "tsx scripts/setup-contact-page.ts --dry-run",
     "setup:about": "tsx scripts/setup-about-page.ts",
-    "setup:about:dry": "tsx scripts/setup-about-page.ts --dry-run"
+    "setup:about:dry": "tsx scripts/setup-about-page.ts --dry-run",
+    "setup:homepage": "tsx scripts/setup-homepage.ts",
+    "setup:homepage:dry": "tsx scripts/setup-homepage.ts --dry-run"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

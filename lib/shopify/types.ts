@@ -294,6 +294,14 @@ export type ShopifyAboutValuesOperation = {
   };
 };
 
+export type ShopifyHomepageHeroOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};
+
 export type ShopifyProductOperation = {
   data: { product: ShopifyProduct };
   variables: {

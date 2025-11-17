@@ -29,6 +29,7 @@ import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
 import { getContactPageQuery } from './queries/contact';
 import { getAboutPageQuery, getAboutProcessStepsQuery, getAboutValuesQuery } from './queries/about';
+import { getHomepageHeroQuery } from './queries/homepage';
 import { getPageMetadataQuery } from './queries/page-metadata';
 import { getPoliciesQuery } from './queries/policies';
 import {
@@ -57,6 +58,7 @@ import {
   ShopifyAboutProcessStepsOperation,
   ShopifyAboutValuesOperation,
   ShopifyContactPageOperation,
+  ShopifyHomepageHeroOperation,
   ShopifyCreateCartOperation,
   ShopifyGalleryItemsOperation,
   ShopifyMenuOperation,
@@ -77,6 +79,7 @@ import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/
 import type { PageMetadata } from '@/types/metadata';
 import type { ContactPage } from '@/types/contact';
 import type { AboutPage, AboutProcessStep, AboutValue } from '@/types/about';
+import type { HomepageHero } from '@/types/homepage';
 import { extractField, extractOptionalField, extractNumberField } from './utils';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
@@ -631,6 +634,42 @@ export async function getAboutValues(): Promise<AboutValue[]> {
       sortOrder: extractNumberField(node, 'sort_order'),
     }))
     .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+export async function getHomepageHero(): Promise<HomepageHero> {
+  'use cache';
+  cacheTag(TAGS.homepage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyHomepageHeroOperation>({
+    query: getHomepageHeroQuery,
+  });
+
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  // Fallback to defaults if not found
+  if (!metaobject) {
+    console.warn('Homepage hero metaobject not found, using defaults');
+    return {
+      heading: 'Handmade Coastal & Woodland Treasures',
+      description: 'Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches with materials gathered from the Pacific Northwest shores.',
+      backgroundImageUrl: '/stock-assets/hero/coastal-shells.jpg',
+      ctaPrimaryText: 'View Gallery',
+      ctaPrimaryUrl: '/gallery',
+      ctaSecondaryText: 'Shop New Arrivals',
+      ctaSecondaryUrl: '/products',
+    };
+  }
+
+  return {
+    heading: extractField(metaobject, 'heading'),
+    description: extractField(metaobject, 'description'),
+    backgroundImageUrl: extractField(metaobject, 'background_image_url'),
+    ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
+    ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
+    ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
+    ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+  };
 }
 
 export async function getPolicies(): Promise<Policies> {

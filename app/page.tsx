@@ -1,5 +1,5 @@
 import { Metadata } from 'next';
-import { getPageMetadata } from '@/lib/shopify';
+import { getPageMetadata, getHomepageHero } from '@/lib/shopify';
 
 // Homepage components
 import HeroSection from '@/components/HeroSection';
@@ -28,10 +28,12 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export default async function Home() {
-  // Homepage with hardcoded components
+  // Fetch homepage hero content from Shopify
+  const hero = await getHomepageHero();
+
   return (
     <div className="bg-parchment">
-      <HeroSection />
+      <HeroSection hero={hero} />
       <CategorySection />
       <FeaturedSectionOne />
       <FeaturedSectionTwo />

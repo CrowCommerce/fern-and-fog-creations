@@ -50,9 +50,9 @@ export async function POST(req: NextRequest): Promise<NextResponse> {
     'menus/delete': [TAGS.menus],
 
     // Metaobject webhooks (for CMS content)
-    'metaobjects/create': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage],
-    'metaobjects/update': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage],
-    'metaobjects/delete': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage],
+    'metaobjects/create': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+    'metaobjects/update': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+    'metaobjects/delete': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
   };
 
   const tagsToRevalidate = topicMap[topic];
