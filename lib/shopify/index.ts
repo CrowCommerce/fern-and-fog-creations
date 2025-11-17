@@ -972,10 +972,9 @@ const reshapeGalleryItems = (metaobjects: ShopifyMetaobject[]): GalleryItem[] =>
 };
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  // TEMP: Disable cache for debugging
-  // 'use cache';
-  // cacheTag(TAGS.gallery);
-  // cacheLife('days');
+  'use cache';
+  cacheTag(TAGS.gallery);
+  cacheLife('days');
 
   const res = await shopifyFetch<ShopifyGalleryItemsOperation>({
     query: getGalleryItemsQuery,
@@ -994,10 +993,9 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
 }
 
 export async function getGalleryPageSettings(): Promise<GalleryPageSettings> {
-  // TEMP: Disable cache for debugging
-  // 'use cache';
-  // cacheTag(TAGS.gallery);
-  // cacheLife('days');
+  'use cache';
+  cacheTag(TAGS.gallery);
+  cacheLife('days');
 
   const res = await shopifyFetch<ShopifyGalleryPageSettingsOperation>({
     query: getGalleryPageSettingsQuery,
