@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import type { HomepageHero } from '@/types/homepage'
+import { HERO_BLUR_PLACEHOLDER } from '@/lib/image-utils'
 
 interface HeroSectionProps {
   hero: HomepageHero;
@@ -18,6 +19,8 @@ export default function HeroSection({ hero }: HeroSectionProps) {
           sizes="100vw"
           className="object-cover object-center"
           quality={90}
+          placeholder="blur"
+          blurDataURL={HERO_BLUR_PLACEHOLDER}
         />
       </div>
       <div aria-hidden="true" className="absolute inset-0 bg-gradient-to-b from-moss/70 via-moss/50 to-moss/70" />
