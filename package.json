@@ -14,7 +14,9 @@
     "fix:gallery:categories": "tsx scripts/fix-gallery-categories.ts",
     "setup:gallery:page": "tsx scripts/create-gallery-page-settings.ts",
     "setup:gallery:page:dry": "tsx scripts/create-gallery-page-settings.ts --dry-run",
-    "rollback:gallery": "tsx scripts/rollback-gallery.ts"
+    "rollback:gallery": "tsx scripts/rollback-gallery.ts",
+    "setup:metadata": "tsx scripts/setup-page-metadata.ts",
+    "setup:metadata:dry": "tsx scripts/setup-page-metadata.ts --dry-run"
   },
   "dependencies": {
     "@builder.io/react": "^8.2.9",

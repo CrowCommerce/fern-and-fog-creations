@@ -1,9 +1,24 @@
 import Link from 'next/link'
 import { Metadata } from 'next'
+import { getPageMetadata } from '@/lib/shopify'
 
-export const metadata: Metadata = {
-  title: 'About | Fern & Fog Creations',
-  description: 'Learn about Heather and the story behind Fern & Fog Creations—handmade coastal and woodland crafts.',
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = await getPageMetadata('about');
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.keywords,
+    robots: {
+      index: metadata.robotsIndex,
+      follow: metadata.robotsFollow,
+    },
+    openGraph: metadata.ogImageUrl
+      ? {
+          images: [{ url: metadata.ogImageUrl }],
+        }
+      : undefined,
+  };
 }
 
 export default function AboutPage() {

@@ -2,10 +2,13 @@ import Link from 'next/link';
 import type { Menu } from '@/lib/shopify/types';
 
 interface FooterProps {
-  menu: Menu[];
+  shopMenu: Menu[];
+  aboutMenu: Menu[];
+  policiesMenu: Menu[];
 }
 
-export default function Footer({ menu }: FooterProps) {
+export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProps) {
+  console.log(shopMenu, aboutMenu, policiesMenu)
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">
       <h2 id="footer-heading" className="sr-only">
@@ -33,11 +36,11 @@ export default function Footer({ menu }: FooterProps) {
               </p>
             </div>
 
-            {/* Footer Links */}
+            {/* Shop Links */}
             <div>
-              <h3 className="text-sm font-medium text-parchment font-display">Quick Links</h3>
+              <h3 className="text-sm font-medium text-parchment font-display">Shop</h3>
               <ul role="list" className="mt-4 space-y-3">
-                {menu.map((item) => (
+                {shopMenu.map((item) => (
                   <li key={item.title} className="text-sm">
                     <Link href={item.path} className="text-mist hover:text-gold transition-colors">
                       {item.title}
@@ -45,6 +48,34 @@ export default function Footer({ menu }: FooterProps) {
                   </li>
                 ))}
               </ul>
+            </div>
+
+            {/* About & Policies */}
+            <div className="grid grid-cols-2 gap-8 md:grid-cols-1 md:gap-0 md:space-y-12">
+              <div>
+                <h3 className="text-sm font-medium text-parchment font-display">About</h3>
+                <ul role="list" className="mt-4 space-y-3">
+                  {aboutMenu.map((item) => (
+                    <li key={item.title} className="text-sm">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <h3 className="text-sm font-medium text-parchment font-display">Policies</h3>
+                <ul role="list" className="mt-4 space-y-3">
+                  {policiesMenu.map((item) => (
+                    <li key={item.title} className="text-sm">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                        {item.title}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
             </div>
           </div>
         </div>

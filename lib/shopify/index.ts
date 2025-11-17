@@ -27,6 +27,7 @@ import {
 import { getGalleryItemsQuery, getGalleryPageSettingsQuery } from './queries/gallery';
 import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
+import { getPageMetadataQuery } from './queries/page-metadata';
 import { getPoliciesQuery } from './queries/policies';
 import {
   getProductQuery,
@@ -56,6 +57,7 @@ import {
   ShopifyMetaobject,
   ShopifyPageOperation,
   ShopifyPagesOperation,
+  ShopifyPageMetadataOperation,
   ShopifyPoliciesOperation,
   ShopifyProduct,
   ShopifyProductOperation,
@@ -66,6 +68,7 @@ import {
   ShopifyGalleryPageSettingsOperation
 } from './types';
 import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/gallery';
+import type { PageMetadata } from '@/types/metadata';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, 'https://')
@@ -434,6 +437,53 @@ export async function getPages(): Promise<Page[]> {
   });
 
   return removeEdgesAndNodes(res.body.data.pages);
+}
+
+export async function getPageMetadata(slug: string): Promise<PageMetadata> {
+  'use cache';
+  cacheTag(TAGS.metadata);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyPageMetadataOperation>({
+    query: getPageMetadataQuery,
+    variables: {
+      type: 'page_metadata',
+      first: 250 // Fetch all metadata entries
+    }
+  });
+
+  // Find the metadata entry for this specific page slug
+  const allMetadata = res.body.data?.metaobjects?.nodes || [];
+  const metaobject = allMetadata.find((node) => {
+    const slugField = node.fields.find((f) => f.key === 'page_slug');
+    return slugField?.value === slug;
+  });
+
+  // Fallback to defaults if not found
+  if (!metaobject) {
+    console.warn(`Page metadata not found for: ${slug}, using defaults`);
+    return {
+      title: 'Fern & Fog Creations',
+      description: 'Handmade coastal crafts with love',
+      robotsIndex: true,
+      robotsFollow: true,
+    };
+  }
+
+  // Helper to get field value by key
+  const getField = (key: string): string => {
+    const field = metaobject.fields.find((f) => f.key === key);
+    return field?.value || '';
+  };
+
+  return {
+    title: getField('title'),
+    description: getField('description'),
+    ogImageUrl: getField('og_image_url') || undefined,
+    keywords: getField('keywords') || undefined,
+    robotsIndex: getField('robots_index') !== 'false',
+    robotsFollow: getField('robots_follow') !== 'false',
+  };
 }
 
 export async function getPolicies(): Promise<Policies> {

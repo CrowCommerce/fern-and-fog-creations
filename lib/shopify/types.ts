@@ -244,6 +244,18 @@ export type ShopifyPagesOperation = {
   };
 };
 
+export type ShopifyPageMetadataOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    type: string;
+    first: number;
+  };
+};
+
 export type ShopifyProductOperation = {
   data: { product: ShopifyProduct };
   variables: {
