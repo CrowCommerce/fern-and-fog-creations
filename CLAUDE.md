@@ -42,26 +42,198 @@ Fern & Fog Creations uses **Shopify metaobjects as the single source of truth fo
 **Content managed via Shopify:**
 - Product catalog (Shopify Products API)
 - Navigation menus (Shopify Menu API)
-- Page SEO metadata (custom metaobjects: `page_metadata`)
-- Gallery items (custom metaobjects: `gallery_item`)
-- Custom page content (TBD: `contact_page`, `about_page`, `homepage_hero`, etc.)
+- Page SEO metadata (custom metaobjects: `page_metadata`) ✅
+- Gallery items (custom metaobjects: `gallery_item`) ✅
+- Homepage hero content (custom metaobjects: `homepage_hero`) ✅
+- About page content (custom metaobjects: `about_page`, `about_process_step`, `about_value`) ✅
+- Contact page content (custom metaobjects: `contact_page`) ✅
 
 **Key Benefits:**
 - Single platform for all content management
 - No external CMS dependencies
 - Unified admin experience in Shopify
-- Automatic cache invalidation via webhooks
+- Automatic cache invalidation via webhooks (instant updates)
 - Type-safe GraphQL queries
+- Business users can edit without code changes
 
-**Homepage Implementation:**
-The homepage currently uses hardcoded React components as an interim solution:
-- `components/HeroSection.tsx` - Hero banner
+**CMS Implementation Status:**
+
+✅ **Complete:**
+- Page metadata (SEO, OpenGraph) for all pages
+- Navigation menus (header + footer)
+- Gallery items with categories and filtering
+- Homepage hero section (heading, description, CTAs, background image)
+- About page (hero, story, process steps, values, CTA)
+- Contact page (heading, description, optional contact info)
+
+**Hardcoded Components (by design):**
 - `components/CategorySection.tsx` - Category grid
 - `components/FeaturedSectionOne.tsx` - Feature highlights
 - `components/FeaturedSectionTwo.tsx` - Secondary features
 - `components/CollectionSection.tsx` - Product showcase
 
-**Future:** These components will be converted to Shopify metaobjects (Task 3.1 in roadmap) to enable business owner editing via Shopify Admin.
+These remain hardcoded as they use product data and don't need business user editing.
+
+### Metaobject Architecture
+
+All CMS content is stored in Shopify metaobjects and accessed via GraphQL queries.
+
+**Metaobject Types:**
+
+| Type | Purpose | Fields | Count |
+|------|---------|--------|-------|
+| `page_metadata` | SEO metadata for all pages | page_id, seo_title, seo_description, keywords, robots_index, robots_follow, og_image_url | 5 (homepage, about, contact, gallery, products) |
+| `homepage_hero` | Homepage hero section | heading, description, background_image_url, cta_primary_text, cta_primary_url, cta_secondary_text, cta_secondary_url | 1 |
+| `about_page` | About page main content | hero_heading, hero_intro, story_heading, story_content, quote_text, process_heading, values_heading, cta_heading, etc. | 1 |
+| `about_process_step` | About page process steps | title, description, icon_type, sort_order | 3 (Gathered, Crafted, Treasured) |
+| `about_value` | About page values | title, description, sort_order | 4 |
+| `contact_page` | Contact page content | heading, description, email_display, phone_display, business_hours, response_time | 1 |
+| `gallery_item` | Gallery portfolio items | title, description, image_url, category, is_sold, featured, sort_order, created_at_date, materials | Variable |
+
+**Data Fetching Pattern:**
+
+```typescript
+// 1. GraphQL Query (lib/shopify/queries/[type].ts)
+export const getHomepageHeroQuery = /* GraphQL */ `
+  query getHomepageHero {
+    metaobjects(type: "homepage_hero", first: 1) {
+      nodes {
+        id
+        handle
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
+`;
+
+// 2. Data Fetching Function (lib/shopify/index.ts)
+export async function getHomepageHero(): Promise<HomepageHero> {
+  'use cache';
+  cacheTag(TAGS.homepage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyHomepageHeroOperation>({
+    query: getHomepageHeroQuery,
+  });
+
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  if (!metaobject) {
+    // Graceful fallback if metaobject doesn't exist
+    return {
+      heading: 'Handmade Coastal & Woodland Treasures',
+      description: 'Default description...',
+      // ... other defaults
+    };
+  }
+
+  // Extract fields using utility functions
+  return {
+    heading: extractField(metaobject, 'heading'),
+    description: extractField(metaobject, 'description'),
+    backgroundImageUrl: extractField(metaobject, 'background_image_url'),
+    ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
+    ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
+    ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
+    ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+  };
+}
+
+// 3. Usage in Page Component (app/page.tsx)
+export default async function Home() {
+  const hero = await getHomepageHero(); // Cached for days
+
+  return (
+    <div className="bg-parchment">
+      <HeroSection hero={hero} />
+      {/* Other sections */}
+    </div>
+  );
+}
+```
+
+**Field Extraction Utilities (`lib/shopify/utils.ts`):**
+
+```typescript
+// Extract required string field
+export function extractField(metaobject: ShopifyMetaobject, key: string): string {
+  const field = metaobject.fields.find((f) => f.key === key);
+  return field?.value || '';
+}
+
+// Extract optional string field
+export function extractOptionalField(metaobject: ShopifyMetaobject, key: string): string | undefined {
+  const value = extractField(metaobject, key);
+  return value || undefined;
+}
+
+// Extract number field with default
+export function extractNumberField(metaobject: ShopifyMetaobject, key: string, defaultValue: number = 0): number {
+  const value = extractField(metaobject, key);
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
+// Extract boolean field
+export function extractBooleanField(metaobject: ShopifyMetaobject, key: string, defaultValue: boolean = false): boolean {
+  const value = extractField(metaobject, key);
+  if (!value) return defaultValue;
+  return value === 'true' || value === '1';
+}
+```
+
+**Cache Strategy:**
+
+All metaobject queries use Next.js 16's native caching:
+
+```typescript
+'use cache';                    // Enable caching
+cacheTag(TAGS.homepage);        // Tag for targeted revalidation
+cacheLife('days');              // Cache for 1 day
+```
+
+**Automatic Cache Revalidation:**
+
+Shopify webhooks automatically revalidate caches when content changes:
+
+```typescript
+// app/api/revalidate/route.ts
+const topicMap: Record<string, string[]> = {
+  'metaobjects/create': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+  'metaobjects/update': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+  'metaobjects/delete': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+};
+
+// When business user updates content in Shopify:
+// 1. Shopify sends webhook to /api/revalidate
+// 2. Webhook handler calls revalidateTag() for affected tags
+// 3. Next.js invalidates cache
+// 4. Next request fetches fresh data
+// Result: Changes appear within seconds
+```
+
+**Migration Scripts:**
+
+Each metaobject type has a corresponding migration script to create the Shopify metaobject definition and default entries:
+
+- `scripts/setup-contact-page.ts` - Creates contact_page definition + default entry
+- `scripts/setup-about-page.ts` - Creates about_page, about_process_step, about_value definitions + defaults
+- `scripts/setup-homepage.ts` - Creates homepage_hero definition + default entry
+
+**Run migrations:**
+```bash
+pnpm setup:contact       # Create contact page metaobject
+pnpm setup:about         # Create about page metaobjects
+pnpm setup:homepage      # Create homepage hero metaobject
+
+# Dry-run mode (preview changes without creating):
+pnpm setup:contact:dry
+pnpm setup:about:dry
+pnpm setup:homepage:dry
+```
 
 ### Contact Form (Jotform Integration) ✅
 
