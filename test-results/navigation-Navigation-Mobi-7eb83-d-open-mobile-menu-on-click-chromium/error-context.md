@@ -245,31 +245,26 @@
         - paragraph [ref=e271]: © 2025 Fern & Fog Creations. All rights reserved.
         - paragraph [ref=e272]: Each piece tells a story • Gathered, crafted, treasured
   - button "Open Next.js Dev Tools" [ref=e278] [cursor=pointer]:
-    - generic [ref=e281]:
-      - text: Compiling
-      - generic [ref=e282]:
-        - generic [ref=e283]: .
-        - generic [ref=e284]: .
-        - generic [ref=e285]: .
-  - alert [ref=e286]
+    - img [ref=e279]
+  - alert [ref=e282]
   - generic:
     - generic:
       - generic:
         - dialog [active]:
-          - generic [ref=e289]:
-            - button "Close menu" [ref=e291] [cursor=pointer]:
-              - generic [ref=e293]: Close menu
-              - img [ref=e294]
-            - generic [ref=e296]:
-              - link "Home" [ref=e297] [cursor=pointer]:
+          - generic [ref=e285]:
+            - button "Close menu" [ref=e287] [cursor=pointer]:
+              - generic [ref=e289]: Close menu
+              - img [ref=e290]
+            - generic [ref=e292]:
+              - link "Home" [ref=e293] [cursor=pointer]:
                 - /url: /
-              - link "Shop" [ref=e298] [cursor=pointer]:
+              - link "Shop" [ref=e294] [cursor=pointer]:
                 - /url: /products
-              - link "Gallery" [ref=e299] [cursor=pointer]:
+              - link "Gallery" [ref=e295] [cursor=pointer]:
                 - /url: /gallery
-              - link "About" [ref=e300] [cursor=pointer]:
+              - link "About" [ref=e296] [cursor=pointer]:
                 - /url: /about
-              - link "Contact" [ref=e301] [cursor=pointer]:
+              - link "Contact" [ref=e297] [cursor=pointer]:
                 - /url: /contact
-            - paragraph [ref=e303]: Handmade with care on the coast
+            - paragraph [ref=e299]: Handmade with care on the coast
 ```

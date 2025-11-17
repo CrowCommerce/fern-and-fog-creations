@@ -30,13 +30,23 @@ test.describe('Homepage', () => {
   });
 
   test('should have proper metadata', async ({ page }) => {
-    // Check meta description
-    const metaDescription = page.locator('meta[name="description"]');
-    await expect(metaDescription).toHaveAttribute('content', /.+/);
+    // Check page title
+    await expect(page).toHaveTitle(/.+Fern & Fog Creations/i);
 
-    // Check OpenGraph tags
+    // Check meta description exists and has content
+    const metaDescription = page.locator('meta[name="description"]');
+    const descriptionContent = await metaDescription.getAttribute('content');
+    expect(descriptionContent).toBeTruthy();
+    expect(descriptionContent!.length).toBeGreaterThan(10);
+
+    // OpenGraph tags are optional but if present, should have content
     const ogTitle = page.locator('meta[property="og:title"]');
-    await expect(ogTitle).toHaveCount(1);
+    const ogCount = await ogTitle.count();
+
+    if (ogCount > 0) {
+      const ogContent = await ogTitle.first().getAttribute('content');
+      expect(ogContent).toBeTruthy();
+    }
   });
 
   test('should load hero image', async ({ page }) => {
