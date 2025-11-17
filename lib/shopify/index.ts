@@ -28,6 +28,7 @@ import { getGalleryItemsQuery, getGalleryPageSettingsQuery } from './queries/gal
 import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
 import { getContactPageQuery } from './queries/contact';
+import { getAboutPageQuery, getAboutProcessStepsQuery, getAboutValuesQuery } from './queries/about';
 import { getPageMetadataQuery } from './queries/page-metadata';
 import { getPoliciesQuery } from './queries/policies';
 import {
@@ -52,6 +53,9 @@ import {
   ShopifyCollectionOperation,
   ShopifyCollectionProductsOperation,
   ShopifyCollectionsOperation,
+  ShopifyAboutPageOperation,
+  ShopifyAboutProcessStepsOperation,
+  ShopifyAboutValuesOperation,
   ShopifyContactPageOperation,
   ShopifyCreateCartOperation,
   ShopifyGalleryItemsOperation,
@@ -72,7 +76,8 @@ import {
 import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/gallery';
 import type { PageMetadata } from '@/types/metadata';
 import type { ContactPage } from '@/types/contact';
-import { extractField, extractOptionalField } from './utils';
+import type { AboutPage, AboutProcessStep, AboutValue } from '@/types/about';
+import { extractField, extractOptionalField, extractNumberField } from './utils';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, 'https://')
@@ -524,6 +529,108 @@ export async function getContactPage(): Promise<ContactPage> {
     businessHours: extractOptionalField(metaobject, 'business_hours'),
     responseTime: extractOptionalField(metaobject, 'response_time'),
   };
+}
+
+export async function getAboutPage(): Promise<AboutPage> {
+  'use cache';
+  cacheTag(TAGS.aboutPage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyAboutPageOperation>({
+    query: getAboutPageQuery,
+  });
+
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  // Fallback to defaults if not found
+  if (!metaobject) {
+    console.warn('About page metaobject not found, using defaults');
+    return {
+      heroHeading: 'About Fern & Fog',
+      heroIntro: 'Where coastal treasures meet woodland wonders',
+      storyHeading: 'The Story',
+      storyContent: 'Fern & Fog Creations was born from countless walks along the Oregon coast...',
+      processHeading: 'The Making Process',
+      valuesHeading: 'What I Believe',
+      ctaHeading: 'Ready to Find Your Treasure?',
+      ctaDescription: 'Explore the collection or get in touch about a custom piece',
+      ctaPrimaryText: 'Browse Shop',
+      ctaPrimaryUrl: '/products',
+      ctaSecondaryText: 'Commission a Custom Piece',
+      ctaSecondaryUrl: '/contact',
+    };
+  }
+
+  return {
+    heroHeading: extractField(metaobject, 'hero_heading'),
+    heroIntro: extractField(metaobject, 'hero_intro'),
+    storyHeading: extractField(metaobject, 'story_heading'),
+    storyContent: extractField(metaobject, 'story_content'),
+    quoteText: extractOptionalField(metaobject, 'quote_text'),
+    quoteAttribution: extractOptionalField(metaobject, 'quote_attribution'),
+    quoteImageUrl: extractOptionalField(metaobject, 'quote_image_url'),
+    processHeading: extractField(metaobject, 'process_heading'),
+    valuesHeading: extractField(metaobject, 'values_heading'),
+    ctaHeading: extractField(metaobject, 'cta_heading'),
+    ctaDescription: extractField(metaobject, 'cta_description'),
+    ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
+    ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
+    ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
+    ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+  };
+}
+
+export async function getAboutProcessSteps(): Promise<AboutProcessStep[]> {
+  'use cache';
+  cacheTag(TAGS.aboutPage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyAboutProcessStepsOperation>({
+    query: getAboutProcessStepsQuery,
+    variables: { first: 10 },
+  });
+
+  const nodes = res.body.data?.metaobjects?.nodes || [];
+
+  if (nodes.length === 0) {
+    console.warn('About process steps not found, using defaults');
+    return [];
+  }
+
+  return nodes
+    .map((node) => ({
+      title: extractField(node, 'title'),
+      description: extractField(node, 'description'),
+      iconType: extractField(node, 'icon_type') as 'gathered' | 'crafted' | 'treasured',
+      sortOrder: extractNumberField(node, 'sort_order'),
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
+}
+
+export async function getAboutValues(): Promise<AboutValue[]> {
+  'use cache';
+  cacheTag(TAGS.aboutPage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyAboutValuesOperation>({
+    query: getAboutValuesQuery,
+    variables: { first: 10 },
+  });
+
+  const nodes = res.body.data?.metaobjects?.nodes || [];
+
+  if (nodes.length === 0) {
+    console.warn('About values not found, using defaults');
+    return [];
+  }
+
+  return nodes
+    .map((node) => ({
+      title: extractField(node, 'title'),
+      description: extractField(node, 'description'),
+      sortOrder: extractNumberField(node, 'sort_order'),
+    }))
+    .sort((a, b) => a.sortOrder - b.sortOrder);
 }
 
 export async function getPolicies(): Promise<Policies> {

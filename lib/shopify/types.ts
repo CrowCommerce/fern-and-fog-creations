@@ -264,6 +264,36 @@ export type ShopifyContactPageOperation = {
   };
 };
 
+export type ShopifyAboutPageOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};
+
+export type ShopifyAboutProcessStepsOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
+export type ShopifyAboutValuesOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
 export type ShopifyProductOperation = {
   data: { product: ShopifyProduct };
   variables: {

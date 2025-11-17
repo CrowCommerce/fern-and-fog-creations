@@ -27,7 +27,8 @@ export const TAGS = {
   gallery: 'gallery',
   menus: 'menus',
   metadata: 'metadata',
-  contactPage: 'contact-page'
+  contactPage: 'contact-page',
+  aboutPage: 'about-page'
 };
 
 export const HIDDEN_PRODUCT_TAG = 'nextjs-frontend-hidden';
