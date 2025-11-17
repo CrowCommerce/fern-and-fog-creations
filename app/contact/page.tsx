@@ -1,5 +1,5 @@
 import { Metadata } from 'next'
-import { getPageMetadata } from '@/lib/shopify'
+import { getPageMetadata, getContactPage } from '@/lib/shopify'
 import ContactForm from './ContactForm'
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -21,7 +21,9 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function ContactPage() {
-  return <ContactForm />
+export default async function ContactPage() {
+  const content = await getContactPage();
+
+  return <ContactForm content={content} />
 }
 

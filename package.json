@@ -16,7 +16,9 @@
     "setup:gallery:page:dry": "tsx scripts/create-gallery-page-settings.ts --dry-run",
     "rollback:gallery": "tsx scripts/rollback-gallery.ts",
     "setup:metadata": "tsx scripts/setup-page-metadata.ts",
-    "setup:metadata:dry": "tsx scripts/setup-page-metadata.ts --dry-run"
+    "setup:metadata:dry": "tsx scripts/setup-page-metadata.ts --dry-run",
+    "setup:contact": "tsx scripts/setup-contact-page.ts",
+    "setup:contact:dry": "tsx scripts/setup-contact-page.ts --dry-run"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",

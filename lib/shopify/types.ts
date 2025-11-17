@@ -256,6 +256,14 @@ export type ShopifyPageMetadataOperation = {
   };
 };
 
+export type ShopifyContactPageOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};
+
 export type ShopifyProductOperation = {
   data: { product: ShopifyProduct };
   variables: {

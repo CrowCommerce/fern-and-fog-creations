@@ -27,6 +27,7 @@ import {
 import { getGalleryItemsQuery, getGalleryPageSettingsQuery } from './queries/gallery';
 import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
+import { getContactPageQuery } from './queries/contact';
 import { getPageMetadataQuery } from './queries/page-metadata';
 import { getPoliciesQuery } from './queries/policies';
 import {
@@ -51,6 +52,7 @@ import {
   ShopifyCollectionOperation,
   ShopifyCollectionProductsOperation,
   ShopifyCollectionsOperation,
+  ShopifyContactPageOperation,
   ShopifyCreateCartOperation,
   ShopifyGalleryItemsOperation,
   ShopifyMenuOperation,
@@ -69,6 +71,8 @@ import {
 } from './types';
 import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/gallery';
 import type { PageMetadata } from '@/types/metadata';
+import type { ContactPage } from '@/types/contact';
+import { extractField, extractOptionalField } from './utils';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
   ? ensureStartsWith(process.env.SHOPIFY_STORE_DOMAIN, 'https://')
@@ -488,6 +492,37 @@ export async function getPageMetadata(slug: string): Promise<PageMetadata> {
     keywords: getField('keywords') || undefined,
     robotsIndex: getField('robots_index') !== 'false',
     robotsFollow: getField('robots_follow') !== 'false',
+  };
+}
+
+export async function getContactPage(): Promise<ContactPage> {
+  'use cache';
+  cacheTag(TAGS.contactPage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyContactPageOperation>({
+    query: getContactPageQuery,
+  });
+
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  // Fallback to defaults if not found
+  if (!metaobject) {
+    console.warn('Contact page metaobject not found, using defaults');
+    return {
+      heading: 'Get in Touch',
+      description: "I'd love to hear from you. Whether you have a question about a piece, want to commission something custom, or just want to say hello.",
+      responseTime: 'I typically respond within 1-2 business days. Thank you for your patience!',
+    };
+  }
+
+  return {
+    heading: extractField(metaobject, 'heading'),
+    description: extractField(metaobject, 'description'),
+    emailDisplay: extractOptionalField(metaobject, 'email_display'),
+    phoneDisplay: extractOptionalField(metaobject, 'phone_display'),
+    businessHours: extractOptionalField(metaobject, 'business_hours'),
+    responseTime: extractOptionalField(metaobject, 'response_time'),
   };
 }
 
