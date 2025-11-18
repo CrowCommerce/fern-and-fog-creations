@@ -69,9 +69,9 @@ test.describe('Accessibility', () => {
       // Check that something is focused
       const focusedElement = page.locator(':focus');
 
-      if (await focusedElement.count() > 0) {
-        await expect(focusedElement).toBeVisible();
-      }
+      // At least one element should be focused after tabbing
+      await expect(focusedElement).toHaveCount(1);
+      await expect(focusedElement).toBeVisible();
     });
   }
 });

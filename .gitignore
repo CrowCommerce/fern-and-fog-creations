@@ -14,8 +14,6 @@
 /coverage
 .playwright-report/
 .playwright/
-.playwright-report/
-.playwright-report/
 
 # next.js
 /.next/
