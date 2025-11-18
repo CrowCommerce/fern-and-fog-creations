@@ -75,6 +75,7 @@ export default function ContactError({
 
           <Link
             href="/products"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern text-fern font-medium rounded-md hover:bg-fern/10 transition-colors"
           >
             Browse products
@@ -88,11 +89,11 @@ export default function ContactError({
             </h2>
             <p className="text-sm text-bark/70">
               You can also browse our{' '}
-              <Link href="/gallery" className="text-fern hover:text-moss underline">
+              <Link href="/gallery" prefetch={true} className="text-fern hover:text-moss underline">
                 gallery
               </Link>{' '}
               or visit our{' '}
-              <Link href="/about" className="text-fern hover:text-moss underline">
+              <Link href="/about" prefetch={true} className="text-fern hover:text-moss underline">
                 about page
               </Link>{' '}
               to learn more about our work.

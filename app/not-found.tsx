@@ -40,6 +40,7 @@ export default function NotFound() {
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <Link
             href="/"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern bg-fern text-parchment font-medium rounded-md hover:bg-moss hover:border-moss transition-colors"
           >
             <svg
@@ -56,6 +57,7 @@ export default function NotFound() {
 
           <Link
             href="/products"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern text-fern font-medium rounded-md hover:bg-fern/10 transition-colors"
           >
             Browse products
@@ -65,16 +67,16 @@ export default function NotFound() {
         <div className="mt-12 pt-8 border-t border-mist">
           <p className="text-sm text-bark/60 mb-4">Popular pages:</p>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <Link href="/products" className="text-fern hover:text-moss underline">
+            <Link href="/products" prefetch={true} className="text-fern hover:text-moss underline">
               All Products
             </Link>
-            <Link href="/gallery" className="text-fern hover:text-moss underline">
+            <Link href="/gallery" prefetch={true} className="text-fern hover:text-moss underline">
               Gallery
             </Link>
-            <Link href="/about" className="text-fern hover:text-moss underline">
+            <Link href="/about" prefetch={true} className="text-fern hover:text-moss underline">
               About Us
             </Link>
-            <Link href="/contact" className="text-fern hover:text-moss underline">
+            <Link href="/contact" prefetch={true} className="text-fern hover:text-moss underline">
               Contact
             </Link>
           </div>

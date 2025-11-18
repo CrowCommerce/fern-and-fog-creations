@@ -23,6 +23,7 @@ export default function FeaturedSectionTwo() {
               <Link
                 href={`/product/${product.slug}`}
                 className="group block"
+                prefetch={true}
               >
                 <div className="aspect-square overflow-hidden rounded-lg">
                   <img
@@ -53,6 +54,7 @@ export default function FeaturedSectionTwo() {
           <Link
             href="/products"
             className="inline-flex items-center px-6 py-3 rounded-md bg-fern text-parchment font-medium hover:bg-moss transition-colors"
+            prefetch={true}
           >
             View All Products
             <span aria-hidden="true" className="ml-2">&rarr;</span>

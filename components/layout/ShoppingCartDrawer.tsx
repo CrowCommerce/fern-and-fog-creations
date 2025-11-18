@@ -116,6 +116,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                         <div className="mt-6">
                           <Link
                             href="/products"
+                            prefetch={true}
                             onClick={() => setOpen(false)}
                             className="inline-flex items-center px-4 py-2 text-sm font-medium text-parchment bg-fern hover:bg-moss transition-colors rounded-md"
                           >
@@ -139,6 +140,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                       src={image.url}
                                       width={image.width || 96}
                                       height={image.height || 96}
+                                      sizes="96px"
                                       className="size-full object-cover"
                                     />
                                   ) : (
@@ -152,6 +154,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                                       <h3>
                                         <Link
                                           href={`/products/${item.merchandise.product.handle}`}
+                                          prefetch={true}
                                           onClick={() => setOpen(false)}
                                           className="hover:text-fern transition-colors"
                                         >
@@ -220,6 +223,7 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
                     <div className="mt-6">
                       <Link
                         href="/cart"
+                        prefetch={true}
                         onClick={() => setOpen(false)}
                         className="flex items-center justify-center rounded-md border-2 border-fern bg-fern px-6 py-3 text-base font-medium text-parchment hover:bg-moss hover:border-moss transition-colors"
                       >

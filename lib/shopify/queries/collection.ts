@@ -1,4 +1,4 @@
-import productFragment from '../fragments/product';
+import productSummaryFragment from '../fragments/product-summary';
 import collectionFragment from '../fragments/collection';
 
 export const getCollectionQuery = /* GraphQL */ `
@@ -23,6 +23,7 @@ export const getCollectionsQuery = /* GraphQL */ `
   ${collectionFragment}
 `;
 
+// Collection products - use lightweight fragment for better performance
 export const getCollectionProductsQuery = /* GraphQL */ `
   query getCollectionProducts(
     $handle: String!
@@ -33,11 +34,11 @@ export const getCollectionProductsQuery = /* GraphQL */ `
       products(sortKey: $sortKey, reverse: $reverse, first: 100) {
         edges {
           node {
-            ...product
+            ...productSummary
           }
         }
       }
     }
   }
-  ${productFragment}
+  ${productSummaryFragment}
 `;

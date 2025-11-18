@@ -69,6 +69,7 @@ function CartContent() {
           </p>
           <Link
             href="/products"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors"
           >
             Browse Shop
@@ -103,6 +104,7 @@ function CartContent() {
                           alt={item.merchandise.title}
                           width={image.width || 128}
                           height={image.height || 128}
+                          sizes="128px"
                           className="size-full object-cover"
                         />
                       ) : (
@@ -116,6 +118,7 @@ function CartContent() {
                           <h3 className="text-lg font-medium text-bark">
                             <Link
                               href={`/products/${item.merchandise.product.handle}`}
+                              prefetch={true}
                               className="hover:text-fern transition-colors"
                             >
                               {item.merchandise.product.title}
@@ -209,6 +212,7 @@ function CartContent() {
                 </button>
                 <Link
                   href="/products"
+                  prefetch={true}
                   className="block w-full text-center px-6 py-3 bg-transparent text-fern font-medium rounded-md ring-1 ring-fern hover:bg-fern/10 transition-colors"
                 >
                   Continue Shopping

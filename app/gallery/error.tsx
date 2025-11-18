@@ -75,6 +75,7 @@ export default function GalleryError({
 
           <Link
             href="/products"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern text-fern font-medium rounded-md hover:bg-fern/10 transition-colors"
           >
             Browse products
@@ -84,11 +85,11 @@ export default function GalleryError({
         <div className="mt-12 pt-8 border-t border-mist">
           <p className="text-sm text-bark/60">
             Browse our{' '}
-            <Link href="/products" className="text-fern hover:text-moss underline">
+            <Link href="/products" prefetch={true} className="text-fern hover:text-moss underline">
               available products
             </Link>{' '}
             or{' '}
-            <Link href="/" className="text-fern hover:text-moss underline">
+            <Link href="/" prefetch={true} className="text-fern hover:text-moss underline">
               return home
             </Link>.
           </p>

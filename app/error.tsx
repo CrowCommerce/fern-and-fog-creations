@@ -75,6 +75,7 @@ export default function Error({
 
           <Link
             href="/"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern text-fern font-medium rounded-md hover:bg-fern/10 transition-colors"
           >
             Return home
@@ -84,7 +85,7 @@ export default function Error({
         <div className="mt-12 pt-8 border-t border-mist">
           <p className="text-sm text-bark/60">
             If this problem persists, please{' '}
-            <Link href="/contact" className="text-fern hover:text-moss underline">
+            <Link href="/contact" prefetch={true} className="text-fern hover:text-moss underline">
               contact us
             </Link>{' '}
             and include the error ID above.

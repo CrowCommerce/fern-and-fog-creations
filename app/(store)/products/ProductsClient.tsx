@@ -149,6 +149,7 @@ export default function ProductsClient({
               <Link
                 key={product.id}
                 href={`/product/${product.slug}`}
+                prefetch={true}
                 className="group relative"
               >
                 {/* Product Image */}

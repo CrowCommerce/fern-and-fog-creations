@@ -77,24 +77,31 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
 }
 
 // Get related products by filtering by category
-async function getRelatedProducts(product: Product, limit: number = 4): Promise<Product[]> {
-  const allProducts = await getProducts()
-
+function filterRelatedProducts(
+  allProducts: Product[],
+  currentProduct: Product,
+  limit: number = 4
+): Product[] {
   return allProducts
-    .filter(p => p.id !== product.id && p.category === product.category && p.forSale)
-    .slice(0, limit)
+    .filter(p => p.id !== currentProduct.id && p.category === currentProduct.category && p.forSale)
+    .slice(0, limit);
 }
 
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { handle } = await params
-  const product = await getProduct(handle)
+
+  // Fetch product and all products in parallel for better performance
+  const [product, allProducts] = await Promise.all([
+    getProduct(handle),
+    getProducts(),
+  ]);
 
   if (!product) {
     notFound()
   }
 
-  // Fetch related products
-  const relatedProducts = await getRelatedProducts(product, 4)
+  // Filter related products from the already-fetched list
+  const relatedProducts = filterRelatedProducts(allProducts, product, 4)
 
   // Generate JSON-LD structured data for SEO
   const productName = isShopifyProduct(product) && product.seo?.title

@@ -36,6 +36,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
           <Link
             href={hero.ctaPrimaryUrl}
             className="inline-block rounded-md border-2 border-parchment bg-transparent px-8 py-3 text-base font-medium text-parchment hover:bg-parchment/10 transition-colors"
+            prefetch={true}
           >
             {hero.ctaPrimaryText}
           </Link>
@@ -43,6 +44,7 @@ export default function HeroSection({ hero }: HeroSectionProps) {
             <Link
               href={hero.ctaSecondaryUrl}
               className="inline-block rounded-md border-2 border-gold bg-gold px-8 py-3 text-base font-medium text-moss hover:bg-gold/90 transition-colors"
+              prefetch={true}
             >
               {hero.ctaSecondaryText}
             </Link>

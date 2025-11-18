@@ -264,7 +264,10 @@ export async function shopifyFetch<T>({
   throw error;
 }
 
-const removeEdgesAndNodes = <T>(array: Connection<T>): T[] => {
+const removeEdgesAndNodes = <T>(array: Connection<T> | undefined): T[] => {
+  if (!array || !array.edges) {
+    return [];
+  }
   return array.edges.map((edge) => edge?.node);
 };
 

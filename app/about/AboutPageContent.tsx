@@ -144,6 +144,7 @@ export default function AboutPageContent({ content, processSteps, values }: Abou
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link
               href={content.ctaPrimaryUrl}
+              prefetch={true}
               className="inline-flex items-center px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors"
             >
               {content.ctaPrimaryText}
@@ -151,6 +152,7 @@ export default function AboutPageContent({ content, processSteps, values }: Abou
             {content.ctaSecondaryText && content.ctaSecondaryUrl && (
               <Link
                 href={content.ctaSecondaryUrl}
+                prefetch={true}
                 className="inline-flex items-center px-8 py-3 bg-transparent text-fern font-medium rounded-md ring-2 ring-fern hover:bg-fern/10 transition-colors"
               >
                 {content.ctaSecondaryText}

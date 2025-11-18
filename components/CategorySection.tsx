@@ -21,6 +21,7 @@ export default function CategorySection() {
               <Link
                 href={`/products/${category.slug}`}
                 className="group relative block"
+                prefetch={true}
               >
                 <div className="aspect-square overflow-hidden">
                   <img
@@ -53,6 +54,7 @@ export default function CategorySection() {
           <Link
             href="/categories"
             className="inline-flex items-center text-fern hover:text-moss font-medium transition-colors"
+            prefetch={true}
           >
             View all categories
             <span aria-hidden="true" className="ml-2">&rarr;</span>

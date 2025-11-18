@@ -42,7 +42,7 @@ export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProp
               <ul role="list" className="mt-4 space-y-3">
                 {shopMenu.map((item) => (
                   <li key={item.title} className="text-sm">
-                    <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                    <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
                       {item.title}
                     </Link>
                   </li>
@@ -57,7 +57,7 @@ export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProp
                 <ul role="list" className="mt-4 space-y-3">
                   {aboutMenu.map((item) => (
                     <li key={item.title} className="text-sm">
-                      <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
                         {item.title}
                       </Link>
                     </li>
@@ -69,7 +69,7 @@ export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProp
                 <ul role="list" className="mt-4 space-y-3">
                   {policiesMenu.map((item) => (
                     <li key={item.title} className="text-sm">
-                      <Link href={item.path} className="text-mist hover:text-gold transition-colors">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
                         {item.title}
                       </Link>
                     </li>

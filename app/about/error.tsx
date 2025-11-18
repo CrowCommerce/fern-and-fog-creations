@@ -75,6 +75,7 @@ export default function AboutError({
 
           <Link
             href="/products"
+            prefetch={true}
             className="inline-flex items-center px-6 py-3 border-2 border-fern text-fern font-medium rounded-md hover:bg-fern/10 transition-colors"
           >
             Browse products
@@ -84,13 +85,13 @@ export default function AboutError({
         <div className="mt-12 pt-8 border-t border-mist">
           <p className="text-sm text-bark/60">
             Visit our{' '}
-            <Link href="/gallery" className="text-fern hover:text-moss underline">
+            <Link href="/gallery" prefetch={true} className="text-fern hover:text-moss underline">
               gallery
             </Link>,{' '}
-            <Link href="/products" className="text-fern hover:text-moss underline">
+            <Link href="/products" prefetch={true} className="text-fern hover:text-moss underline">
               shop products
             </Link>, or{' '}
-            <Link href="/contact" className="text-fern hover:text-moss underline">
+            <Link href="/contact" prefetch={true} className="text-fern hover:text-moss underline">
               get in touch
             </Link>.
           </p>
