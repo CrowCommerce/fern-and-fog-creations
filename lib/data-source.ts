@@ -138,8 +138,12 @@ function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
   // Default to 'earrings' if no mapping found
   const category = mapShopifyCategory(shopifyProduct) || 'earrings';
 
-  // Extract images
-  const images = shopifyProduct.images.map(img => img.url);
+  // Extract images - fallback to featuredImage if images array missing
+  const images = shopifyProduct.images && shopifyProduct.images.length > 0
+    ? shopifyProduct.images.map(img => img.url)
+    : shopifyProduct.featuredImage
+      ? [shopifyProduct.featuredImage.url]
+      : [];
 
   // Extract materials from tags (convention: tags like "material:Silver" or "material:Sea glass")
   const materials = extractMaterialsFromTags(shopifyProduct.tags);

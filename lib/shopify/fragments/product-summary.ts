@@ -27,6 +27,13 @@ const productSummaryFragment = /* GraphQL */ `
     featuredImage {
       ...image
     }
+    images(first: 5) {
+      edges {
+        node {
+          ...image
+        }
+      }
+    }
     tags
     updatedAt
   }

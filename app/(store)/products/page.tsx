@@ -1,5 +1,6 @@
 import { Suspense } from 'react';
-import { getProducts, getDataSourceMode } from '@/lib/data-source';
+import { getProducts, getDataSourceMode, isShopifyEnabled } from '@/lib/data-source';
+import { getCollections } from '@/lib/shopify';
 import ProductsClient from './ProductsClient';
 
 async function ProductsData() {
@@ -8,7 +9,19 @@ async function ProductsData() {
   const availableProducts = allProducts.filter((p) => p.forSale);
   const dataMode = getDataSourceMode();
 
-  return <ProductsClient products={availableProducts} dataMode={dataMode} />;
+  // Fetch collections from Shopify for category filter
+  let collections: any[] = [];
+  if (isShopifyEnabled()) {
+    collections = await getCollections();
+  }
+
+  return (
+    <ProductsClient
+      products={availableProducts}
+      collections={collections}
+      dataMode={dataMode}
+    />
+  );
 }
 
 export default function ProductsPage() {

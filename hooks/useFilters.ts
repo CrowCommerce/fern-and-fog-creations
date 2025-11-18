@@ -8,13 +8,15 @@
 import { useMemo } from 'react';
 import type { Product } from '@/data/products';
 import type { ActiveFilters, FilterFacet, SortOption } from '@/types/filter';
+import type { Collection } from '@/lib/shopify/types';
 
 interface UseFiltersProps {
   products: Product[];
+  collections?: Collection[];
   initialFilters?: ActiveFilters;
 }
 
-export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
+export function useFilters({ products, collections = [], initialFilters = {} }: UseFiltersProps) {
   // Apply filters to products
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -77,17 +79,25 @@ export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
       });
     });
 
+    // Generate category options from Shopify collections
+    const categoryOptions = collections
+      .filter((c) => c.handle) // Exclude "All" collection (empty handle)
+      .map((collection) => ({
+        value: collection.handle,
+        label: collection.title,
+        count: products.filter((p) =>
+          p.category.toLowerCase() === collection.handle.toLowerCase() ||
+          p.category.toLowerCase().replace(/\s+/g, '-') === collection.handle
+        ).length,
+      }))
+      .filter((opt) => opt.count > 0); // Only show collections with products
+
     return [
       {
         id: 'category',
         name: 'Category',
         type: 'checkbox',
-        options: [
-          { value: 'earrings', label: 'Earrings', count: products.filter((p) => p.category === 'earrings').length },
-          { value: 'resin', label: 'Resin Art', count: products.filter((p) => p.category === 'resin').length },
-          { value: 'driftwood', label: 'Driftwood', count: products.filter((p) => p.category === 'driftwood').length },
-          { value: 'wall-hangings', label: 'Wall Hangings', count: products.filter((p) => p.category === 'wall-hangings').length },
-        ],
+        options: categoryOptions,
       },
       {
         id: 'priceRange',
@@ -115,7 +125,7 @@ export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
           .filter((opt) => opt.count > 0),
       },
     ];
-  }, [products]);
+  }, [products, collections]);
 
   return {
     filteredProducts,
