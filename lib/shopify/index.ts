@@ -11,6 +11,7 @@ import {
   isRetryableError,
   type ShopifyAPIError,
 } from '@/lib/type-guards';
+import { handleShopifyError } from './error-handler';
 import { ensureStartsWith } from '@/lib/utils';
 import {
   revalidateTag,
@@ -522,42 +523,48 @@ export async function getMenu(handle: string): Promise<Menu[]> {
   cacheTag(TAGS.menus);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyMenuOperation>({
-    query: getMenuQuery,
-    variables: {
-      handle
-    }
-  });
+  try {
+    const res = await shopifyFetch<ShopifyMenuOperation>({
+      query: getMenuQuery,
+      variables: {
+        handle
+      }
+    });
 
-  if (!res.body?.data?.menu) {
-    console.warn(`Menu not found for handle: ${handle}`);
+    if (!res.body?.data?.menu) {
+      console.warn(`Menu not found for handle: ${handle}`);
+      return [];
+    }
+
+    const items = res.body.data.menu.items || [];
+
+    return items.map((item: { title: string; url: string }) => {
+      try {
+        // Parse the URL to extract pathname
+        const url = new URL(item.url);
+        let path = url.pathname;
+
+        // Apply path transformations for Next.js routing
+        path = path.replace('/collections', '/search');
+        path = path.replace('/pages', '');
+
+        return {
+          title: item.title,
+          path
+        };
+      } catch (e) {
+        // If URL parsing fails (relative URL), use as-is
+        return {
+          title: item.title,
+          path: item.url
+        };
+      }
+    });
+  } catch (error) {
+    handleShopifyError(error, 'getMenu');
+    console.warn(`[getMenu] Returning empty menu for ${handle} due to error`);
     return [];
   }
-
-  const items = res.body.data.menu.items || [];
-
-  return items.map((item: { title: string; url: string }) => {
-    try {
-      // Parse the URL to extract pathname
-      const url = new URL(item.url);
-      let path = url.pathname;
-
-      // Apply path transformations for Next.js routing
-      path = path.replace('/collections', '/search');
-      path = path.replace('/pages', '');
-
-      return {
-        title: item.title,
-        path
-      };
-    } catch (e) {
-      // If URL parsing fails (relative URL), use as-is
-      return {
-        title: item.title,
-        path: item.url
-      };
-    }
-  });
 }
 
 export async function getPage(handle: string): Promise<Page> {
@@ -582,46 +589,55 @@ export async function getPageMetadata(slug: string): Promise<PageMetadata> {
   cacheTag(TAGS.metadata);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyPageMetadataOperation>({
-    query: getPageMetadataQuery,
-    variables: {
-      type: 'page_metadata',
-      first: 250 // Fetch all metadata entries
+  // Default fallback data
+  const fallback: PageMetadata = {
+    title: 'Fern & Fog Creations',
+    description: 'Handmade coastal crafts with love',
+    robotsIndex: true,
+    robotsFollow: true,
+  };
+
+  try {
+    const res = await shopifyFetch<ShopifyPageMetadataOperation>({
+      query: getPageMetadataQuery,
+      variables: {
+        type: 'page_metadata',
+        first: 250 // Fetch all metadata entries
+      }
+    });
+
+    // Find the metadata entry for this specific page slug
+    const allMetadata = res.body.data?.metaobjects?.nodes || [];
+    const metaobject = allMetadata.find((node) => {
+      const slugField = node.fields.find((f) => f.key === 'page_slug');
+      return slugField?.value === slug;
+    });
+
+    // Fallback to defaults if not found
+    if (!metaobject) {
+      console.warn(`Page metadata not found for: ${slug}, using defaults`);
+      return fallback;
     }
-  });
 
-  // Find the metadata entry for this specific page slug
-  const allMetadata = res.body.data?.metaobjects?.nodes || [];
-  const metaobject = allMetadata.find((node) => {
-    const slugField = node.fields.find((f) => f.key === 'page_slug');
-    return slugField?.value === slug;
-  });
-
-  // Fallback to defaults if not found
-  if (!metaobject) {
-    console.warn(`Page metadata not found for: ${slug}, using defaults`);
-    return {
-      title: 'Fern & Fog Creations',
-      description: 'Handmade coastal crafts with love',
-      robotsIndex: true,
-      robotsFollow: true,
+    // Helper to get field value by key
+    const getField = (key: string): string => {
+      const field = metaobject.fields.find((f) => f.key === key);
+      return field?.value || '';
     };
+
+    return {
+      title: getField('title'),
+      description: getField('description'),
+      ogImageUrl: getField('og_image_url') || undefined,
+      keywords: getField('keywords') || undefined,
+      robotsIndex: getField('robots_index') !== 'false',
+      robotsFollow: getField('robots_follow') !== 'false',
+    };
+  } catch (error) {
+    handleShopifyError(error, 'getPageMetadata');
+    console.warn(`[getPageMetadata] Returning fallback for ${slug} due to error`);
+    return fallback;
   }
-
-  // Helper to get field value by key
-  const getField = (key: string): string => {
-    const field = metaobject.fields.find((f) => f.key === key);
-    return field?.value || '';
-  };
-
-  return {
-    title: getField('title'),
-    description: getField('description'),
-    ogImageUrl: getField('og_image_url') || undefined,
-    keywords: getField('keywords') || undefined,
-    robotsIndex: getField('robots_index') !== 'false',
-    robotsFollow: getField('robots_follow') !== 'false',
-  };
 }
 
 export async function getContactPage(): Promise<ContactPage> {
@@ -629,30 +645,39 @@ export async function getContactPage(): Promise<ContactPage> {
   cacheTag(TAGS.contactPage);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyContactPageOperation>({
-    query: getContactPageQuery,
-  });
-
-  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
-
-  // Fallback to defaults if not found
-  if (!metaobject) {
-    console.warn('Contact page metaobject not found, using defaults');
-    return {
-      heading: 'Get in Touch',
-      description: "I'd love to hear from you. Whether you have a question about a piece, want to commission something custom, or just want to say hello.",
-      responseTime: 'I typically respond within 1-2 business days. Thank you for your patience!',
-    };
-  }
-
-  return {
-    heading: extractField(metaobject, 'heading'),
-    description: extractField(metaobject, 'description'),
-    emailDisplay: extractOptionalField(metaobject, 'email_display'),
-    phoneDisplay: extractOptionalField(metaobject, 'phone_display'),
-    businessHours: extractOptionalField(metaobject, 'business_hours'),
-    responseTime: extractOptionalField(metaobject, 'response_time'),
+  // Default fallback data
+  const fallback: ContactPage = {
+    heading: 'Get in Touch',
+    description: "I'd love to hear from you. Whether you have a question about a piece, want to commission something custom, or just want to say hello.",
+    responseTime: 'I typically respond within 1-2 business days. Thank you for your patience!',
   };
+
+  try {
+    const res = await shopifyFetch<ShopifyContactPageOperation>({
+      query: getContactPageQuery,
+    });
+
+    const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+    // Fallback to defaults if not found
+    if (!metaobject) {
+      console.warn('Contact page metaobject not found, using defaults');
+      return fallback;
+    }
+
+    return {
+      heading: extractField(metaobject, 'heading'),
+      description: extractField(metaobject, 'description'),
+      emailDisplay: extractOptionalField(metaobject, 'email_display'),
+      phoneDisplay: extractOptionalField(metaobject, 'phone_display'),
+      businessHours: extractOptionalField(metaobject, 'business_hours'),
+      responseTime: extractOptionalField(metaobject, 'response_time'),
+    };
+  } catch (error) {
+    handleShopifyError(error, 'getContactPage');
+    console.warn('[getContactPage] Returning fallback due to error');
+    return fallback;
+  }
 }
 
 export async function getAboutPage(): Promise<AboutPage> {
@@ -762,35 +787,44 @@ export async function getHomepageHero(): Promise<HomepageHero> {
   cacheTag(TAGS.homepage);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyHomepageHeroOperation>({
-    query: getHomepageHeroQuery,
-  });
-
-  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
-
-  // Fallback to defaults if not found
-  if (!metaobject) {
-    console.warn('Homepage hero metaobject not found, using defaults');
-    return {
-      heading: 'Handmade Coastal & Woodland Treasures',
-      description: 'Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches with materials gathered from the Pacific Northwest shores.',
-      backgroundImageUrl: '/stock-assets/hero/coastal-shells.jpg',
-      ctaPrimaryText: 'View Gallery',
-      ctaPrimaryUrl: '/gallery',
-      ctaSecondaryText: 'Shop New Arrivals',
-      ctaSecondaryUrl: '/products',
-    };
-  }
-
-  return {
-    heading: extractField(metaobject, 'heading'),
-    description: extractField(metaobject, 'description'),
-    backgroundImageUrl: extractField(metaobject, 'background_image_url'),
-    ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
-    ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
-    ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
-    ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+  // Default fallback data
+  const fallback: HomepageHero = {
+    heading: 'Handmade Coastal & Woodland Treasures',
+    description: 'Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches with materials gathered from the Pacific Northwest shores.',
+    backgroundImageUrl: '/stock-assets/hero/coastal-shells.jpg',
+    ctaPrimaryText: 'View Gallery',
+    ctaPrimaryUrl: '/gallery',
+    ctaSecondaryText: 'Shop New Arrivals',
+    ctaSecondaryUrl: '/products',
   };
+
+  try {
+    const res = await shopifyFetch<ShopifyHomepageHeroOperation>({
+      query: getHomepageHeroQuery,
+    });
+
+    const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+    // Fallback to defaults if not found
+    if (!metaobject) {
+      console.warn('Homepage hero metaobject not found, using defaults');
+      return fallback;
+    }
+
+    return {
+      heading: extractField(metaobject, 'heading'),
+      description: extractField(metaobject, 'description'),
+      backgroundImageUrl: extractField(metaobject, 'background_image_url'),
+      ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
+      ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
+      ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
+      ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+    };
+  } catch (error) {
+    handleShopifyError(error, 'getHomepageHero');
+    console.warn('[getHomepageHero] Returning fallback due to error');
+    return fallback;
+  }
 }
 
 export async function getPolicies(): Promise<Policies> {
@@ -976,20 +1010,26 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
   cacheTag(TAGS.gallery);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyGalleryItemsOperation>({
-    query: getGalleryItemsQuery,
-    variables: {
-      first: 100 // Fetch up to 100 gallery items
-    }
-  });
+  try {
+    const res = await shopifyFetch<ShopifyGalleryItemsOperation>({
+      query: getGalleryItemsQuery,
+      variables: {
+        first: 100 // Fetch up to 100 gallery items
+      }
+    });
 
-  // Add null safety to prevent crashes if Shopify returns unexpected data
-  if (!res.body.data?.metaobjects?.nodes) {
-    console.error('Gallery items query returned invalid data structure:', res.body);
+    // Add null safety to prevent crashes if Shopify returns unexpected data
+    if (!res.body.data?.metaobjects?.nodes) {
+      console.error('Gallery items query returned invalid data structure:', res.body);
+      return [];
+    }
+
+    return reshapeGalleryItems(res.body.data.metaobjects.nodes);
+  } catch (error) {
+    handleShopifyError(error, 'getGalleryItems');
+    console.warn('[getGalleryItems] Returning empty gallery due to error');
     return [];
   }
-
-  return reshapeGalleryItems(res.body.data.metaobjects.nodes);
 }
 
 export async function getGalleryPageSettings(): Promise<GalleryPageSettings> {
@@ -997,36 +1037,45 @@ export async function getGalleryPageSettings(): Promise<GalleryPageSettings> {
   cacheTag(TAGS.gallery);
   cacheLife('days');
 
-  const res = await shopifyFetch<ShopifyGalleryPageSettingsOperation>({
-    query: getGalleryPageSettingsQuery,
-  });
-
-  // Add null safety to prevent crashes if Shopify returns unexpected data
-  // Note: Query returns array of nodes, we take the first one (should only be one entry)
-  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
-
-  // Fallback to defaults if not configured
-  if (!metaobject) {
-    console.warn('Gallery page settings not found, using defaults');
-    return {
-      heading: 'Gallery of Past Work',
-      description:
-        'A collection of treasures that have found their homes. Each piece represents a moment in time, a story preserved in natural materials.',
-    };
-  }
-
-  // Helper to get field value by key
-  const getField = (key: string): string => {
-    const field = metaobject.fields.find((f) => f.key === key);
-    return field?.value || '';
-  };
-
-  return {
-    heading: getField('heading') || 'Gallery of Past Work',
+  // Default fallback data
+  const fallback: GalleryPageSettings = {
+    heading: 'Gallery of Past Work',
     description:
-      getField('description') ||
-      'A collection of treasures that have found their homes.',
+      'A collection of treasures that have found their homes. Each piece represents a moment in time, a story preserved in natural materials.',
   };
+
+  try {
+    const res = await shopifyFetch<ShopifyGalleryPageSettingsOperation>({
+      query: getGalleryPageSettingsQuery,
+    });
+
+    // Add null safety to prevent crashes if Shopify returns unexpected data
+    // Note: Query returns array of nodes, we take the first one (should only be one entry)
+    const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+    // Fallback to defaults if not configured
+    if (!metaobject) {
+      console.warn('Gallery page settings not found, using defaults');
+      return fallback;
+    }
+
+    // Helper to get field value by key
+    const getField = (key: string): string => {
+      const field = metaobject.fields.find((f) => f.key === key);
+      return field?.value || '';
+    };
+
+    return {
+      heading: getField('heading') || 'Gallery of Past Work',
+      description:
+        getField('description') ||
+        'A collection of treasures that have found their homes.',
+    };
+  } catch (error) {
+    handleShopifyError(error, 'getGalleryPageSettings');
+    console.warn('[getGalleryPageSettings] Returning fallback due to error');
+    return fallback;
+  }
 }
 
 // This is called from `app/api/revalidate.ts` so providers can control revalidation logic.

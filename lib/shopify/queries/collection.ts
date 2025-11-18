@@ -1,18 +1,5 @@
 import productFragment from '../fragments/product';
-import seoFragment from '../fragments/seo';
-
-const collectionFragment = /* GraphQL */ `
-  fragment collection on Collection {
-    handle
-    title
-    description
-    seo {
-      ...seo
-    }
-    updatedAt
-  }
-  ${seoFragment}
-`;
+import collectionFragment from '../fragments/collection';
 
 export const getCollectionQuery = /* GraphQL */ `
   query getCollection($handle: String!) {
