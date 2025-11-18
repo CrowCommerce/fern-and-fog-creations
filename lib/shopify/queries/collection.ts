@@ -1,18 +1,5 @@
-import productFragment from '../fragments/product';
-import seoFragment from '../fragments/seo';
-
-const collectionFragment = /* GraphQL */ `
-  fragment collection on Collection {
-    handle
-    title
-    description
-    seo {
-      ...seo
-    }
-    updatedAt
-  }
-  ${seoFragment}
-`;
+import productSummaryFragment from '../fragments/product-summary';
+import collectionFragment from '../fragments/collection';
 
 export const getCollectionQuery = /* GraphQL */ `
   query getCollection($handle: String!) {
@@ -36,6 +23,7 @@ export const getCollectionsQuery = /* GraphQL */ `
   ${collectionFragment}
 `;
 
+// Collection products - use lightweight fragment for better performance
 export const getCollectionProductsQuery = /* GraphQL */ `
   query getCollectionProducts(
     $handle: String!
@@ -46,11 +34,11 @@ export const getCollectionProductsQuery = /* GraphQL */ `
       products(sortKey: $sortKey, reverse: $reverse, first: 100) {
         edges {
           node {
-            ...product
+            ...productSummary
           }
         }
       }
     }
   }
-  ${productFragment}
+  ${productSummaryFragment}
 `;

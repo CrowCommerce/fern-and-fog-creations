@@ -11,10 +11,10 @@ import { Bars3Icon, ShoppingBagIcon, XMarkIcon } from '@heroicons/react/24/outli
 import ShoppingCartDrawer from './ShoppingCartDrawer'
 import { useCart } from '@/components/cart/cart-context'
 import { SearchButton } from '@/components/search/SearchButton'
-import type { NavigationItem } from '@/lib/builder/navigation'
+import type { Menu } from '@/lib/shopify/types'
 
 interface HeaderProps {
-  navigation: NavigationItem[];
+  navigation: Menu[];
 }
 
 export default function Header({ navigation }: HeaderProps) {
@@ -55,12 +55,13 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="mt-8 space-y-2 px-4">
               {navigation.map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   onClick={() => setMobileMenuOpen(false)}
                   className="block rounded-md px-3 py-3 text-base font-medium text-bark hover:bg-mist hover:text-moss transition-colors"
+                  prefetch={true}
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
             </div>
@@ -95,17 +96,18 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="hidden lg:flex lg:items-center lg:space-x-8">
               {navigation.slice(0, 2).map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   className="text-sm font-medium text-bark hover:text-fern transition-colors"
+                  prefetch={true}
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
             </div>
 
             {/* Logo/Wordmark - Center */}
-            <Link href="/" className="flex items-center space-x-2 justify-center">
+            <Link href="/" className="flex items-center space-x-2 justify-center" prefetch={true}>
               <svg className="h-6 w-6 text-fern" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
                 <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
@@ -119,11 +121,12 @@ export default function Header({ navigation }: HeaderProps) {
             <div className="hidden lg:flex lg:items-center lg:justify-end lg:space-x-8">
               {navigation.slice(2).map((item) => (
                 <Link
-                  key={item.name}
-                  href={item.href}
+                  key={item.title}
+                  href={item.path}
                   className="text-sm font-medium text-bark hover:text-fern transition-colors"
+                  prefetch={true}
                 >
-                  {item.name}
+                  {item.title}
                 </Link>
               ))}
 

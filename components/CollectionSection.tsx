@@ -24,7 +24,7 @@ export default function CollectionSection() {
         <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
           {previewItems.map((item) => (
             <SpotlightCard key={item.id} className="p-6">
-              <Link href="/gallery" className="group block">
+              <Link href="/gallery" className="group block" prefetch={true}>
                 <div className="aspect-square overflow-hidden rounded-lg ring-2 ring-gold/30">
                   <img
                     alt={item.title}
@@ -52,6 +52,7 @@ export default function CollectionSection() {
           <Link
             href="/gallery"
             className="inline-flex items-center px-6 py-3 rounded-md border-2 border-gold text-gold font-medium hover:bg-gold hover:text-moss transition-colors"
+            prefetch={true}
           >
             View Full Gallery
             <span aria-hidden="true" className="ml-2">&rarr;</span>

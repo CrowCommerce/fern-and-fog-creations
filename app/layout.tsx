@@ -5,7 +5,6 @@ import HeaderWrapper from "@/components/layout/HeaderWrapper";
 import FooterWrapper from '@/components/layout/FooterWrapper'
 import { CartProvider } from '@/components/cart/cart-context';
 import { getCart } from '@/lib/shopify';
-import { BuilderInit } from '@/components/builder/BuilderInit';
 import { SearchProvider } from '@/components/search/SearchProvider';
 import { SearchDialog } from '@/components/search/SearchDialog';
 import { Analytics } from '@/components/analytics/Analytics';
@@ -62,7 +61,6 @@ export default async function RootLayout({
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
         <Analytics />
-        <BuilderInit />
         <CartProvider cartPromise={cartPromise}>
           <SearchProvider>
             <SearchDialog />

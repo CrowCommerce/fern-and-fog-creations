@@ -113,6 +113,7 @@ export type ShopifyCollection = {
   description: string;
   seo: SEO;
   updatedAt: string;
+  image?: Image;
 };
 
 export type ShopifyProduct = {
@@ -130,6 +131,7 @@ export type ShopifyProduct = {
   variants: Connection<ProductVariant>;
   featuredImage: Image;
   images: Connection<Image>;
+  collections?: Connection<ShopifyCollection>;
   seo: SEO;
   tags: string[];
   updatedAt: string;
@@ -241,6 +243,64 @@ export type ShopifyPageOperation = {
 export type ShopifyPagesOperation = {
   data: {
     pages: Connection<Page>;
+  };
+};
+
+export type ShopifyPageMetadataOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    type: string;
+    first: number;
+  };
+};
+
+export type ShopifyContactPageOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};
+
+export type ShopifyAboutPageOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+};
+
+export type ShopifyAboutProcessStepsOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
+export type ShopifyAboutValuesOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
+export type ShopifyHomepageHeroOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
   };
 };
 

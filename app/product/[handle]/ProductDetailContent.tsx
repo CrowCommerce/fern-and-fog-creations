@@ -111,9 +111,9 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
           {/* Breadcrumbs */}
           <nav className="mb-8 text-sm">
             <ol className="flex items-center space-x-2 text-bark/60">
-              <li><Link href="/" className="hover:text-fern">Home</Link></li>
+              <li><Link href="/" prefetch={true} className="hover:text-fern">Home</Link></li>
               <li>/</li>
-              <li><Link href="/products" className="hover:text-fern">Shop</Link></li>
+              <li><Link href="/products" prefetch={true} className="hover:text-fern">Shop</Link></li>
               <li>/</li>
               <li className="text-bark font-medium">{product.name}</li>
             </ol>
@@ -257,6 +257,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                 {!product.forSale && (
                   <Link
                     href={`/contact?product=${product.slug}`}
+                    prefetch={true}
                     className="block w-full px-8 py-3 bg-fern text-parchment font-medium rounded-md hover:bg-moss transition-colors text-center"
                   >
                     Request This Piece
@@ -313,6 +314,7 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
                   <Link
                     key={related.id}
                     href={`/product/${related.slug}`}
+                    prefetch={true}
                     className="group"
                   >
                     <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">

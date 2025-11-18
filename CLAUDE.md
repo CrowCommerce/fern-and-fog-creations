@@ -35,113 +35,205 @@ Development server runs on `http://localhost:3000`
 
 ## Architecture Overview
 
-### Builder.io Visual CMS Integration ✨
+### Shopify-Only CMS Strategy
 
-Fern & Fog Creations uses Builder.io as a visual CMS for marketing pages, landing pages, and content pages while preserving all Shopify e-commerce functionality.
+Fern & Fog Creations uses **Shopify metaobjects as the single source of truth for all content management**. This provides a unified platform for managing products, collections, menus, page metadata, and custom page content.
 
-**Core Integration Files:**
-- `src/lib/builder/config.ts` - Configuration and reserved path protection
-- `src/lib/builder/resolve-content.ts` - Server-side content fetching
-- `src/components/builder/BuilderComponentClient.tsx` - Client component wrapper
-- `src/components/builder/BuilderInit.tsx` - SDK initialization
-- `src/components/builder/register-components.tsx` - Custom component registration
-- `src/lib/builder/cart-adapter.ts` - Cart integration hooks
-- `app/[...page]/page.tsx` - Catch-all route for CMS pages
+**Content managed via Shopify:**
+- Product catalog (Shopify Products API)
+- Navigation menus (Shopify Menu API)
+- Page SEO metadata (custom metaobjects: `page_metadata`) ✅
+- Gallery items (custom metaobjects: `gallery_item`) ✅
+- Homepage hero content (custom metaobjects: `homepage_hero`) ✅
+- About page content (custom metaobjects: `about_page`, `about_process_step`, `about_value`) ✅
+- Contact page content (custom metaobjects: `contact_page`) ✅
 
-**Custom Fern & Fog Components:**
+**Key Benefits:**
+- Single platform for all content management
+- No external CMS dependencies
+- Unified admin experience in Shopify
+- Automatic cache invalidation via webhooks (instant updates)
+- Type-safe GraphQL queries
+- Business users can edit without code changes
 
-The following branded components are available in Builder.io's visual editor:
+**CMS Implementation Status:**
 
-1. **HeroBlock** - Full-width hero with background image, heading, description, and dual CTAs
-   - Configurable: background image, heading, description, button labels/links
-   - Location: `src/components/builder/blocks/HeroBlock.tsx`
+✅ **Complete:**
+- Page metadata (SEO, OpenGraph) for all pages
+- Navigation menus (header + footer)
+- Gallery items with categories and filtering
+- Homepage hero section (heading, description, CTAs, background image)
+- About page (hero, story, process steps, values, CTA)
+- Contact page (heading, description, optional contact info)
 
-2. **CategoryGridBlock** - 4-column responsive category grid
-   - Configurable: heading, categories (name, image, description, slug), view all link
-   - Location: `src/components/builder/blocks/CategoryGridBlock.tsx`
+**Hardcoded Components (by design):**
+- `components/CategorySection.tsx` - Category grid
+- `components/FeaturedSectionOne.tsx` - Feature highlights
+- `components/FeaturedSectionTwo.tsx` - Secondary features
+- `components/CollectionSection.tsx` - Product showcase
 
-3. **FeatureGridBlock** - 3-column feature grid with emoji icons
-   - Configurable: heading, features (name, description, emoji icon), background color
-   - Location: `src/components/builder/blocks/FeatureGridBlock.tsx`
+These remain hardcoded as they use product data and don't need business user editing.
 
-4. **TextBlock** - Flexible rich text content block
-   - Configurable: heading, rich text content, alignment, background, max width
-   - Location: `src/components/builder/blocks/TextBlock.tsx`
+### Metaobject Architecture
 
-5. **CTABlock** - Call-to-action section with buttons
-   - Configurable: heading, description, buttons (labels/links), background color
-   - Location: `src/components/builder/blocks/CTABlock.tsx`
+All CMS content is stored in Shopify metaobjects and accessed via GraphQL queries.
 
-**Route Protection:**
+**Metaobject Types:**
 
-Builder.io's catch-all route (`app/[...page]/page.tsx`) **excludes** these reserved paths:
-- `/products/*` - Product listing/collections
-- `/product/*` - Product detail pages
-- `/cart` - Shopping cart
-- `/api/*` - API routes
-- `/_next/*` - Next.js internals
+| Type | Purpose | Fields | Count |
+|------|---------|--------|-------|
+| `page_metadata` | SEO metadata for all pages | page_id, seo_title, seo_description, keywords, robots_index, robots_follow, og_image_url | 5 (homepage, about, contact, gallery, products) |
+| `homepage_hero` | Homepage hero section | heading, description, background_image_url, cta_primary_text, cta_primary_url, cta_secondary_text, cta_secondary_url | 1 |
+| `about_page` | About page main content | hero_heading, hero_intro, story_heading, story_content, quote_text, process_heading, values_heading, cta_heading, etc. | 1 |
+| `about_process_step` | About page process steps | title, description, icon_type, sort_order | 3 (Gathered, Crafted, Treasured) |
+| `about_value` | About page values | title, description, sort_order | 4 |
+| `contact_page` | Contact page content | heading, description, email_display, phone_display, business_hours, response_time | 1 |
+| `gallery_item` | Gallery portfolio items | title, description, image_url, category, is_sold, featured, sort_order, created_at_date, materials | Variable |
 
-**Builder.io Pages Handle:**
-- Marketing landing pages (`/about-us`, `/our-story`)
-- Blog posts (`/blog/*`)
-- Promotional pages
-- Any non-reserved path
+**Data Fetching Pattern:**
 
-**Environment Variables:**
+```typescript
+// 1. GraphQL Query (lib/shopify/queries/[type].ts)
+export const getHomepageHeroQuery = /* GraphQL */ `
+  query getHomepageHero {
+    metaobjects(type: "homepage_hero", first: 1) {
+      nodes {
+        id
+        handle
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
+`;
+
+// 2. Data Fetching Function (lib/shopify/index.ts)
+export async function getHomepageHero(): Promise<HomepageHero> {
+  'use cache';
+  cacheTag(TAGS.homepage);
+  cacheLife('days');
+
+  const res = await shopifyFetch<ShopifyHomepageHeroOperation>({
+    query: getHomepageHeroQuery,
+  });
+
+  const metaobject = res.body.data?.metaobjects?.nodes?.[0];
+
+  if (!metaobject) {
+    // Graceful fallback if metaobject doesn't exist
+    return {
+      heading: 'Handmade Coastal & Woodland Treasures',
+      description: 'Default description...',
+      // ... other defaults
+    };
+  }
+
+  // Extract fields using utility functions
+  return {
+    heading: extractField(metaobject, 'heading'),
+    description: extractField(metaobject, 'description'),
+    backgroundImageUrl: extractField(metaobject, 'background_image_url'),
+    ctaPrimaryText: extractField(metaobject, 'cta_primary_text'),
+    ctaPrimaryUrl: extractField(metaobject, 'cta_primary_url'),
+    ctaSecondaryText: extractOptionalField(metaobject, 'cta_secondary_text'),
+    ctaSecondaryUrl: extractOptionalField(metaobject, 'cta_secondary_url'),
+  };
+}
+
+// 3. Usage in Page Component (app/page.tsx)
+export default async function Home() {
+  const hero = await getHomepageHero(); // Cached for days
+
+  return (
+    <div className="bg-parchment">
+      <HeroSection hero={hero} />
+      {/* Other sections */}
+    </div>
+  );
+}
+```
+
+**Field Extraction Utilities (`lib/shopify/utils.ts`):**
+
+```typescript
+// Extract required string field
+export function extractField(metaobject: ShopifyMetaobject, key: string): string {
+  const field = metaobject.fields.find((f) => f.key === key);
+  return field?.value || '';
+}
+
+// Extract optional string field
+export function extractOptionalField(metaobject: ShopifyMetaobject, key: string): string | undefined {
+  const value = extractField(metaobject, key);
+  return value || undefined;
+}
+
+// Extract number field with default
+export function extractNumberField(metaobject: ShopifyMetaobject, key: string, defaultValue: number = 0): number {
+  const value = extractField(metaobject, key);
+  const parsed = parseInt(value, 10);
+  return isNaN(parsed) ? defaultValue : parsed;
+}
+
+// Extract boolean field
+export function extractBooleanField(metaobject: ShopifyMetaobject, key: string, defaultValue: boolean = false): boolean {
+  const value = extractField(metaobject, key);
+  if (!value) return defaultValue;
+  return value === 'true' || value === '1';
+}
+```
+
+**Cache Strategy:**
+
+All metaobject queries use Next.js 16's native caching:
+
+```typescript
+'use cache';                    // Enable caching
+cacheTag(TAGS.homepage);        // Tag for targeted revalidation
+cacheLife('days');              // Cache for 1 day
+```
+
+**Automatic Cache Revalidation:**
+
+Shopify webhooks automatically revalidate caches when content changes:
+
+```typescript
+// app/api/revalidate/route.ts
+const topicMap: Record<string, string[]> = {
+  'metaobjects/create': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+  'metaobjects/update': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+  'metaobjects/delete': [TAGS.gallery, TAGS.metadata, TAGS.contactPage, TAGS.aboutPage, TAGS.homepage],
+};
+
+// When business user updates content in Shopify:
+// 1. Shopify sends webhook to /api/revalidate
+// 2. Webhook handler calls revalidateTag() for affected tags
+// 3. Next.js invalidates cache
+// 4. Next request fetches fresh data
+// Result: Changes appear within seconds
+```
+
+**Migration Scripts:**
+
+Each metaobject type has a corresponding migration script to create the Shopify metaobject definition and default entries:
+
+- `scripts/setup-contact-page.ts` - Creates contact_page definition + default entry
+- `scripts/setup-about-page.ts` - Creates about_page, about_process_step, about_value definitions + defaults
+- `scripts/setup-homepage.ts` - Creates homepage_hero definition + default entry
+
+**Run migrations:**
 ```bash
-BUILDER_PUBLIC_KEY=your-api-key
-NEXT_PUBLIC_BUILDER_PUBLIC_KEY=your-api-key  # Same value
+pnpm setup:contact       # Create contact page metaobject
+pnpm setup:about         # Create about page metaobjects
+pnpm setup:homepage      # Create homepage hero metaobject
+
+# Dry-run mode (preview changes without creating):
+pnpm setup:contact:dry
+pnpm setup:about:dry
+pnpm setup:homepage:dry
 ```
-
-**Cart Integration:**
-
-Builder.io components can access cart functionality:
-```typescript
-import { useBuilderCart, useCartState } from '@/lib/builder/cart-adapter';
-
-const cart = useBuilderCart();
-const { itemCount, totalAmount, isEmpty } = useCartState();
-```
-
-**Creating Pages in Builder.io:**
-
-1. Go to https://builder.io/content
-2. Create new "page" entry
-3. Set URL path (e.g., `/about-us`, `/blog/post-title`, `/landing/summer-sale`)
-4. Drag Fern & Fog components from the left sidebar
-5. Configure component inputs in the right panel
-6. Publish when ready
-7. Visit your URL to see the live page
-
-**Catch-All Route:**
-The app includes a catch-all route (`app/[...page]/page.tsx`) that enables creating arbitrary pages in Builder.io:
-- Homepage (`/`) - Builder.io content with fallback
-- Any custom path (e.g., `/about-us`, `/blog/*`, `/landing/*`)
-- Protected routes (products, cart, checkout) are NOT handled by Builder.io
-
-```typescript
-// app/[...page]/page.tsx
-// Automatically fetches Builder.io content for any non-reserved path
-const builderContent = await resolveBuilderContent('page', {
-  userAttributes: { urlPath: `/${pageSegments.join('/')}` },
-});
-```
-
-**Reserved Paths (Protected from Builder.io):**
-- `/products` - Product listing
-- `/product/*` - Product details
-- `/cart` - Shopping cart
-- `/checkout` - Checkout
-- `/account` - User accounts
-- `/api/*` - API routes
-- `/_next/*` - Next.js internals
-
-**Important Notes:**
-- All custom components maintain coastal/woodland theming
-- Components use brand colors: moss, fern, parchment, bark, mist, gold
-- Shopify e-commerce routes are completely protected
-- Cart, products, checkout are NOT managed by Builder.io
-- Create unlimited marketing pages, landing pages, blog posts via Builder.io
 
 ### Contact Form (Jotform Integration) ✅
 
@@ -304,7 +396,7 @@ All hero images use Next.js Image component for automatic optimization.
 
 **Implementation:**
 ```typescript
-// components/builder/blocks/HeroBlock.tsx
+// components/HeroSection.tsx
 import Image from 'next/image'
 
 <Image
@@ -338,9 +430,9 @@ images: {
 ```
 
 **Components Using Optimized Images:**
-- `HeroBlock` - Builder.io hero component
-- `HeroSection` - Hardcoded fallback hero
+- `HeroSection` - Homepage hero component
 - Product images (via Shopify) - Automatically optimized
+- Gallery images (via Shopify metaobjects) - Automatically optimized
 
 ### App Router Structure
 
@@ -414,13 +506,120 @@ getCart()                             // Fetch cart contents
 addToCart(lines)                      // Add items to cart
 removeFromCart(lineIds)               // Remove items
 updateCart(lines)                     // Update quantities
-getProductRecommendations(productId)  // Related products
+getProductRecommendations(productId)  // Shopify AI-powered related products
 ```
+
+**Related Products System:**
+
+The app uses Shopify's AI-powered product recommendations API with intelligent fallbacks:
+
+```typescript
+// From lib/data-source.ts
+export async function getRelatedProducts(
+  product: LocalProduct,
+  limit: number = 4
+): Promise<LocalProduct[]> {
+  if (isShopifyEnabled() && isShopifyConfigured()) {
+    try {
+      // 1. Try Shopify's AI recommendations first
+      const recommendations = await shopify.getProductRecommendations(product.id);
+      const relatedProducts = recommendations.map(convertShopifyToLocal).slice(0, limit);
+
+      if (relatedProducts.length > 0) {
+        return relatedProducts;
+      }
+
+      // 2. Fallback to category-based filtering if no recommendations
+      console.warn(`No Shopify recommendations for product ${product.id}, using category fallback`);
+      return getLocalRelatedProducts(product, limit);
+    } catch (error) {
+      // 3. Fallback on error
+      console.error('Failed to fetch recommendations from Shopify:', error);
+      return getLocalRelatedProducts(product, limit);
+    }
+  }
+
+  // 4. Use local category-based filtering in local mode
+  return getLocalRelatedProducts(product, limit);
+}
+```
+
+**Fallback Strategy:**
+- **Primary**: Shopify's AI-powered recommendations (uses ML to suggest relevant products)
+- **Secondary**: Category-based filtering (same collection/category)
+- **Tertiary**: Local data filtering (development mode)
+
+**Usage in Components:**
+```typescript
+import { getRelatedProducts } from '@/lib/data-source';
+
+// In product detail page
+const relatedProducts = await getRelatedProducts(product, 4);
+```
+
+**Product Categorization:**
+
+Products are categorized using **Shopify collections** (not tags):
+
+```typescript
+// lib/data-source.ts - convertShopifyToLocal()
+const collectionNodes = shopifyProduct.collections?.edges?.map(edge => edge.node) || [];
+const category = collectionNodes.length > 0
+  ? collectionNodes[0].handle
+  : 'uncategorized';
+```
+
+**Important:** Products automatically inherit their category from the first Shopify collection they belong to. This allows business users to manage categories entirely through Shopify's admin interface by adding/removing products from collections.
 
 **GraphQL Organization:**
 - `src/lib/shopify/queries/` - GraphQL queries (product, cart, collection, menu, page)
 - `src/lib/shopify/mutations/` - GraphQL mutations (cart operations)
 - `src/lib/shopify/fragments/` - Reusable GraphQL fragments (product, cart, image, seo)
+
+**Product Fragment Enhancements:**
+
+The `product-summary.ts` fragment includes critical fields for categorization and display:
+
+```graphql
+# lib/shopify/fragments/product-summary.ts
+fragment productSummary on Product {
+  id
+  handle
+  title
+  description
+  availableForSale
+  tags
+  priceRange { minVariantPrice { amount currencyCode } }
+  featuredImage { url altText width height }
+
+  # Collection membership for dynamic categorization
+  collections(first: 5) {
+    edges {
+      node {
+        handle
+        title
+      }
+    }
+  }
+
+  # Multiple images for product detail pages
+  images(first: 20) {
+    edges {
+      node {
+        url
+        altText
+        width
+        height
+      }
+    }
+  }
+}
+```
+
+**Key Fragment Fields:**
+- `collections` - Enables dynamic category assignment from Shopify admin
+- `images` - Provides full image array for product galleries (not just featuredImage)
+- Both fields critical for proper product display and categorization
 
 **Caching Strategy:**
 ```typescript
@@ -545,7 +744,7 @@ The products page supports filtering and sorting via URL search params and dedic
 **Filter Components:**
 - `src/components/filters/FilterPanel.tsx` - Desktop filter sidebar
 - `src/components/filters/MobileFilterDrawer.tsx` - Mobile filter drawer
-- `src/components/filters/CheckboxFilter.tsx` - Category/tag checkboxes
+- `src/components/filters/CheckboxFilter.tsx` - Category checkboxes (dynamically generated from Shopify collections)
 - `src/components/filters/PriceRangeFilter.tsx` - Min/max price inputs
 - `src/components/filters/SortDropdown.tsx` - Sort order selector
 
@@ -553,12 +752,38 @@ The products page supports filtering and sorting via URL search params and dedic
 - The `app/(store)/layout.tsx` manages filter state across all product pages
 - Filters are synced to URL search params for shareability and back-button support
 - `ProductsClient.tsx` receives filter props from the layout
+- **Categories are dynamically generated from Shopify collections** - business users manage filters by creating/editing collections in Shopify admin
 
 **URL Pattern:**
 ```
 /products?category=earrings&sort=price-asc&minPrice=20&maxPrice=100
-/products/[collection]?sort=newest&material=sea-glass
+/products/[collection]?sort=newest
 ```
+
+**Dynamic Category Facets:**
+
+Categories are automatically generated from Shopify collections in `hooks/useFilters.ts`:
+
+```typescript
+// Generate category options from Shopify collections
+const categoryOptions = collections
+  .filter((c) => c.handle) // Exclude "All" collection (empty handle)
+  .map((collection) => ({
+    value: collection.handle,
+    label: collection.title,
+    count: products.filter((p) =>
+      p.category.toLowerCase() === collection.handle.toLowerCase() ||
+      p.category.toLowerCase().replace(/\s+/g, '-') === collection.handle
+    ).length,
+  }))
+  .filter((opt) => opt.count > 0); // Only show collections with products
+```
+
+**Key Benefits:**
+- No hardcoded category lists
+- Business users manage categories through Shopify collections
+- Category counts automatically calculated
+- Empty categories automatically hidden
 
 **Implementation Pattern:**
 ```typescript
@@ -668,6 +893,53 @@ Both loaded via `next/font/google` in `app/layout.tsx`.
 - `src/types/index.ts` - Consolidated type exports
 - `src/lib/shopify/types.ts` - Shopify API types
 - `src/components/cart/cart-context.tsx` - Cart-related types
+
+**Product Type Structure:**
+
+```typescript
+// src/types/product.ts
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  category: string; // Dynamic - populated from Shopify collection handle
+  images: string[];
+  materials: string[]; // Informational only - not used for filtering
+  description: string;
+  forSale: boolean;
+  featured?: boolean;
+  variants?: ProductVariant[];
+  options?: ProductOption[];
+  priceRange?: { min: number; max: number };
+}
+```
+
+**Important Type Changes:**
+- `category` field changed from union type to `string` to support dynamic Shopify collections
+- `materials` field retained for product information display but removed from filter interface
+- Categories now come from Shopify collection handles, not hardcoded values
+
+**Filter Type Structure:**
+
+```typescript
+// src/types/filter.ts
+export interface ActiveFilters {
+  category?: string[];      // Multi-select category filter (from Shopify collections)
+  priceRange?: { min: number; max: number };
+  availability?: boolean;   // Filter by in-stock status
+  sort?: SortOption;        // Sort order
+  // Note: 'material' filter removed - categories managed via Shopify collections only
+}
+
+export type SortOption =
+  | 'featured'
+  | 'price-asc'
+  | 'price-desc'
+  | 'newest'
+  | 'name-asc'
+  | 'name-desc'
+```
 
 **Type Guards:** `src/lib/type-guards.ts` contains utility functions like `isShopifyError()` for runtime type checking.
 

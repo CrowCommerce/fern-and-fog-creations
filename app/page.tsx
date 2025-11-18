@@ -1,47 +1,39 @@
 import { Metadata } from 'next';
-import { headers } from 'next/headers';
-import { resolveBuilderContent } from '@/lib/builder/resolve-content';
-import { BuilderComponentClient } from '@/components/builder/BuilderComponentClient';
+import { getPageMetadata, getHomepageHero } from '@/lib/shopify';
 
-// Fallback components (used if no Builder.io content exists)
+// Homepage components
 import HeroSection from '@/components/HeroSection';
 import CategorySection from '@/components/CategorySection';
 import FeaturedSectionOne from '@/components/FeaturedSectionOne';
 import CollectionSection from '@/components/CollectionSection';
 import FeaturedSectionTwo from '@/components/FeaturedSectionTwo';
 
-export const metadata: Metadata = {
-  title: 'Fern & Fog Creations | Handmade Coastal Crafts',
-  description: 'Sea glass earrings, pressed flower resin, driftwood décor—crafted in small batches on the coast.',
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const metadata = await getPageMetadata('homepage');
+
+  return {
+    title: metadata.title,
+    description: metadata.description,
+    keywords: metadata.keywords,
+    robots: {
+      index: metadata.robotsIndex,
+      follow: metadata.robotsFollow,
+    },
+    openGraph: metadata.ogImageUrl
+      ? {
+          images: [{ url: metadata.ogImageUrl }],
+        }
+      : undefined,
+  };
+}
 
 export default async function Home() {
-  // Access headers to mark as dynamic - required for Builder.io SDK compatibility
-  // This prevents Math.random() errors during prerendering
-  await headers();
+  // Fetch homepage hero content from Shopify
+  const hero = await getHomepageHero();
 
-  // Try to fetch Builder.io content for the homepage
-  const builderContent = await resolveBuilderContent('page', {
-    userAttributes: { urlPath: '/' },
-  });
-
-  // If Builder.io content exists, render it
-  if (builderContent) {
-    return (
-      <div className="bg-parchment">
-        <BuilderComponentClient
-          model="page"
-          content={builderContent}
-        />
-      </div>
-    );
-  }
-
-  // Fallback: Use hardcoded components
-  // This ensures the site works even without Builder.io content configured
   return (
     <div className="bg-parchment">
-      <HeroSection />
+      <HeroSection hero={hero} />
       <CategorySection />
       <FeaturedSectionOne />
       <FeaturedSectionTwo />

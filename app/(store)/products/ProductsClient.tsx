@@ -9,18 +9,28 @@ import { FilterPanel } from '@/components/filters/FilterPanel';
 import { MobileFilterDrawer } from '@/components/filters/MobileFilterDrawer';
 import SortDropdown from '@/components/filters/SortDropdown';
 import type { ActiveFilters, SortOption } from '@/types/filter';
+import type { Collection } from '@/lib/shopify/types';
 
 interface ProductsClientProps {
   products: Product[];
+  collections?: Collection[];
   dataMode: 'shopify' | 'local';
 }
 
 export default function ProductsClient({
   products,
+  collections = [],
   dataMode,
 }: ProductsClientProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+
+  // Helper function to get image URL from either local (string) or Shopify (object) format
+  const getImageUrl = (image: any): string => {
+    if (!image) return '/placeholder.jpg';
+    if (typeof image === 'string') return image; // Local data format
+    return image.url || '/placeholder.jpg'; // Shopify data format
+  };
 
   // Parse initial filters from URL
   const [activeFilters, setActiveFilters] = useState<ActiveFilters>(() => {
@@ -42,12 +52,6 @@ export default function ProductsClient({
       };
     }
 
-    // Material filter
-    const materialParam = searchParams?.get('material');
-    if (materialParam) {
-      filters.material = materialParam.split(',');
-    }
-
     // Sort
     const sortParam = searchParams?.get('sort');
     if (sortParam) {
@@ -60,6 +64,7 @@ export default function ProductsClient({
   // Apply filters
   const { filteredProducts, facets, resultCount } = useFilters({
     products,
+    collections,
     initialFilters: activeFilters,
   });
 
@@ -78,11 +83,6 @@ export default function ProductsClient({
     if (newFilters.priceRange) {
       params.set('minPrice', String(newFilters.priceRange.min));
       params.set('maxPrice', String(newFilters.priceRange.max));
-    }
-
-    // Material
-    if (newFilters.material && newFilters.material.length > 0) {
-      params.set('material', newFilters.material.join(','));
     }
 
     // Sort
@@ -149,12 +149,13 @@ export default function ProductsClient({
               <Link
                 key={product.id}
                 href={`/product/${product.slug}`}
+                prefetch={true}
                 className="group relative"
               >
                 {/* Product Image */}
                 <div className="aspect-square w-full overflow-hidden rounded-lg bg-mist">
                   <img
-                    src={product.images[0] || '/placeholder.jpg'}
+                    src={getImageUrl(product.images?.[0])}
                     alt={product.name}
                     className="h-full w-full object-cover object-center group-hover:opacity-90 transition-opacity"
                   />

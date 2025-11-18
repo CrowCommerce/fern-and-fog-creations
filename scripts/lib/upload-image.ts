@@ -129,7 +129,7 @@ async function uploadToStagedUrl(
   }
 
   // Add the file as a Blob
-  const blob = new Blob([fileBuffer]);
+  const blob = new Blob([new Uint8Array(fileBuffer)]);
   formData.append('file', blob);
 
   const response = await fetch(stagedTarget.url, {

@@ -1,4 +1,4 @@
-import productFragment from './product';
+import productSummaryFragment from './product-summary';
 
 const cartFragment = /* GraphQL */ `
   fragment cart on Cart {
@@ -38,7 +38,7 @@ const cartFragment = /* GraphQL */ `
                 value
               }
               product {
-                ...product
+                ...productSummary
               }
             }
           }
@@ -47,7 +47,7 @@ const cartFragment = /* GraphQL */ `
     }
     totalQuantity
   }
-  ${productFragment}
+  ${productSummaryFragment}
 `;
 
 export default cartFragment;

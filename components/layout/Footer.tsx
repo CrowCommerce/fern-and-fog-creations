@@ -1,11 +1,14 @@
 import Link from 'next/link';
-import type { FooterNavigationData } from '@/lib/builder/navigation';
+import type { Menu } from '@/lib/shopify/types';
 
 interface FooterProps {
-  footerNavigation: FooterNavigationData;
+  shopMenu: Menu[];
+  aboutMenu: Menu[];
+  policiesMenu: Menu[];
 }
 
-export default function Footer({ footerNavigation }: FooterProps) {
+export default function Footer({ shopMenu, aboutMenu, policiesMenu }: FooterProps) {
+ 
   return (
     <footer aria-labelledby="footer-heading" className="bg-moss border-t-2 border-fern">
       <h2 id="footer-heading" className="sr-only">
@@ -37,10 +40,10 @@ export default function Footer({ footerNavigation }: FooterProps) {
             <div>
               <h3 className="text-sm font-medium text-parchment font-display">Shop</h3>
               <ul role="list" className="mt-4 space-y-3">
-                {footerNavigation.shop.map((item) => (
-                  <li key={item.name} className="text-sm">
-                    <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                      {item.name}
+                {shopMenu.map((item) => (
+                  <li key={item.title} className="text-sm">
+                    <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
+                      {item.title}
                     </Link>
                   </li>
                 ))}
@@ -52,10 +55,10 @@ export default function Footer({ footerNavigation }: FooterProps) {
               <div>
                 <h3 className="text-sm font-medium text-parchment font-display">About</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  {footerNavigation.about.map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                        {item.name}
+                  {aboutMenu.map((item) => (
+                    <li key={item.title} className="text-sm">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
+                        {item.title}
                       </Link>
                     </li>
                   ))}
@@ -64,10 +67,10 @@ export default function Footer({ footerNavigation }: FooterProps) {
               <div>
                 <h3 className="text-sm font-medium text-parchment font-display">Policies</h3>
                 <ul role="list" className="mt-4 space-y-3">
-                  {footerNavigation.policies.map((item) => (
-                    <li key={item.name} className="text-sm">
-                      <Link href={item.href} className="text-mist hover:text-gold transition-colors">
-                        {item.name}
+                  {policiesMenu.map((item) => (
+                    <li key={item.title} className="text-sm">
+                      <Link href={item.path} className="text-mist hover:text-gold transition-colors" prefetch={true}>
+                        {item.title}
                       </Link>
                     </li>
                   ))}

@@ -8,13 +8,15 @@
 import { useMemo } from 'react';
 import type { Product } from '@/data/products';
 import type { ActiveFilters, FilterFacet, SortOption } from '@/types/filter';
+import type { Collection } from '@/lib/shopify/types';
 
 interface UseFiltersProps {
   products: Product[];
+  collections?: Collection[];
   initialFilters?: ActiveFilters;
 }
 
-export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
+export function useFilters({ products, collections = [], initialFilters = {} }: UseFiltersProps) {
   // Apply filters to products
   const filteredProducts = useMemo(() => {
     let filtered = [...products];
@@ -37,17 +39,6 @@ export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
       });
     }
 
-    // Material filter
-    if (initialFilters.material && initialFilters.material.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.materials.some((m) =>
-          initialFilters.material!.some((filterMat) =>
-            m.toLowerCase().includes(filterMat.toLowerCase())
-          )
-        )
-      );
-    }
-
     // Availability filter
     if (initialFilters.availability !== undefined) {
       filtered = filtered.filter((p) => p.forSale === initialFilters.availability);
@@ -67,27 +58,25 @@ export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
     const minPrice = Math.floor(Math.min(...allPrices) / 10) * 10;
     const maxPrice = Math.ceil(Math.max(...allPrices) / 10) * 10;
 
-    // Get unique materials
-    const allMaterials = new Set<string>();
-    products.forEach((p) => {
-      p.materials.forEach((m) => {
-        // Simplify materials (e.g., "Sterling silver hooks" -> "Silver")
-        const simplified = simplifyMaterial(m);
-        allMaterials.add(simplified);
-      });
-    });
+    // Generate category options from Shopify collections
+    const categoryOptions = collections
+      .filter((c) => c.handle) // Exclude "All" collection (empty handle)
+      .map((collection) => ({
+        value: collection.handle,
+        label: collection.title,
+        count: products.filter((p) =>
+          p.category.toLowerCase() === collection.handle.toLowerCase() ||
+          p.category.toLowerCase().replace(/\s+/g, '-') === collection.handle
+        ).length,
+      }))
+      .filter((opt) => opt.count > 0); // Only show collections with products
 
     return [
       {
         id: 'category',
         name: 'Category',
         type: 'checkbox',
-        options: [
-          { value: 'earrings', label: 'Earrings', count: products.filter((p) => p.category === 'earrings').length },
-          { value: 'resin', label: 'Resin Art', count: products.filter((p) => p.category === 'resin').length },
-          { value: 'driftwood', label: 'Driftwood', count: products.filter((p) => p.category === 'driftwood').length },
-          { value: 'wall-hangings', label: 'Wall Hangings', count: products.filter((p) => p.category === 'wall-hangings').length },
-        ],
+        options: categoryOptions,
       },
       {
         id: 'priceRange',
@@ -97,25 +86,8 @@ export function useFilters({ products, initialFilters = {} }: UseFiltersProps) {
         max: maxPrice,
         options: [],
       },
-      {
-        id: 'material',
-        name: 'Materials',
-        type: 'checkbox',
-        options: Array.from(allMaterials)
-          .sort()
-          .map((m) => ({
-            value: m,
-            label: m,
-            count: products.filter((p) =>
-              p.materials.some((mat) =>
-                mat.toLowerCase().includes(m.toLowerCase())
-              )
-            ).length,
-          }))
-          .filter((opt) => opt.count > 0),
-      },
     ];
-  }, [products]);
+  }, [products, collections]);
 
   return {
     filteredProducts,
@@ -149,21 +121,4 @@ function applySort(products: Product[], sort: SortOption): Product[] {
         return parseInt(a.id) - parseInt(b.id);
       });
   }
-}
-
-// Helper: Simplify material names for filtering
-function simplifyMaterial(material: string): string {
-  const lower = material.toLowerCase();
-
-  if (lower.includes('silver')) return 'Silver';
-  if (lower.includes('gold')) return 'Gold';
-  if (lower.includes('resin')) return 'Resin';
-  if (lower.includes('sea glass')) return 'Sea Glass';
-  if (lower.includes('driftwood')) return 'Driftwood';
-  if (lower.includes('fern') || lower.includes('flower')) return 'Pressed Flowers';
-  if (lower.includes('shell')) return 'Shells';
-  if (lower.includes('macrame')) return 'Macramé';
-
-  // Return first word capitalized
-  return material.split(' ')[0].charAt(0).toUpperCase() + material.split(' ')[0].slice(1);
 }

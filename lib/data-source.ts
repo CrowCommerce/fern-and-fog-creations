@@ -130,16 +130,21 @@ function getLocalProducts(options?: {
 /**
  * Convert Shopify product format to local product format
  */
-function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
+export function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
   // Extract price from Shopify's price range
   const price = parseFloat(shopifyProduct.priceRange.minVariantPrice.amount);
 
-  // Map Shopify category/collection to local category
-  // Default to 'earrings' if no mapping found
-  const category = mapShopifyCategory(shopifyProduct) || 'earrings';
+  // Extract category from Shopify collections
+  // Use the first collection handle, or 'uncategorized' if no collections
+  const collectionNodes = shopifyProduct.collections?.edges?.map(edge => edge.node) || [];
+  const category = collectionNodes.length > 0 ? collectionNodes[0].handle : 'uncategorized';
 
-  // Extract images
-  const images = shopifyProduct.images.map(img => img.url);
+  // Extract images - fallback to featuredImage if images array missing
+  const images = shopifyProduct.images && shopifyProduct.images.length > 0
+    ? shopifyProduct.images.map(img => img.url)
+    : shopifyProduct.featuredImage
+      ? [shopifyProduct.featuredImage.url]
+      : [];
 
   // Extract materials from tags (convention: tags like "material:Silver" or "material:Sea glass")
   const materials = extractMaterialsFromTags(shopifyProduct.tags);
@@ -191,20 +196,6 @@ function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
 }
 
 /**
- * Map Shopify tags to local category
- */
-function mapShopifyCategory(product: ShopifyProduct): LocalProduct['category'] | undefined {
-  const tags = product.tags.map(t => t.toLowerCase());
-
-  if (tags.includes('earrings')) return 'earrings';
-  if (tags.includes('resin')) return 'resin';
-  if (tags.includes('driftwood')) return 'driftwood';
-  if (tags.includes('wall-hangings')) return 'wall-hangings';
-
-  return undefined;
-}
-
-/**
  * Extract materials from Shopify tags
  * Convention: tags like "material:Silver" or just "Silver"
  */
@@ -230,6 +221,57 @@ function extractMaterialsFromTags(tags: string[]): string[] {
   }
 
   return materials;
+}
+
+/**
+ * Get related products for a given product
+ * Uses Shopify recommendations API in Shopify mode, category-based filtering in local mode
+ */
+export async function getRelatedProducts(
+  product: LocalProduct,
+  limit: number = 4
+): Promise<LocalProduct[]> {
+  if (isShopifyEnabled() && isShopifyConfigured()) {
+    try {
+      // Use Shopify's recommendation API
+      const recommendations = await shopify.getProductRecommendations(product.id);
+
+      // Convert to local format and limit results
+      const relatedProducts = recommendations.map(convertShopifyToLocal).slice(0, limit);
+
+      // If we got recommendations, return them
+      if (relatedProducts.length > 0) {
+        return relatedProducts;
+      }
+
+      // If no recommendations from Shopify, fall back to category-based filtering
+      console.warn(`No Shopify recommendations for product ${product.id}, using category fallback`);
+      return getLocalRelatedProducts(product, limit);
+    } catch (error) {
+      console.error('Failed to fetch recommendations from Shopify:', error);
+      // Fallback to category-based filtering on error
+      return getLocalRelatedProducts(product, limit);
+    }
+  }
+
+  // Use local category-based filtering
+  return getLocalRelatedProducts(product, limit);
+}
+
+/**
+ * Get related products using category-based filtering (local mode or fallback)
+ */
+function getLocalRelatedProducts(
+  currentProduct: LocalProduct,
+  limit: number
+): LocalProduct[] {
+  return localProducts
+    .filter(p =>
+      p.id !== currentProduct.id &&
+      p.category === currentProduct.category &&
+      p.forSale
+    )
+    .slice(0, limit);
 }
 
 /**
