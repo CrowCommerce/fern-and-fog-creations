@@ -1,10 +1,11 @@
 import { Suspense } from 'react';
 import { notFound } from 'next/navigation';
 import type { Metadata } from 'next';
-import { getDataSourceMode, isShopifyEnabled } from '@/lib/data-source';
+import { getDataSourceMode, isShopifyEnabled, convertShopifyToLocal, getProducts } from '@/lib/data-source';
 import { getCollection, getCollections, getCollectionProducts } from '@/lib/shopify';
 import ProductsClient from '../ProductsClient';
-import { getProducts } from '@/lib/data-source';
+import type { Collection } from '@/lib/shopify/types';
+import type { Product as LocalProduct } from '@/data/products';
 
 interface CollectionPageProps {
   params: Promise<{
@@ -16,9 +17,10 @@ interface CollectionPageProps {
 // Generate metadata for SEO using Shopify collection data
 export async function generateMetadata({ params }: CollectionPageProps): Promise<Metadata> {
   const { collection } = await params;
+  const dataMode = getDataSourceMode();
 
   // If using Shopify, fetch collection data for SEO
-  if (isShopifyEnabled()) {
+  if (dataMode === 'shopify') {
     try {
       const collectionData = await getCollection(collection);
 
@@ -51,9 +53,9 @@ export async function generateMetadata({ params }: CollectionPageProps): Promise
 
 async function CollectionData({ collection }: { collection: string }) {
   const dataMode = getDataSourceMode();
-  let collectionProducts: any[] = [];
+  let collectionProducts: LocalProduct[] = [];
 
-  if (isShopifyEnabled()) {
+  if (dataMode === 'shopify') {
     // Fetch products from specific Shopify collection
     const fetchedProducts = await getCollectionProducts({ collection });
 
@@ -67,7 +69,8 @@ async function CollectionData({ collection }: { collection: string }) {
       // Collection exists but has no products
       collectionProducts = [];
     } else {
-      collectionProducts = fetchedProducts;
+      // Convert Shopify products to local format
+      collectionProducts = fetchedProducts.map(convertShopifyToLocal);
     }
   } else {
     // Local mode: fallback to filtering by category
@@ -82,8 +85,8 @@ async function CollectionData({ collection }: { collection: string }) {
   }
 
   // Fetch collections from Shopify for category filter
-  let collections: any[] = [];
-  if (isShopifyEnabled()) {
+  let collections: Collection[] = [];
+  if (dataMode === 'shopify') {
     collections = await getCollections();
   }
 
@@ -117,7 +120,8 @@ export default async function CollectionPage({ params }: CollectionPageProps) {
  * This enables static generation for all collection pages
  */
 export async function generateStaticParams() {
-  if (isShopifyEnabled()) {
+  const dataMode = getDataSourceMode();
+  if (dataMode === 'shopify') {
     const collections = await getCollections();
     return collections
       .filter((collection) => collection.handle) // Exclude "All" collection (empty handle)

@@ -2,6 +2,7 @@ import { Suspense } from 'react';
 import { getProducts, getDataSourceMode, isShopifyEnabled } from '@/lib/data-source';
 import { getCollections } from '@/lib/shopify';
 import ProductsClient from './ProductsClient';
+import type { Collection } from '@/lib/shopify/types';
 
 async function ProductsData() {
   // Fetch products using dual-mode data source
@@ -10,7 +11,7 @@ async function ProductsData() {
   const dataMode = getDataSourceMode();
 
   // Fetch collections from Shopify for category filter
-  let collections: any[] = [];
+  let collections: Collection[] = [];
   if (isShopifyEnabled()) {
     collections = await getCollections();
   }

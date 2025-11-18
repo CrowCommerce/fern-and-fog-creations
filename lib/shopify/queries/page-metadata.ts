@@ -5,8 +5,8 @@
  * This allows business users to edit page titles, descriptions, and SEO settings
  * without code changes.
  *
- * IMPORTANT: This query uses the Admin API pattern (metaobjectByHandle)
- * which is NOT available in the Storefront API. We need to use metaobjects query instead.
+ * Note: This query uses the Storefront API metaobjects query pattern.
+ * The metaobjects query is available in the Storefront API and allows filtering by type.
  */
 
 export const getPageMetadataQuery = /* GraphQL */ `

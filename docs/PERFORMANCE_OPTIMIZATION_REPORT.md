@@ -218,7 +218,7 @@ const relatedProducts = filterRelatedProducts(allProducts, product, 4);
 
 ### Build Results
 
-```
+```text
 ✓ Compiled successfully in 4.4s
 ✓ Generating static pages (55/55) in 2.1s
 ```

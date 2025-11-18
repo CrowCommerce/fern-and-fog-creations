@@ -16,8 +16,7 @@ test.describe('Accessibility', () => {
       // Should have exactly one h1
       const h1Elements = page.locator('h1');
       const h1Count = await h1Elements.count();
-      expect(h1Count).toBeGreaterThanOrEqual(1);
-      expect(h1Count).toBeLessThanOrEqual(2); // Allow for error boundaries
+      expect(h1Count).toBe(1);
     });
 
     test(`${name} should have alt text on images`, async ({ page }) => {

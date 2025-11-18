@@ -130,7 +130,7 @@ function getLocalProducts(options?: {
 /**
  * Convert Shopify product format to local product format
  */
-function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
+export function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
   // Extract price from Shopify's price range
   const price = parseFloat(shopifyProduct.priceRange.minVariantPrice.amount);
 
