@@ -506,13 +506,120 @@ getCart()                             // Fetch cart contents
 addToCart(lines)                      // Add items to cart
 removeFromCart(lineIds)               // Remove items
 updateCart(lines)                     // Update quantities
-getProductRecommendations(productId)  // Related products
+getProductRecommendations(productId)  // Shopify AI-powered related products
 ```
+
+**Related Products System:**
+
+The app uses Shopify's AI-powered product recommendations API with intelligent fallbacks:
+
+```typescript
+// From lib/data-source.ts
+export async function getRelatedProducts(
+  product: LocalProduct,
+  limit: number = 4
+): Promise<LocalProduct[]> {
+  if (isShopifyEnabled() && isShopifyConfigured()) {
+    try {
+      // 1. Try Shopify's AI recommendations first
+      const recommendations = await shopify.getProductRecommendations(product.id);
+      const relatedProducts = recommendations.map(convertShopifyToLocal).slice(0, limit);
+
+      if (relatedProducts.length > 0) {
+        return relatedProducts;
+      }
+
+      // 2. Fallback to category-based filtering if no recommendations
+      console.warn(`No Shopify recommendations for product ${product.id}, using category fallback`);
+      return getLocalRelatedProducts(product, limit);
+    } catch (error) {
+      // 3. Fallback on error
+      console.error('Failed to fetch recommendations from Shopify:', error);
+      return getLocalRelatedProducts(product, limit);
+    }
+  }
+
+  // 4. Use local category-based filtering in local mode
+  return getLocalRelatedProducts(product, limit);
+}
+```
+
+**Fallback Strategy:**
+- **Primary**: Shopify's AI-powered recommendations (uses ML to suggest relevant products)
+- **Secondary**: Category-based filtering (same collection/category)
+- **Tertiary**: Local data filtering (development mode)
+
+**Usage in Components:**
+```typescript
+import { getRelatedProducts } from '@/lib/data-source';
+
+// In product detail page
+const relatedProducts = await getRelatedProducts(product, 4);
+```
+
+**Product Categorization:**
+
+Products are categorized using **Shopify collections** (not tags):
+
+```typescript
+// lib/data-source.ts - convertShopifyToLocal()
+const collectionNodes = shopifyProduct.collections?.edges?.map(edge => edge.node) || [];
+const category = collectionNodes.length > 0
+  ? collectionNodes[0].handle
+  : 'uncategorized';
+```
+
+**Important:** Products automatically inherit their category from the first Shopify collection they belong to. This allows business users to manage categories entirely through Shopify's admin interface by adding/removing products from collections.
 
 **GraphQL Organization:**
 - `src/lib/shopify/queries/` - GraphQL queries (product, cart, collection, menu, page)
 - `src/lib/shopify/mutations/` - GraphQL mutations (cart operations)
 - `src/lib/shopify/fragments/` - Reusable GraphQL fragments (product, cart, image, seo)
+
+**Product Fragment Enhancements:**
+
+The `product-summary.ts` fragment includes critical fields for categorization and display:
+
+```graphql
+# lib/shopify/fragments/product-summary.ts
+fragment productSummary on Product {
+  id
+  handle
+  title
+  description
+  availableForSale
+  tags
+  priceRange { minVariantPrice { amount currencyCode } }
+  featuredImage { url altText width height }
+
+  # Collection membership for dynamic categorization
+  collections(first: 5) {
+    edges {
+      node {
+        handle
+        title
+      }
+    }
+  }
+
+  # Multiple images for product detail pages
+  images(first: 20) {
+    edges {
+      node {
+        url
+        altText
+        width
+        height
+      }
+    }
+  }
+}
+```
+
+**Key Fragment Fields:**
+- `collections` - Enables dynamic category assignment from Shopify admin
+- `images` - Provides full image array for product galleries (not just featuredImage)
+- Both fields critical for proper product display and categorization
 
 **Caching Strategy:**
 ```typescript
@@ -637,7 +744,7 @@ The products page supports filtering and sorting via URL search params and dedic
 **Filter Components:**
 - `src/components/filters/FilterPanel.tsx` - Desktop filter sidebar
 - `src/components/filters/MobileFilterDrawer.tsx` - Mobile filter drawer
-- `src/components/filters/CheckboxFilter.tsx` - Category/tag checkboxes
+- `src/components/filters/CheckboxFilter.tsx` - Category checkboxes (dynamically generated from Shopify collections)
 - `src/components/filters/PriceRangeFilter.tsx` - Min/max price inputs
 - `src/components/filters/SortDropdown.tsx` - Sort order selector
 
@@ -645,12 +752,38 @@ The products page supports filtering and sorting via URL search params and dedic
 - The `app/(store)/layout.tsx` manages filter state across all product pages
 - Filters are synced to URL search params for shareability and back-button support
 - `ProductsClient.tsx` receives filter props from the layout
+- **Categories are dynamically generated from Shopify collections** - business users manage filters by creating/editing collections in Shopify admin
 
 **URL Pattern:**
 ```
 /products?category=earrings&sort=price-asc&minPrice=20&maxPrice=100
-/products/[collection]?sort=newest&material=sea-glass
+/products/[collection]?sort=newest
 ```
+
+**Dynamic Category Facets:**
+
+Categories are automatically generated from Shopify collections in `hooks/useFilters.ts`:
+
+```typescript
+// Generate category options from Shopify collections
+const categoryOptions = collections
+  .filter((c) => c.handle) // Exclude "All" collection (empty handle)
+  .map((collection) => ({
+    value: collection.handle,
+    label: collection.title,
+    count: products.filter((p) =>
+      p.category.toLowerCase() === collection.handle.toLowerCase() ||
+      p.category.toLowerCase().replace(/\s+/g, '-') === collection.handle
+    ).length,
+  }))
+  .filter((opt) => opt.count > 0); // Only show collections with products
+```
+
+**Key Benefits:**
+- No hardcoded category lists
+- Business users manage categories through Shopify collections
+- Category counts automatically calculated
+- Empty categories automatically hidden
 
 **Implementation Pattern:**
 ```typescript
@@ -760,6 +893,53 @@ Both loaded via `next/font/google` in `app/layout.tsx`.
 - `src/types/index.ts` - Consolidated type exports
 - `src/lib/shopify/types.ts` - Shopify API types
 - `src/components/cart/cart-context.tsx` - Cart-related types
+
+**Product Type Structure:**
+
+```typescript
+// src/types/product.ts
+export interface Product {
+  id: string;
+  slug: string;
+  name: string;
+  price: number;
+  category: string; // Dynamic - populated from Shopify collection handle
+  images: string[];
+  materials: string[]; // Informational only - not used for filtering
+  description: string;
+  forSale: boolean;
+  featured?: boolean;
+  variants?: ProductVariant[];
+  options?: ProductOption[];
+  priceRange?: { min: number; max: number };
+}
+```
+
+**Important Type Changes:**
+- `category` field changed from union type to `string` to support dynamic Shopify collections
+- `materials` field retained for product information display but removed from filter interface
+- Categories now come from Shopify collection handles, not hardcoded values
+
+**Filter Type Structure:**
+
+```typescript
+// src/types/filter.ts
+export interface ActiveFilters {
+  category?: string[];      // Multi-select category filter (from Shopify collections)
+  priceRange?: { min: number; max: number };
+  availability?: boolean;   // Filter by in-stock status
+  sort?: SortOption;        // Sort order
+  // Note: 'material' filter removed - categories managed via Shopify collections only
+}
+
+export type SortOption =
+  | 'featured'
+  | 'price-asc'
+  | 'price-desc'
+  | 'newest'
+  | 'name-asc'
+  | 'name-desc'
+```
 
 **Type Guards:** `src/lib/type-guards.ts` contains utility functions like `isShopifyError()` for runtime type checking.
 
