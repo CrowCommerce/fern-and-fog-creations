@@ -34,6 +34,14 @@ const productSummaryFragment = /* GraphQL */ `
         }
       }
     }
+    collections(first: 5) {
+      edges {
+        node {
+          handle
+          title
+        }
+      }
+    }
     tags
     updatedAt
   }

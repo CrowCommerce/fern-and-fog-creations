@@ -5,7 +5,7 @@ export interface Product {
   slug: string;
   name: string;
   price: number;
-  category: 'earrings' | 'resin' | 'driftwood' | 'wall-hangings';
+  category: string;
   images: string[];
   materials: string[];
   description: string;

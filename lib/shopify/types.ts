@@ -131,6 +131,7 @@ export type ShopifyProduct = {
   variants: Connection<ProductVariant>;
   featuredImage: Image;
   images: Connection<Image>;
+  collections?: Connection<ShopifyCollection>;
   seo: SEO;
   tags: string[];
   updatedAt: string;

@@ -38,7 +38,7 @@ export interface ProductWithVariants {
   name: string
   price: number // Represents base price or "from" price when variants exist
   priceRange?: PriceRange
-  category: 'earrings' | 'resin' | 'driftwood' | 'wall-hangings'
+  category: string
   images: string[]
   materials: string[]
   description: string

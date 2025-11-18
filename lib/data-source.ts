@@ -134,9 +134,10 @@ function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
   // Extract price from Shopify's price range
   const price = parseFloat(shopifyProduct.priceRange.minVariantPrice.amount);
 
-  // Map Shopify category/collection to local category
-  // Default to 'earrings' if no mapping found
-  const category = mapShopifyCategory(shopifyProduct) || 'earrings';
+  // Extract category from Shopify collections
+  // Use the first collection handle, or 'uncategorized' if no collections
+  const collectionNodes = shopifyProduct.collections?.edges?.map(edge => edge.node) || [];
+  const category = collectionNodes.length > 0 ? collectionNodes[0].handle : 'uncategorized';
 
   // Extract images - fallback to featuredImage if images array missing
   const images = shopifyProduct.images && shopifyProduct.images.length > 0
@@ -192,20 +193,6 @@ function convertShopifyToLocal(shopifyProduct: ShopifyProduct): LocalProduct {
     options,
     priceRange
   };
-}
-
-/**
- * Map Shopify tags to local category
- */
-function mapShopifyCategory(product: ShopifyProduct): LocalProduct['category'] | undefined {
-  const tags = product.tags.map(t => t.toLowerCase());
-
-  if (tags.includes('earrings')) return 'earrings';
-  if (tags.includes('resin')) return 'resin';
-  if (tags.includes('driftwood')) return 'driftwood';
-  if (tags.includes('wall-hangings')) return 'wall-hangings';
-
-  return undefined;
 }
 
 /**
