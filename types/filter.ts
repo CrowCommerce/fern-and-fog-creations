@@ -29,7 +29,6 @@ export type SortOption =
 export interface ActiveFilters {
   category?: string[]
   priceRange?: { min: number; max: number }
-  material?: string[]
   availability?: boolean
   sort?: SortOption
 }

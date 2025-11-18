@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation'
 import { Suspense } from 'react'
 import type { Metadata } from 'next'
-import { getProduct, getProducts } from '@/lib/data-source'
+import { getProduct, getProducts, getRelatedProducts } from '@/lib/data-source'
 import ProductDetailContent from './ProductDetailContent'
 import type { Product } from '@/data/products'
 import { HIDDEN_PRODUCT_TAG } from '@/lib/constants'
@@ -76,32 +76,18 @@ export async function generateMetadata({ params }: ProductPageProps): Promise<Me
   }
 }
 
-// Get related products by filtering by category
-function filterRelatedProducts(
-  allProducts: Product[],
-  currentProduct: Product,
-  limit: number = 4
-): Product[] {
-  return allProducts
-    .filter(p => p.id !== currentProduct.id && p.category === currentProduct.category && p.forSale)
-    .slice(0, limit);
-}
-
 export default async function ProductDetailPage({ params }: ProductPageProps) {
   const { handle } = await params
 
-  // Fetch product and all products in parallel for better performance
-  const [product, allProducts] = await Promise.all([
-    getProduct(handle),
-    getProducts(),
-  ]);
+  // Fetch product first
+  const product = await getProduct(handle);
 
   if (!product) {
     notFound()
   }
 
-  // Filter related products from the already-fetched list
-  const relatedProducts = filterRelatedProducts(allProducts, product, 4)
+  // Get related products using the unified function
+  const relatedProducts = await getRelatedProducts(product, 4)
 
   // Generate JSON-LD structured data for SEO
   const productName = isShopifyProduct(product) && product.seo?.title

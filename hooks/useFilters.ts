@@ -39,17 +39,6 @@ export function useFilters({ products, collections = [], initialFilters = {} }: 
       });
     }
 
-    // Material filter
-    if (initialFilters.material && initialFilters.material.length > 0) {
-      filtered = filtered.filter((p) =>
-        p.materials.some((m) =>
-          initialFilters.material!.some((filterMat) =>
-            m.toLowerCase().includes(filterMat.toLowerCase())
-          )
-        )
-      );
-    }
-
     // Availability filter
     if (initialFilters.availability !== undefined) {
       filtered = filtered.filter((p) => p.forSale === initialFilters.availability);
@@ -68,16 +57,6 @@ export function useFilters({ products, collections = [], initialFilters = {} }: 
     const allPrices = products.map((p) => p.price);
     const minPrice = Math.floor(Math.min(...allPrices) / 10) * 10;
     const maxPrice = Math.ceil(Math.max(...allPrices) / 10) * 10;
-
-    // Get unique materials
-    const allMaterials = new Set<string>();
-    products.forEach((p) => {
-      p.materials.forEach((m) => {
-        // Simplify materials (e.g., "Sterling silver hooks" -> "Silver")
-        const simplified = simplifyMaterial(m);
-        allMaterials.add(simplified);
-      });
-    });
 
     // Generate category options from Shopify collections
     const categoryOptions = collections
@@ -106,23 +85,6 @@ export function useFilters({ products, collections = [], initialFilters = {} }: 
         min: minPrice,
         max: maxPrice,
         options: [],
-      },
-      {
-        id: 'material',
-        name: 'Materials',
-        type: 'checkbox',
-        options: Array.from(allMaterials)
-          .sort()
-          .map((m) => ({
-            value: m,
-            label: m,
-            count: products.filter((p) =>
-              p.materials.some((mat) =>
-                mat.toLowerCase().includes(m.toLowerCase())
-              )
-            ).length,
-          }))
-          .filter((opt) => opt.count > 0),
       },
     ];
   }, [products, collections]);
@@ -159,21 +121,4 @@ function applySort(products: Product[], sort: SortOption): Product[] {
         return parseInt(a.id) - parseInt(b.id);
       });
   }
-}
-
-// Helper: Simplify material names for filtering
-function simplifyMaterial(material: string): string {
-  const lower = material.toLowerCase();
-
-  if (lower.includes('silver')) return 'Silver';
-  if (lower.includes('gold')) return 'Gold';
-  if (lower.includes('resin')) return 'Resin';
-  if (lower.includes('sea glass')) return 'Sea Glass';
-  if (lower.includes('driftwood')) return 'Driftwood';
-  if (lower.includes('fern') || lower.includes('flower')) return 'Pressed Flowers';
-  if (lower.includes('shell')) return 'Shells';
-  if (lower.includes('macrame')) return 'Macramé';
-
-  // Return first word capitalized
-  return material.split(' ')[0].charAt(0).toUpperCase() + material.split(' ')[0].slice(1);
 }

@@ -224,6 +224,57 @@ function extractMaterialsFromTags(tags: string[]): string[] {
 }
 
 /**
+ * Get related products for a given product
+ * Uses Shopify recommendations API in Shopify mode, category-based filtering in local mode
+ */
+export async function getRelatedProducts(
+  product: LocalProduct,
+  limit: number = 4
+): Promise<LocalProduct[]> {
+  if (isShopifyEnabled() && isShopifyConfigured()) {
+    try {
+      // Use Shopify's recommendation API
+      const recommendations = await shopify.getProductRecommendations(product.id);
+
+      // Convert to local format and limit results
+      const relatedProducts = recommendations.map(convertShopifyToLocal).slice(0, limit);
+
+      // If we got recommendations, return them
+      if (relatedProducts.length > 0) {
+        return relatedProducts;
+      }
+
+      // If no recommendations from Shopify, fall back to category-based filtering
+      console.warn(`No Shopify recommendations for product ${product.id}, using category fallback`);
+      return getLocalRelatedProducts(product, limit);
+    } catch (error) {
+      console.error('Failed to fetch recommendations from Shopify:', error);
+      // Fallback to category-based filtering on error
+      return getLocalRelatedProducts(product, limit);
+    }
+  }
+
+  // Use local category-based filtering
+  return getLocalRelatedProducts(product, limit);
+}
+
+/**
+ * Get related products using category-based filtering (local mode or fallback)
+ */
+function getLocalRelatedProducts(
+  currentProduct: LocalProduct,
+  limit: number
+): LocalProduct[] {
+  return localProducts
+    .filter(p =>
+      p.id !== currentProduct.id &&
+      p.category === currentProduct.category &&
+      p.forSale
+    )
+    .slice(0, limit);
+}
+
+/**
  * Get current data source mode
  */
 export function getDataSourceMode(): 'shopify' | 'local' {

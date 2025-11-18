@@ -52,12 +52,6 @@ export default function ProductsClient({
       };
     }
 
-    // Material filter
-    const materialParam = searchParams?.get('material');
-    if (materialParam) {
-      filters.material = materialParam.split(',');
-    }
-
     // Sort
     const sortParam = searchParams?.get('sort');
     if (sortParam) {
@@ -89,11 +83,6 @@ export default function ProductsClient({
     if (newFilters.priceRange) {
       params.set('minPrice', String(newFilters.priceRange.min));
       params.set('maxPrice', String(newFilters.priceRange.max));
-    }
-
-    // Material
-    if (newFilters.material && newFilters.material.length > 0) {
-      params.set('material', newFilters.material.join(','));
     }
 
     // Sort
