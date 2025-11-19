@@ -160,3 +160,179 @@ export async function validateConnection(): Promise<boolean> {
     return false;
   }
 }
+
+/**
+ * Get the primary location ID for the store (for inventory tracking)
+ */
+export async function getLocationId(): Promise<string> {
+  const query = `
+    query {
+      locations(first: 1) {
+        edges {
+          node {
+            id
+            name
+          }
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminRequest<{
+    locations: {
+      edges: Array<{
+        node: { id: string; name: string };
+      }>;
+    };
+  }>(query);
+
+  const locationId = result.locations.edges[0]?.node.id;
+  if (!locationId) {
+    throw new Error('No location found for store');
+  }
+
+  return locationId;
+}
+
+/**
+ * Create a staged upload target for image upload
+ */
+export async function createStagedUpload(
+  filename: string,
+  mimeType: string,
+  fileSize: number
+): Promise<{
+  url: string;
+  resourceUrl: string;
+  parameters: Array<{ name: string; value: string }>;
+}> {
+  const query = `
+    mutation stagedUploadsCreate($input: [StagedUploadInput!]!) {
+      stagedUploadsCreate(input: $input) {
+        stagedTargets {
+          url
+          resourceUrl
+          parameters {
+            name
+            value
+          }
+        }
+        userErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminRequest<{
+    stagedUploadsCreate: {
+      stagedTargets: Array<{
+        url: string;
+        resourceUrl: string;
+        parameters: Array<{ name: string; value: string }>;
+      }>;
+      userErrors: UserError[];
+    };
+  }>(query, {
+    input: [
+      {
+        filename,
+        mimeType,
+        resource: 'IMAGE',
+        fileSize: fileSize.toString(),
+      },
+    ],
+  });
+
+  if (result.stagedUploadsCreate.userErrors.length > 0) {
+    throw new Error(
+      `Staged upload failed: ${result.stagedUploadsCreate.userErrors
+        .map((e) => e.message)
+        .join(', ')}`
+    );
+  }
+
+  return result.stagedUploadsCreate.stagedTargets[0];
+}
+
+/**
+ * Upload file to staged upload target
+ */
+export async function uploadFileToStaged(
+  stagedTarget: {
+    url: string;
+    resourceUrl: string;
+    parameters: Array<{ name: string; value: string }>;
+  },
+  fileBuffer: Buffer,
+  filename: string
+): Promise<string> {
+  const formData = new FormData();
+
+  // Add parameters from staged target
+  stagedTarget.parameters.forEach((param) => {
+    formData.append(param.name, param.value);
+  });
+
+  // Add file
+  const blob = new Blob([fileBuffer]);
+  formData.append('file', blob, filename);
+
+  const response = await fetch(stagedTarget.url, {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    throw new Error(`Failed to upload file: ${response.statusText}`);
+  }
+
+  return stagedTarget.resourceUrl;
+}
+
+/**
+ * Attach uploaded images to a product
+ */
+export async function attachImagesToProduct(
+  productId: string,
+  imageUrls: Array<{ url: string; altText: string }>
+): Promise<void> {
+  const query = `
+    mutation productCreateMedia($media: [CreateMediaInput!]!, $productId: ID!) {
+      productCreateMedia(media: $media, productId: $productId) {
+        media {
+          alt
+          mediaContentType
+          status
+        }
+        mediaUserErrors {
+          field
+          message
+        }
+      }
+    }
+  `;
+
+  const result = await shopifyAdminRequest<{
+    productCreateMedia: {
+      media: unknown[];
+      mediaUserErrors: UserError[];
+    };
+  }>(query, {
+    productId,
+    media: imageUrls.map((img) => ({
+      originalSource: img.url,
+      alt: img.altText,
+      mediaContentType: 'IMAGE',
+    })),
+  });
+
+  if (result.productCreateMedia.mediaUserErrors.length > 0) {
+    throw new Error(
+      `Failed to attach images: ${result.productCreateMedia.mediaUserErrors
+        .map((e) => e.message)
+        .join(', ')}`
+    );
+  }
+}
