@@ -235,6 +235,112 @@ pnpm setup:about:dry
 pnpm setup:homepage:dry
 ```
 
+### Product Migration to Shopify (Admin API)
+
+**Scripts:** `scripts/migrate-products.ts` migrates local product data to Shopify store.
+
+**Critical Requirements:**
+- Requires Shopify Admin API access token with specific scopes
+- Uses Admin API 2024-10 (latest stable version)
+- Handles product variants using two-step creation pattern (required by API 2024-10+)
+
+**Required Admin API Scopes:**
+```bash
+# Add these in Shopify Admin > Apps > Your App > API credentials
+# IMPORTANT: App must be reinstalled after adding scopes
+write_products, read_products        # Create/update products
+write_collections, read_collections  # Create/update collections
+write_files, read_files             # Image uploads (both required!)
+read_inventory                      # Fetch store location for inventory
+```
+
+**Environment Variable:**
+```bash
+SHOPIFY_ADMIN_ACCESS_TOKEN=your-admin-access-token
+```
+
+**Run Product Migration:**
+```bash
+pnpm migrate:products           # Migrate all 16 products from data/products.ts
+pnpm migrate:products:dry       # Preview what would be created (no changes)
+```
+
+**Migration Process:**
+1. Validates Shopify Admin API connection
+2. Fetches store location ID (for inventory tracking)
+3. Creates/verifies collections (earrings, resin, driftwood, wall-hangings)
+4. For each product:
+   - Creates/updates product with title, description, tags, options
+   - Uploads product images to Shopify CDN (requires `read_files` + `write_files` scopes)
+   - Creates variants using `productVariantsBulkCreate` with `REMOVE_STANDALONE_VARIANT` strategy
+   - Sets inventory quantities at store location
+   - Assigns product to collection
+
+**Important API 2024-10 Patterns:**
+
+**Two-Step Variant Creation** (required since API 2024-07):
+```typescript
+// Step 1: Create product with options (creates auto-default variant)
+await productCreate({
+  productOptions: [
+    { name: "Color", values: [{ name: "Blue" }, { name: "Red" }] },
+    { name: "Size", values: [{ name: "Small" }, { name: "Large" }] }
+  ]
+});
+
+// Step 2: Replace default variant with custom variants
+await productVariantsBulkCreate({
+  productId,
+  variants: [...],
+  strategy: 'REMOVE_STANDALONE_VARIANT'  // Atomically replaces default
+});
+```
+
+**Why `REMOVE_STANDALONE_VARIANT` strategy:**
+- When product is created with `productOptions`, Shopify auto-creates a default variant
+- Using this strategy atomically replaces the default variant with custom variants
+- Preserves option structure (avoids "Option does not exist" errors)
+- Alternative to manual variant deletion (which removes options)
+
+**ProductVariantsBulkInput Structure:**
+```typescript
+{
+  price: "29.99",
+  inventoryItem: {
+    tracked: true,
+    sku: "SEA-GLASS-SF-SM"  // SKU nested in inventoryItem (not root!)
+  },
+  inventoryQuantities: [{
+    availableQuantity: 10,
+    locationId: "gid://shopify/Location/12345"
+  }],
+  optionValues: [  // Must include both name and value
+    { optionName: "Color", name: "Seafoam" },
+    { optionName: "Size", name: "Small" }
+  ]
+}
+```
+
+**Common Migration Issues:**
+
+1. **Missing `read_files` scope** → Image uploads fail with 403 Forbidden
+   - Solution: Add both `read_files` AND `write_files` scopes, reinstall app, get new token
+
+2. **ProductOptions cannot be specified during update** → Updates fail
+   - Solution: Script conditionally includes `productOptions` only on CREATE operations
+
+3. **The variant already exists** → Default variant conflict
+   - Solution: Use `REMOVE_STANDALONE_VARIANT` strategy instead of manual deletion
+
+**Migration Helper Functions:**
+- `scripts/lib/shopify-admin.ts` - Shared Admin API utilities
+  - `shopifyAdminRequest()` - GraphQL client with retry logic and rate limiting
+  - `validateConnection()` - Test Admin API credentials
+  - `getLocationId()` - Fetch primary store location
+  - `createStagedUpload()` - Prepare image upload target
+  - `uploadFileToStaged()` - Upload file to Shopify CDN
+  - `attachImagesToProduct()` - Associate images with product
+
 ### Contact Form (Jotform Integration) ✅
 
 The contact form uses **Jotform** - a no-code form builder with built-in spam protection and email notifications.

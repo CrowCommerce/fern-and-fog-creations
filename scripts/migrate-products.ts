@@ -372,69 +372,6 @@ async function upsertProduct(
 }
 
 /**
- * Get product's default variant ID (created automatically by Shopify)
- */
-async function getDefaultVariantId(productId: string): Promise<string | null> {
-  const query = `
-    query getProduct($id: ID!) {
-      product(id: $id) {
-        variants(first: 1) {
-          edges {
-            node {
-              id
-            }
-          }
-        }
-      }
-    }
-  `;
-
-  const result = await shopifyAdminRequest<{
-    product: {
-      variants: {
-        edges: Array<{ node: { id: string } }>;
-      };
-    };
-  }>(query, { id: productId });
-
-  return result.product.variants.edges[0]?.node.id || null;
-}
-
-/**
- * Delete the default variant created by Shopify
- */
-async function deleteDefaultVariant(productId: string, variantId: string): Promise<void> {
-  const mutation = `
-    mutation productVariantsBulkDelete($productId: ID!, $variantsIds: [ID!]!) {
-      productVariantsBulkDelete(productId: $productId, variantsIds: $variantsIds) {
-        product {
-          id
-        }
-        userErrors {
-          field
-          message
-        }
-      }
-    }
-  `;
-
-  const result = await shopifyAdminRequest<{
-    productVariantsBulkDelete: {
-      product?: { id: string };
-      userErrors: UserError[];
-    };
-  }>(mutation, { productId, variantsIds: [variantId] });
-
-  if (result.productVariantsBulkDelete.userErrors.length > 0) {
-    throw new Error(
-      `Failed to delete default variant: ${result.productVariantsBulkDelete.userErrors
-        .map((e) => e.message)
-        .join(', ')}`
-    );
-  }
-}
-
-/**
  * Create product variants using productVariantsBulkCreate
  * (Required for API 2024-10 - variants cannot be created with product)
  */
@@ -448,18 +385,9 @@ async function createProductVariants(
     selectedOptions: Array<{ name: string; value: string }>;
   }>
 ): Promise<void> {
-  // Step 1: Delete the default variant created by Shopify
-  // (When a product is created with options, Shopify auto-creates a default variant)
-  const defaultVariantId = await getDefaultVariantId(productId);
-  if (defaultVariantId) {
-    console.log(`   Deleting default variant...`);
-    await deleteDefaultVariant(productId, defaultVariantId);
-  }
-
-  // Step 2: Create all custom variants
   const mutation = `
-    mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!) {
-      productVariantsBulkCreate(productId: $productId, variants: $variants) {
+    mutation productVariantsBulkCreate($productId: ID!, $variants: [ProductVariantsBulkInput!]!, $strategy: ProductVariantsBulkCreateStrategy!) {
+      productVariantsBulkCreate(productId: $productId, variants: $variants, strategy: $strategy) {
         productVariants {
           id
           title
@@ -497,6 +425,7 @@ async function createProductVariants(
   }>(mutation, {
     productId,
     variants,
+    strategy: 'REMOVE_STANDALONE_VARIANT',
   });
 
   if (result.productVariantsBulkCreate.userErrors.length > 0) {
