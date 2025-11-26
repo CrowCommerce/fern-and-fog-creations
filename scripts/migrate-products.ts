@@ -289,6 +289,7 @@ async function upsertProduct(
             },
           ],
           inventoryPolicy: 'DENY',
+          selectedOptions: [] as Array<{ name: string; value: string }>,
         },
       ];
 
