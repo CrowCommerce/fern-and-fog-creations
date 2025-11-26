@@ -130,6 +130,8 @@ UPSTASH_REDIS_REST_URL=your-url
 UPSTASH_REDIS_REST_TOKEN=your-token
 ```
 
+**For complete setup instructions:** See [docs/SHOPIFY_SETUP.md](docs/SHOPIFY_SETUP.md)
+
 ## Key Patterns
 
 ### Product Types

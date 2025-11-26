@@ -101,6 +101,10 @@ UPSTASH_REDIS_REST_TOKEN=your-upstash-token
 
 ## 📖 Documentation
 
+### Getting Started
+
+- **[Shopify Setup Guide](docs/SHOPIFY_SETUP.md)** - Complete setup for connecting to a new Shopify store
+
 ### For Business Users
 
 - **[Shopify CMS Guide](docs/SHOPIFY_CMS_GUIDE.md)** - Complete guide to managing website content
