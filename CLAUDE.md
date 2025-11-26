@@ -1280,5 +1280,55 @@ This codebase prioritizes accessibility:
 
 ## Git Workflow
 
-- Main branch: `main`
-- Use conventional commit messages (e.g., `feat:`, `fix:`, `chore:`)
+**Committing Changes:**
+
+When Claude Code makes changes, it should:
+1. **Always commit and push** changes after completing a task
+2. Use descriptive commit messages following conventional commits format
+3. Include the Claude Code footer in commit messages
+
+**Reverting Changes:**
+
+If you don't like changes that were committed, you have several options:
+
+```bash
+# Option 1: Undo the last commit but keep changes (safest)
+git reset --soft HEAD~1
+# Then you can modify files and re-commit, or discard changes
+
+# Option 2: Undo the last commit and discard changes (destructive)
+git reset --hard HEAD~1
+# WARNING: This permanently deletes the changes
+
+# Option 3: Revert a specific commit by hash (creates new commit)
+git revert <commit-hash>
+# Safe option: keeps history and creates a new commit that undoes changes
+
+# Option 4: Undo multiple commits (e.g., last 3 commits)
+git reset --soft HEAD~3  # Keep changes
+git reset --hard HEAD~3  # Discard changes
+
+# After any reset, force push to update remote (if already pushed)
+git push --force
+# WARNING: Only use force push on feature branches, never on main/master
+```
+
+**Finding Commit Hashes:**
+
+```bash
+# View recent commits with hashes
+git log --oneline -10
+
+# View detailed commit history
+git log -5
+
+# Search for commits by message
+git log --grep="search term"
+```
+
+**Best Practices:**
+- Review changes with `git diff` before reverting
+- Use `--soft` reset to keep changes if you're unsure
+- Only force push on feature branches (never main/master)
+- Create a backup branch before destructive operations: `git branch backup-branch`
+- Avoid `--hard` reset unless you're certain you want to delete changes
