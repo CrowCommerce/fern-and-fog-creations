@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Inter } from "next/font/google";
 import { Suspense } from "react";
+import { Toaster } from "sonner";
 import HeaderWrapper from "@/components/layout/HeaderWrapper";
 import FooterWrapper from '@/components/layout/FooterWrapper'
 import { CartProvider } from '@/components/cart/cart-context';
@@ -61,6 +62,7 @@ export default async function RootLayout({
         className={`${cormorant.variable} ${inter.variable} antialiased`}
       >
         <Analytics />
+        <Toaster richColors position="top-center" />
         <CartProvider cartPromise={cartPromise}>
           <SearchProvider>
             <SearchDialog />
