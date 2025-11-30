@@ -16,6 +16,13 @@ interface ProductPageProps {
 // Generate static params for all products
 export async function generateStaticParams() {
   const products = await getProducts()
+
+  // Cache Components requires at least one result from generateStaticParams
+  // Return a placeholder if no products exist - the page will return notFound() for invalid handles
+  if (products.length === 0) {
+    return [{ handle: '_placeholder' }]
+  }
+
   return products.map((product) => ({
     handle: product.slug,
   }))
