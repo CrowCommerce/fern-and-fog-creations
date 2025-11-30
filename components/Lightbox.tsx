@@ -51,24 +51,23 @@ export default function Lightbox({
     <Dialog open={isOpen} onClose={onClose} className="relative z-[70]">
       <DialogBackdrop className="fixed inset-0 bg-moss/95 transition-opacity" />
 
-      <div className="fixed inset-0 overflow-hidden">
-        <div className="flex min-h-full items-center justify-center p-4">
+      <div className="fixed inset-0 overflow-y-auto">
+        <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
           <DialogPanel className="relative w-full max-w-5xl">
-            {/* Close Button */}
-            <button
-              onClick={onClose}
-              className="absolute -top-12 right-4 p-2 text-parchment hover:text-gold transition-colors cursor-pointer"
-              aria-label="Close lightbox"
-            >
-              <XMarkIcon className="h-8 w-8" />
-            </button>
-
             {/* Image */}
-            <div className="relative aspect-square bg-bark/20 rounded-lg overflow-hidden">
+            <div className="relative bg-bark/20 rounded-lg overflow-hidden max-h-[70vh] flex items-center justify-center">
+              {/* Close Button - inside image container */}
+              <button
+                onClick={onClose}
+                className="absolute top-4 right-4 z-10 p-2 bg-bark/50 hover:bg-bark/70 text-parchment rounded-full transition-colors cursor-pointer"
+                aria-label="Close lightbox"
+              >
+                <XMarkIcon className="h-6 w-6" />
+              </button>
               <img
                 src={currentImage.src}
                 alt={currentImage.alt}
-                className="w-full h-full object-contain"
+                className="max-w-full max-h-[70vh] object-contain"
               />
             </div>
 
