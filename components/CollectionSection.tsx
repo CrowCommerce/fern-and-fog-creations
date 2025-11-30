@@ -1,10 +1,52 @@
-import Link from 'next/link'
-import { galleryItems } from '@/data/gallery'
-import SpotlightCard from '@/components/SpotlightCard'
+import Link from 'next/link';
+import { cacheLife, cacheTag } from 'next/cache';
+import { PhotoIcon } from '@heroicons/react/24/outline';
+import { TAGS } from '@/lib/constants';
+import { getGalleryItems } from '@/lib/shopify';
+import { isShopifyEnabled, isShopifyConfigured } from '@/lib/data-source';
+import SpotlightCard from '@/components/SpotlightCard';
+import type { GalleryItem } from '@/types/gallery';
 
-export default function CollectionSection() {
-  // Get first 3 gallery items
-  const previewItems = galleryItems.slice(0, 3)
+/**
+ * Fetch gallery preview items with caching
+ */
+async function getPreviewItems(): Promise<GalleryItem[]> {
+  'use cache';
+  cacheTag(TAGS.gallery);
+  cacheLife('days');
+
+  if (isShopifyEnabled() && isShopifyConfigured()) {
+    try {
+      const items = await getGalleryItems();
+      return items.slice(0, 3);
+    } catch (error) {
+      console.error('Failed to fetch gallery items from Shopify:', error);
+    }
+  }
+
+  return [];
+}
+
+export default async function CollectionSection() {
+  const previewItems = await getPreviewItems();
+
+  if (previewItems.length === 0) {
+    return (
+      <section aria-labelledby="gallery-heading" className="bg-moss py-24 sm:py-32">
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="bg-parchment/20 p-6 rounded-full mb-6">
+            <PhotoIcon className="w-12 h-12 text-gold/60" />
+          </div>
+          <h2 id="gallery-heading" className="text-2xl font-display text-parchment mb-3">
+            Gallery Coming Soon
+          </h2>
+          <p className="text-mist/70 max-w-md mx-auto">
+            The store owner needs to add gallery items in Shopify Admin &rarr; Content &rarr; Gallery Item.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section
@@ -37,7 +79,7 @@ export default function CollectionSection() {
                     {item.title}
                   </h3>
                   <p className="mt-2 text-sm text-bark/60">
-                    {item.materials.join(' • ')}
+                    {item.materials.join(' \u2022 ')}
                   </p>
                   <p className="mt-3 text-sm text-bark/80 leading-relaxed italic line-clamp-3">
                     &quot;{item.story}&quot;
@@ -60,5 +102,5 @@ export default function CollectionSection() {
         </div>
       </div>
     </section>
-  )
+  );
 }

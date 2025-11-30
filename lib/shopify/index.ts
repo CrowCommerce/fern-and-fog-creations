@@ -35,7 +35,11 @@ import { getMenuQuery } from './queries/menu';
 import { getPageQuery, getPagesQuery } from './queries/page';
 import { getContactPageQuery } from './queries/contact';
 import { getAboutPageQuery, getAboutProcessStepsQuery, getAboutValuesQuery } from './queries/about';
-import { getHomepageHeroQuery } from './queries/homepage';
+import {
+  getHomepageHeroQuery,
+  getHomepageCategoriesQuery,
+  getHomepageFeaturesQuery
+} from './queries/homepage';
 import { getPageMetadataQuery } from './queries/page-metadata';
 import { getPoliciesQuery } from './queries/policies';
 import {
@@ -79,13 +83,15 @@ import {
   ShopifyProductsOperation,
   ShopifyRemoveFromCartOperation,
   ShopifyUpdateCartOperation,
-  ShopifyGalleryPageSettingsOperation
+  ShopifyGalleryPageSettingsOperation,
+  ShopifyHomepageCategoriesOperation,
+  ShopifyHomepageFeaturesOperation
 } from './types';
 import type { GalleryItem, GalleryCategory, GalleryPageSettings } from '@/types/gallery';
 import type { PageMetadata } from '@/types/metadata';
 import type { ContactPage } from '@/types/contact';
 import type { AboutPage, AboutProcessStep, AboutValue } from '@/types/about';
-import type { HomepageHero } from '@/types/homepage';
+import type { HomepageHero, HomepageCategory, HomepageFeature } from '@/types/homepage';
 import { extractField, extractOptionalField, extractNumberField } from './utils';
 
 const domain = process.env.SHOPIFY_STORE_DOMAIN
@@ -786,6 +792,73 @@ export async function getHomepageHero(): Promise<HomepageHero> {
     handleShopifyError(error, 'getHomepageHero');
     console.warn('[getHomepageHero] Returning fallback due to error');
     return fallback;
+  }
+}
+
+export async function getHomepageCategories(): Promise<HomepageCategory[]> {
+  try {
+    const res = await shopifyFetch<ShopifyHomepageCategoriesOperation>({
+      query: getHomepageCategoriesQuery,
+      variables: { first: 10 }
+    });
+
+    const nodes = res.body.data?.metaobjects?.nodes || [];
+
+    if (nodes.length === 0) {
+      return [];
+    }
+
+    // Helper to get image URL from reference field
+    const getImageField = (metaobject: ShopifyMetaobject, key: string): string => {
+      const field = metaobject.fields.find((f) => f.key === key);
+      return field?.reference?.image?.url || '';
+    };
+
+    return nodes
+      .map((node) => ({
+        id: node.id,
+        handle: node.handle,
+        name: extractField(node, 'name'),
+        slug: extractField(node, 'slug'),
+        description: extractField(node, 'description'),
+        imageUrl: getImageField(node, 'image'),
+        sortOrder: extractNumberField(node, 'sort_order')
+      }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  } catch (error) {
+    handleShopifyError(error, 'getHomepageCategories');
+    console.warn('[getHomepageCategories] Returning empty array due to error');
+    return [];
+  }
+}
+
+export async function getHomepageFeatures(): Promise<HomepageFeature[]> {
+  try {
+    const res = await shopifyFetch<ShopifyHomepageFeaturesOperation>({
+      query: getHomepageFeaturesQuery,
+      variables: { first: 10 }
+    });
+
+    const nodes = res.body.data?.metaobjects?.nodes || [];
+
+    if (nodes.length === 0) {
+      return [];
+    }
+
+    return nodes
+      .map((node) => ({
+        id: node.id,
+        handle: node.handle,
+        name: extractField(node, 'name'),
+        description: extractField(node, 'description'),
+        iconType: extractField(node, 'icon_type') as 'gathered' | 'crafted' | 'treasured',
+        sortOrder: extractNumberField(node, 'sort_order')
+      }))
+      .sort((a, b) => a.sortOrder - b.sortOrder);
+  } catch (error) {
+    handleShopifyError(error, 'getHomepageFeatures');
+    console.warn('[getHomepageFeatures] Returning empty array due to error');
+    return [];
   }
 }
 

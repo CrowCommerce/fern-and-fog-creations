@@ -1,20 +1,24 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useSearchParams, useRouter } from 'next/navigation';
-import Link from 'next/link';
-import type { Product } from '@/data/products';
-import { useFilters } from '@/hooks/useFilters';
-import { FilterPanel } from '@/components/filters/FilterPanel';
-import { MobileFilterDrawer } from '@/components/filters/MobileFilterDrawer';
-import SortDropdown from '@/components/filters/SortDropdown';
-import type { ActiveFilters, SortOption } from '@/types/filter';
-import type { Collection } from '@/lib/shopify/types';
+import { useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
+import Link from "next/link";
+import {
+  ShoppingBagIcon,
+  MagnifyingGlassIcon,
+} from "@heroicons/react/24/outline";
+import type { Product } from "@/data/products";
+import { useFilters } from "@/hooks/useFilters";
+import { FilterPanel } from "@/components/filters/FilterPanel";
+import { MobileFilterDrawer } from "@/components/filters/MobileFilterDrawer";
+import SortDropdown from "@/components/filters/SortDropdown";
+import type { ActiveFilters, SortOption } from "@/types/filter";
+import type { Collection } from "@/lib/shopify/types";
 
 interface ProductsClientProps {
   products: Product[];
   collections?: Collection[];
-  dataMode: 'shopify' | 'local';
+  dataMode: "shopify" | "local";
 }
 
 export default function ProductsClient({
@@ -27,9 +31,9 @@ export default function ProductsClient({
 
   // Helper function to get image URL from either local (string) or Shopify (object) format
   const getImageUrl = (image: any): string => {
-    if (!image) return '/placeholder.jpg';
-    if (typeof image === 'string') return image; // Local data format
-    return image.url || '/placeholder.jpg'; // Shopify data format
+    if (!image) return "/placeholder.jpg";
+    if (typeof image === "string") return image; // Local data format
+    return image.url || "/placeholder.jpg"; // Shopify data format
   };
 
   // Parse initial filters from URL
@@ -37,14 +41,14 @@ export default function ProductsClient({
     const filters: ActiveFilters = {};
 
     // Category filter
-    const categoryParam = searchParams?.get('category');
+    const categoryParam = searchParams?.get("category");
     if (categoryParam) {
-      filters.category = categoryParam.split(',');
+      filters.category = categoryParam.split(",");
     }
 
     // Price range filter
-    const minPrice = searchParams?.get('minPrice');
-    const maxPrice = searchParams?.get('maxPrice');
+    const minPrice = searchParams?.get("minPrice");
+    const maxPrice = searchParams?.get("maxPrice");
     if (minPrice && maxPrice) {
       filters.priceRange = {
         min: parseInt(minPrice),
@@ -53,7 +57,7 @@ export default function ProductsClient({
     }
 
     // Sort
-    const sortParam = searchParams?.get('sort');
+    const sortParam = searchParams?.get("sort");
     if (sortParam) {
       filters.sort = sortParam as SortOption;
     }
@@ -76,25 +80,43 @@ export default function ProductsClient({
 
     // Category
     if (newFilters.category && newFilters.category.length > 0) {
-      params.set('category', newFilters.category.join(','));
+      params.set("category", newFilters.category.join(","));
     }
 
     // Price range
     if (newFilters.priceRange) {
-      params.set('minPrice', String(newFilters.priceRange.min));
-      params.set('maxPrice', String(newFilters.priceRange.max));
+      params.set("minPrice", String(newFilters.priceRange.min));
+      params.set("maxPrice", String(newFilters.priceRange.max));
     }
 
     // Sort
     if (newFilters.sort) {
-      params.set('sort', newFilters.sort);
+      params.set("sort", newFilters.sort);
     }
 
     const queryString = params.toString();
-    router.replace(queryString ? `/products?${queryString}` : '/products', {
+    router.replace(queryString ? `/products?${queryString}` : "/products", {
       scroll: false,
     });
   };
+
+  // 1. Store Empty State (No products at all)
+  if (products.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center py-24 px-4 text-center">
+        <div className="bg-mist/50 p-6 rounded-full mb-6">
+          <ShoppingBagIcon className="w-12 h-12 text-fern/60" />
+        </div>
+        <h2 className="text-2xl font-serif text-bark mb-3">
+          No Products Found
+        </h2>
+        <p className="text-bark/60 max-w-md mx-auto">
+          The store owner needs to add products to the inventory. Please check
+          back later.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <div className="lg:grid lg:grid-cols-4 lg:gap-x-8">
@@ -124,7 +146,7 @@ export default function ProductsClient({
           {/* Sort Dropdown */}
           <div className="ml-auto">
             <SortDropdown
-              value={activeFilters.sort || 'featured'}
+              value={activeFilters.sort || "featured"}
               onChange={(sort) =>
                 handleFilterChange({ ...activeFilters, sort })
               }
@@ -134,11 +156,20 @@ export default function ProductsClient({
 
         {/* Product Grid */}
         {filteredProducts.length === 0 ? (
-          <div className="text-center py-12">
-            <p className="text-lg text-bark/60">No products match your filters</p>
+          <div className="flex flex-col items-center justify-center py-16 px-4 text-center border border-dashed border-bark/20 rounded-lg bg-parchment/30">
+            <div className="bg-white p-4 rounded-full mb-4 shadow-sm">
+              <MagnifyingGlassIcon className="w-8 h-8 text-bark/40" />
+            </div>
+            <h3 className="text-lg font-medium text-bark mb-2">
+              No matching products
+            </h3>
+            <p className="text-bark/60 mb-6 max-w-sm">
+              We couldn't find any products matching your current filters. Try
+              adjusting your search criteria.
+            </p>
             <button
               onClick={() => handleFilterChange({})}
-              className="mt-4 text-fern hover:text-moss underline cursor-pointer"
+              className="px-6 py-2.5 bg-fern text-parchment rounded-md hover:bg-moss transition-colors font-medium text-sm"
             >
               Clear all filters
             </button>
@@ -166,7 +197,9 @@ export default function ProductsClient({
                   <h3 className="text-base font-medium text-bark group-hover:text-fern transition-colors">
                     {product.name}
                   </h3>
-                  <p className="mt-1 text-sm text-bark/60 capitalize">{product.category}</p>
+                  <p className="mt-1 text-sm text-bark/60 capitalize">
+                    {product.category}
+                  </p>
                   <p className="mt-2 text-base font-semibold text-bark">
                     ${product.price.toFixed(2)}
                   </p>

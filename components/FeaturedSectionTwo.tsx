@@ -1,9 +1,47 @@
-import Link from 'next/link'
-import { getFeaturedProducts } from '@/data/products'
-import SpotlightCard from '@/components/SpotlightCard'
+import Link from 'next/link';
+import { cacheLife, cacheTag } from 'next/cache';
+import { ShoppingBagIcon } from '@heroicons/react/24/outline';
+import { TAGS } from '@/lib/constants';
+import { getProducts } from '@/lib/data-source';
+import SpotlightCard from '@/components/SpotlightCard';
+import type { Product } from '@/data/products';
 
-export default function FeaturedSectionTwo() {
-  const featuredProducts = getFeaturedProducts()
+/**
+ * Fetch featured products with caching
+ */
+async function getFeaturedProducts(): Promise<Product[]> {
+  'use cache';
+  cacheTag(TAGS.products);
+  cacheLife('days');
+
+  const allProducts = await getProducts();
+
+  // Filter for featured products that are for sale, limit to 6
+  return allProducts
+    .filter((p) => p.featured && p.forSale)
+    .slice(0, 6);
+}
+
+export default async function FeaturedSectionTwo() {
+  const featuredProducts = await getFeaturedProducts();
+
+  if (featuredProducts.length === 0) {
+    return (
+      <section aria-labelledby="featured-heading" className="bg-parchment py-24 sm:py-32">
+        <div className="flex flex-col items-center justify-center py-16 px-4 text-center">
+          <div className="bg-mist/50 p-6 rounded-full mb-6">
+            <ShoppingBagIcon className="w-12 h-12 text-fern/60" />
+          </div>
+          <h2 id="featured-heading" className="text-2xl font-display text-bark mb-3">
+            Featured Products Coming Soon
+          </h2>
+          <p className="text-bark/60 max-w-md mx-auto">
+            Add products and mark them as &quot;featured&quot; in Shopify to display them here.
+          </p>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section aria-labelledby="featured-heading" className="bg-parchment py-24 sm:py-32">
@@ -18,7 +56,7 @@ export default function FeaturedSectionTwo() {
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {featuredProducts.slice(0, 6).map((product) => (
+          {featuredProducts.map((product) => (
             <SpotlightCard key={product.id} className="p-6">
               <Link
                 href={`/product/${product.slug}`}
@@ -62,5 +100,5 @@ export default function FeaturedSectionTwo() {
         </div>
       </div>
     </section>
-  )
+  );
 }
