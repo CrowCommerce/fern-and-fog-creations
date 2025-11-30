@@ -1,0 +1,93 @@
+{
+  "timestamp": "2025-11-30T03:18:59.809Z",
+  "totalItems": 12,
+  "successful": 12,
+  "failed": 0,
+  "duration": 32346,
+  "items": [
+    {
+      "legacyId": "g1",
+      "title": "First Light Sea Glass Collection",
+      "handle": "first-light-sea-glass-collection",
+      "metaobjectId": "gid://shopify/Metaobject/172324094121",
+      "imageId": "gid://shopify/MediaImage/34822845366441"
+    },
+    {
+      "legacyId": "g2",
+      "title": "Meadow Memory Pendant",
+      "handle": "meadow-memory-pendant",
+      "metaobjectId": "gid://shopify/Metaobject/172324126889",
+      "imageId": "gid://shopify/MediaImage/34822845399209"
+    },
+    {
+      "legacyId": "g3",
+      "title": "Storm-Tossed Welcome Sign",
+      "handle": "storm-tossed-welcome-sign",
+      "metaobjectId": "gid://shopify/Metaobject/172324159657",
+      "imageId": "gid://shopify/MediaImage/34822845431977"
+    },
+    {
+      "legacyId": "g4",
+      "title": "Autumn Forest Wall Tapestry",
+      "handle": "autumn-forest-wall-tapestry",
+      "metaobjectId": "gid://shopify/Metaobject/172324192425",
+      "imageId": "gid://shopify/MediaImage/34822845464745"
+    },
+    {
+      "legacyId": "g5",
+      "title": "Tidepool Treasure Earrings",
+      "handle": "tidepool-treasure-earrings",
+      "metaobjectId": "gid://shopify/Metaobject/172324225193",
+      "imageId": "gid://shopify/MediaImage/34822845530281"
+    },
+    {
+      "legacyId": "g6",
+      "title": "Bride's Bouquet Preservation Box",
+      "handle": "bride-s-bouquet-preservation-box",
+      "metaobjectId": "gid://shopify/Metaobject/172324257961",
+      "imageId": "gid://shopify/MediaImage/34822845628585"
+    },
+    {
+      "legacyId": "g7",
+      "title": "Weathered Poetry Stones",
+      "handle": "weathered-poetry-stones",
+      "metaobjectId": "gid://shopify/Metaobject/172324290729",
+      "imageId": "gid://shopify/MediaImage/34822845694121"
+    },
+    {
+      "legacyId": "g8",
+      "title": "Moon Phase Wall Hanging",
+      "handle": "moon-phase-wall-hanging",
+      "metaobjectId": "gid://shopify/Metaobject/172324323497",
+      "imageId": "gid://shopify/MediaImage/34822845759657"
+    },
+    {
+      "legacyId": "g9",
+      "title": "Wildflower Year Collection",
+      "handle": "wildflower-year-collection",
+      "metaobjectId": "gid://shopify/Metaobject/172324356265",
+      "imageId": "gid://shopify/MediaImage/34822845825193"
+    },
+    {
+      "legacyId": "g10",
+      "title": "Kelp Forest Chandelier",
+      "handle": "kelp-forest-chandelier",
+      "metaobjectId": "gid://shopify/Metaobject/172324389033",
+      "imageId": "gid://shopify/MediaImage/34822845890729"
+    },
+    {
+      "legacyId": "g11",
+      "title": "Rose Gold Beach Glass Set",
+      "handle": "rose-gold-beach-glass-set",
+      "metaobjectId": "gid://shopify/Metaobject/172324421801",
+      "imageId": "gid://shopify/MediaImage/34822845923497"
+    },
+    {
+      "legacyId": "g12",
+      "title": "Grandmother's Garden Remembrance",
+      "handle": "grandmother-s-garden-remembrance",
+      "metaobjectId": "gid://shopify/Metaobject/172324454569",
+      "imageId": "gid://shopify/MediaImage/34822845956265"
+    }
+  ]
+}

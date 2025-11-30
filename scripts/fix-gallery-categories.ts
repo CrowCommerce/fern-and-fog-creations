@@ -33,23 +33,9 @@ interface GalleryItemsQueryResponse {
 }
 
 /**
- * Get category metaobject ID by slug
+ * Valid category slugs for gallery items
  */
-async function getCategoryId(slug: string): Promise<string | null> {
-  const query = `
-    query {
-      metaobjectByHandle(handle: { type: "gallery_category", handle: "${slug}" }) {
-        id
-      }
-    }
-  `;
-
-  const result = await shopifyAdminRequest<{
-    metaobjectByHandle: { id: string } | null;
-  }>(query);
-
-  return result.metaobjectByHandle?.id || null;
-}
+const VALID_CATEGORIES = ['earrings', 'resin', 'driftwood', 'wall-hangings'] as const;
 
 /**
  * Get all gallery items from Shopify
@@ -71,9 +57,9 @@ async function getGalleryItems(): Promise<Array<{ id: string; handle: string }>>
 }
 
 /**
- * Update gallery item with category reference
+ * Update gallery item with category value (as text, not reference)
  */
-async function updateGalleryItemCategory(itemId: string, categoryId: string): Promise<void> {
+async function updateGalleryItemCategory(itemId: string, categorySlug: string): Promise<void> {
   const mutation = `
     mutation metaobjectUpdate($id: ID!, $metaobject: MetaobjectUpdateInput!) {
       metaobjectUpdate(id: $id, metaobject: $metaobject) {
@@ -91,7 +77,7 @@ async function updateGalleryItemCategory(itemId: string, categoryId: string): Pr
   const variables = {
     id: itemId,
     metaobject: {
-      fields: [{ key: 'category', value: categoryId }],
+      fields: [{ key: 'category', value: categorySlug }],
     },
   };
 
@@ -141,19 +127,9 @@ async function fix() {
   }
   console.log(`✓ Mapped ${categoryMap.size} items\n`);
 
-  // Get category IDs
-  console.log('🔍 Fetching category metaobject IDs...');
-  const categoryIds = new Map<string, string>();
-
-  for (const categorySlug of ['earrings', 'resin', 'driftwood', 'wall-hangings']) {
-    const categoryId = await getCategoryId(categorySlug);
-    if (!categoryId) {
-      console.error(`✗ Category "${categorySlug}" not found`);
-      process.exit(1);
-    }
-    categoryIds.set(categorySlug, categoryId);
-  }
-  console.log(`✓ Found ${categoryIds.size} categories\n`);
+  // Validate categories exist in our allowed list
+  console.log('🔍 Validating category slugs...');
+  console.log(`✓ Using ${VALID_CATEGORIES.length} valid categories: ${VALID_CATEGORIES.join(', ')}\n`);
 
   // Get gallery items from Shopify
   console.log('📊 Fetching gallery items from Shopify...');
@@ -176,14 +152,13 @@ async function fix() {
         continue;
       }
 
-      const categoryId = categoryIds.get(originalCategory);
-      if (!categoryId) {
+      if (!VALID_CATEGORIES.includes(originalCategory as typeof VALID_CATEGORIES[number])) {
         console.warn(`   ⚠️  Unknown category "${originalCategory}" for ${shopifyItem.handle}, skipping`);
         failed++;
         continue;
       }
 
-      await updateGalleryItemCategory(shopifyItem.id, categoryId);
+      await updateGalleryItemCategory(shopifyItem.id, originalCategory);
       console.log(`   ✓ Updated: ${shopifyItem.handle} → ${originalCategory}`);
       successful++;
     } catch (error) {

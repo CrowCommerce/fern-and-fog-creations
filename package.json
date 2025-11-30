@@ -12,6 +12,7 @@
     "migrate:gallery:categories": "tsx scripts/migrate-gallery-categories.ts",
     "migrate:gallery:categories:dry": "tsx scripts/migrate-gallery-categories.ts --dry-run",
     "fix:gallery:categories": "tsx scripts/fix-gallery-categories.ts",
+    "fix:gallery:add-category-field": "tsx scripts/add-gallery-category-field.ts",
     "setup:gallery:page": "tsx scripts/create-gallery-page-settings.ts",
     "setup:gallery:page:dry": "tsx scripts/create-gallery-page-settings.ts --dry-run",
     "rollback:gallery": "tsx scripts/rollback-gallery.ts",
