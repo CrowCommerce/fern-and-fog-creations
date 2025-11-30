@@ -14,9 +14,7 @@ import {
 import { handleShopifyError } from './error-handler';
 import { ensureStartsWith } from '@/lib/utils';
 import {
-  revalidateTag,
-  cacheTag,
-  cacheLife
+  revalidateTag
 } from 'next/cache';
 import { cookies, headers } from 'next/headers';
 import { NextRequest, NextResponse } from 'next/server';
@@ -444,10 +442,6 @@ export async function getCart(): Promise<Cart | undefined> {
 export async function getCollection(
   handle: string
 ): Promise<Collection | undefined> {
-  'use cache';
-  cacheTag(TAGS.collections);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyCollectionOperation>({
     query: getCollectionQuery,
     variables: {
@@ -467,10 +461,6 @@ export async function getCollectionProducts({
   reverse?: boolean;
   sortKey?: string;
 }): Promise<Product[]> {
-  'use cache';
-  cacheTag(TAGS.collections, TAGS.products);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyCollectionProductsOperation>({
     query: getCollectionProductsQuery,
     variables: {
@@ -491,10 +481,6 @@ export async function getCollectionProducts({
 }
 
 export async function getCollections(): Promise<Collection[]> {
-  'use cache';
-  cacheTag(TAGS.collections);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyCollectionsOperation>({
     query: getCollectionsQuery
   });
@@ -523,10 +509,6 @@ export async function getCollections(): Promise<Collection[]> {
 }
 
 export async function getMenu(handle: string): Promise<Menu[]> {
-  'use cache';
-  cacheTag(TAGS.menus);
-  cacheLife('days');
-
   try {
     const res = await shopifyFetch<ShopifyMenuOperation>({
       query: getMenuQuery,
@@ -589,10 +571,6 @@ export async function getPages(): Promise<Page[]> {
 }
 
 export async function getPageMetadata(slug: string): Promise<PageMetadata> {
-  'use cache';
-  cacheTag(TAGS.metadata);
-  cacheLife('days');
-
   // Default fallback data
   const fallback: PageMetadata = {
     title: 'Fern & Fog Creations',
@@ -645,10 +623,6 @@ export async function getPageMetadata(slug: string): Promise<PageMetadata> {
 }
 
 export async function getContactPage(): Promise<ContactPage> {
-  'use cache';
-  cacheTag(TAGS.contactPage);
-  cacheLife('days');
-
   // Default fallback data
   const fallback: ContactPage = {
     heading: 'Get in Touch',
@@ -685,10 +659,6 @@ export async function getContactPage(): Promise<ContactPage> {
 }
 
 export async function getAboutPage(): Promise<AboutPage> {
-  'use cache';
-  cacheTag(TAGS.aboutPage);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyAboutPageOperation>({
     query: getAboutPageQuery,
   });
@@ -734,10 +704,6 @@ export async function getAboutPage(): Promise<AboutPage> {
 }
 
 export async function getAboutProcessSteps(): Promise<AboutProcessStep[]> {
-  'use cache';
-  cacheTag(TAGS.aboutPage);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyAboutProcessStepsOperation>({
     query: getAboutProcessStepsQuery,
     variables: { first: 10 },
@@ -761,10 +727,6 @@ export async function getAboutProcessSteps(): Promise<AboutProcessStep[]> {
 }
 
 export async function getAboutValues(): Promise<AboutValue[]> {
-  'use cache';
-  cacheTag(TAGS.aboutPage);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyAboutValuesOperation>({
     query: getAboutValuesQuery,
     variables: { first: 10 },
@@ -787,10 +749,6 @@ export async function getAboutValues(): Promise<AboutValue[]> {
 }
 
 export async function getHomepageHero(): Promise<HomepageHero> {
-  'use cache';
-  cacheTag(TAGS.homepage);
-  cacheLife('days');
-
   // Default fallback data
   const fallback: HomepageHero = {
     heading: 'Handmade Coastal & Woodland Treasures',
@@ -832,10 +790,6 @@ export async function getHomepageHero(): Promise<HomepageHero> {
 }
 
 export async function getPolicies(): Promise<Policies> {
-  'use cache';
-  cacheTag(TAGS.collections);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyPoliciesOperation>({
     query: getPoliciesQuery
   });
@@ -846,10 +800,6 @@ export async function getPolicies(): Promise<Policies> {
 export async function getPolicy(
   type: 'privacy' | 'refund' | 'shipping' | 'terms'
 ): Promise<ShopPolicy | null> {
-  'use cache';
-  cacheTag(TAGS.collections);
-  cacheLife('days');
-
   const policies = await getPolicies();
 
   const policyMap: Record<string, ShopPolicy | null> = {
@@ -863,10 +813,6 @@ export async function getPolicy(
 }
 
 export async function getProduct(handle: string): Promise<Product | undefined> {
-  'use cache';
-  cacheTag(TAGS.products);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyProductOperation>({
     query: getProductQuery,
     variables: {
@@ -880,10 +826,6 @@ export async function getProduct(handle: string): Promise<Product | undefined> {
 export async function getProductRecommendations(
   productId: string
 ): Promise<Product[]> {
-  'use cache';
-  cacheTag(TAGS.products);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyProductRecommendationsOperation>({
     query: getProductRecommendationsQuery,
     variables: {
@@ -903,10 +845,6 @@ export async function getProducts({
   reverse?: boolean;
   sortKey?: string;
 }): Promise<Product[]> {
-  'use cache';
-  cacheTag(TAGS.products);
-  cacheLife('days');
-
   const res = await shopifyFetch<ShopifyProductsOperation>({
     query: getProductsQuery,
     variables: {
@@ -1010,10 +948,6 @@ const reshapeGalleryItems = (metaobjects: ShopifyMetaobject[]): GalleryItem[] =>
 };
 
 export async function getGalleryItems(): Promise<GalleryItem[]> {
-  'use cache';
-  cacheTag(TAGS.gallery);
-  cacheLife('days');
-
   try {
     const res = await shopifyFetch<ShopifyGalleryItemsOperation>({
       query: getGalleryItemsQuery,
@@ -1037,10 +971,6 @@ export async function getGalleryItems(): Promise<GalleryItem[]> {
 }
 
 export async function getGalleryPageSettings(): Promise<GalleryPageSettings> {
-  'use cache';
-  cacheTag(TAGS.gallery);
-  cacheLife('days');
-
   // Default fallback data
   const fallback: GalleryPageSettings = {
     heading: 'Gallery of Past Work',

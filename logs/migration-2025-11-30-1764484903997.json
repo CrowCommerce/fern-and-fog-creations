@@ -1,0 +1,99 @@
+{
+  "timestamp": "2025-11-30T06:41:09.638Z",
+  "totalItems": 12,
+  "successful": 0,
+  "failed": 12,
+  "duration": 35157,
+  "categories": [
+    {
+      "slug": "earrings",
+      "id": "gid://shopify/Metaobject/172330680489"
+    },
+    {
+      "slug": "resin",
+      "id": "gid://shopify/Metaobject/172330713257"
+    },
+    {
+      "slug": "driftwood",
+      "id": "gid://shopify/Metaobject/172330746025"
+    },
+    {
+      "slug": "wall-hangings",
+      "id": "gid://shopify/Metaobject/172330778793"
+    }
+  ],
+  "items": [
+    {
+      "legacyId": "g1",
+      "title": "First Light Sea Glass Collection",
+      "handle": "first-light-sea-glass-collection",
+      "error": "Failed to create gallery item \"First Light Sea Glass Collection\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g2",
+      "title": "Meadow Memory Pendant",
+      "handle": "meadow-memory-pendant",
+      "error": "Failed to create gallery item \"Meadow Memory Pendant\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g3",
+      "title": "Storm-Tossed Welcome Sign",
+      "handle": "storm-tossed-welcome-sign",
+      "error": "Failed to create gallery item \"Storm-Tossed Welcome Sign\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g4",
+      "title": "Autumn Forest Wall Tapestry",
+      "handle": "autumn-forest-wall-tapestry",
+      "error": "Failed to create gallery item \"Autumn Forest Wall Tapestry\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g5",
+      "title": "Tidepool Treasure Earrings",
+      "handle": "tidepool-treasure-earrings",
+      "error": "Failed to create gallery item \"Tidepool Treasure Earrings\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g6",
+      "title": "Bride's Bouquet Preservation Box",
+      "handle": "bride-s-bouquet-preservation-box",
+      "error": "Failed to create gallery item \"Bride's Bouquet Preservation Box\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g7",
+      "title": "Weathered Poetry Stones",
+      "handle": "weathered-poetry-stones",
+      "error": "Failed to create gallery item \"Weathered Poetry Stones\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g8",
+      "title": "Moon Phase Wall Hanging",
+      "handle": "moon-phase-wall-hanging",
+      "error": "Failed to create gallery item \"Moon Phase Wall Hanging\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g9",
+      "title": "Wildflower Year Collection",
+      "handle": "wildflower-year-collection",
+      "error": "Failed to create gallery item \"Wildflower Year Collection\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g10",
+      "title": "Kelp Forest Chandelier",
+      "handle": "kelp-forest-chandelier",
+      "error": "Failed to create gallery item \"Kelp Forest Chandelier\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g11",
+      "title": "Rose Gold Beach Glass Set",
+      "handle": "rose-gold-beach-glass-set",
+      "error": "Failed to create gallery item \"Rose Gold Beach Glass Set\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    },
+    {
+      "legacyId": "g12",
+      "title": "Grandmother's Garden Remembrance",
+      "handle": "grandmother-s-garden-remembrance",
+      "error": "Failed to create gallery item \"Grandmother's Garden Remembrance\": Failed to create metaobject: metaobject.fields.1: Value does not exist in provided choices: [\"earrings\", \"resin\", \"driftwood\", \"wall-hangings\"]."
+    }
+  ]
+}

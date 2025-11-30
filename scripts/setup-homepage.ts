@@ -251,16 +251,13 @@ async function main() {
     await createHomepageHeroMetaobject();
 
     console.log('\n✅ Homepage setup complete!');
-    console.log('\n📋 Next steps:');
-    console.log('1. Visit Shopify Admin → Content → Metaobjects → Homepage Hero');
-    console.log('2. Edit the "main" entry to customize hero content');
-    console.log('3. Update background_image_url to use your own image');
-    console.log('4. Verify changes appear on homepage');
-    console.log('5. Deploy to production\n');
+    console.log('\nCustomize at: Shopify Admin → Content → Metaobjects → Homepage Hero');
 
     if (DRY_RUN) {
-      console.log('💡 Run without --dry-run to execute migration\n');
+      console.log('\n💡 Run without --dry-run to execute setup');
     }
+
+    console.log('\n💡 Tip: Run `pnpm setup:all` to set up all page content at once\n');
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
     process.exit(1);

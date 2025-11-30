@@ -276,13 +276,13 @@ async function setup() {
 
   console.log('━'.repeat(50));
   console.log('✅ Setup Complete!\n');
+  console.log('Customize at: Shopify Admin → Content → Metaobjects → Page Metadata');
 
-  if (!DRY_RUN) {
-    console.log('Next steps:');
-    console.log('  1. Go to Shopify Admin > Content > Metaobjects');
-    console.log('  2. Find "Page Metadata" entries');
-    console.log('  3. Edit titles, descriptions, and OpenGraph images\n');
+  if (DRY_RUN) {
+    console.log('\n💡 Run without --dry-run to execute setup');
   }
+
+  console.log('\n💡 Tip: Run `pnpm setup:all` to set up all page content at once\n');
 }
 
 // Run the setup

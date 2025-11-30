@@ -264,11 +264,10 @@ async function setup() {
     } else {
       console.log('✅ Setup Complete!\n');
       console.log(`Execution time: ${durationSeconds}s\n`);
-      console.log('Next steps:');
-      console.log('  1. Go to Shopify Admin → Content → Metaobjects → Gallery Page Settings');
-      console.log('  2. Click "main" entry to edit heading and description');
-      console.log('  3. Changes appear immediately on your gallery page\n');
+      console.log('Customize at: Shopify Admin → Content → Metaobjects → Gallery Page Settings');
     }
+
+    console.log('\n💡 Tip: Run `pnpm setup:all` to set up all page content at once\n');
 
     process.exit(0);
   } catch (error) {

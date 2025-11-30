@@ -593,6 +593,9 @@ async function main() {
       console.log('\n📝 DRY RUN complete - Run without --dry-run to apply changes');
     } else {
       console.log('\n✅ Migration complete!');
+      console.log('\n' + '━'.repeat(60));
+      console.log('📋 Next step:');
+      console.log('   Run `pnpm migrate:gallery` to migrate gallery items\n');
     }
   } catch (error) {
     console.error('\n❌ Migration failed:', error);

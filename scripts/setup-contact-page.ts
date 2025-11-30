@@ -251,15 +251,13 @@ async function main() {
     await createContactPageMetaobject();
 
     console.log('\n✅ Contact page setup complete!');
-    console.log('\n📋 Next steps:');
-    console.log('1. Visit Shopify Admin → Content → Metaobjects → Contact Page');
-    console.log('2. Edit the "main" entry to customize content');
-    console.log('3. Verify changes appear on /contact page');
-    console.log('4. Deploy to production\n');
+    console.log('\nCustomize at: Shopify Admin → Content → Metaobjects → Contact Page');
 
     if (DRY_RUN) {
-      console.log('💡 Run without --dry-run to execute migration\n');
+      console.log('\n💡 Run without --dry-run to execute setup');
     }
+
+    console.log('\n💡 Tip: Run `pnpm setup:all` to set up all page content at once\n');
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
     process.exit(1);

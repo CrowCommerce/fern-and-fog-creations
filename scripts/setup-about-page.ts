@@ -587,19 +587,13 @@ async function main() {
     await createAboutPageContent();
 
     console.log('\n✅ About page setup complete!');
-    console.log('\n📋 Content created:');
-    console.log('  - 1 about page (main)');
-    console.log('  - 3 process steps (gathered, crafted, treasured)');
-    console.log('  - 4 values (ethical sourcing, quality, sustainability, uniqueness)');
-    console.log('\n📋 Next steps:');
-    console.log('1. Visit Shopify Admin → Content → Metaobjects');
-    console.log('2. Edit any of the about page metaobjects');
-    console.log('3. Verify changes appear on /about page');
-    console.log('4. Deploy to production\n');
+    console.log('\nCustomize at: Shopify Admin → Content → Metaobjects');
 
     if (DRY_RUN) {
-      console.log('💡 Run without --dry-run to execute migration\n');
+      console.log('\n💡 Run without --dry-run to execute setup');
     }
+
+    console.log('\n💡 Tip: Run `pnpm setup:all` to set up all page content at once\n');
   } catch (error) {
     console.error('\n❌ Setup failed:', error);
     process.exit(1);
