@@ -2,6 +2,7 @@
 
 import { getProducts } from '@/lib/data-source';
 import type { Product } from '@/types';
+import { serverAnalytics } from '@/lib/analytics/server-tracker';
 
 export async function searchProducts(
   query: string,
@@ -15,6 +16,12 @@ export async function searchProducts(
       query: query.trim(),
       sortKey: 'RELEVANCE',
       reverse: false,
+    });
+
+    // Track search performed
+    serverAnalytics.searchPerformed({
+      query: query.trim(),
+      results_count: products.length,
     });
 
     return {

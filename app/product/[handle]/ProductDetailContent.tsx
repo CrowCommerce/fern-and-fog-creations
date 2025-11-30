@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { useCart } from '@/components/cart/cart-context'
 import { ProductProvider } from '@/components/product/product-context'
@@ -11,6 +11,7 @@ import type { Product as ShopifyProduct, ProductVariant as ShopifyVariant } from
 import { formatPriceRange } from '@/lib/variant-utils'
 import { addItem } from '@/components/cart/actions'
 import { useTransition } from 'react'
+import { analytics } from '@/lib/analytics'
 
 // Adapter to convert local types to Shopify types for cart operations
 function adaptToShopifyVariant(variant: ProductVariant): ShopifyVariant {
@@ -55,6 +56,16 @@ export default function ProductDetailContent({ product, relatedProducts }: Produ
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     product?.variants?.[0] || null
   )
+
+  // Track product view on mount
+  useEffect(() => {
+    analytics.productView({
+      product_id: product.id,
+      product_title: product.name,
+      price: product.price,
+      collection: product.category,
+    })
+  }, [product.id, product.name, product.price, product.category])
 
   // Determine display price and availability
   const displayPrice = selectedVariant?.price || product.price
