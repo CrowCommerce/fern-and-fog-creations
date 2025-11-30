@@ -29,7 +29,9 @@ export const TAGS = {
   metadata: 'metadata',
   contactPage: 'contact-page',
   aboutPage: 'about-page',
-  homepage: 'homepage'
+  homepage: 'homepage',
+  homepageCategories: 'homepage-categories',
+  homepageFeatures: 'homepage-features'
 };
 
 export const HIDDEN_PRODUCT_TAG = 'nextjs-frontend-hidden';

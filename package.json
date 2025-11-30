@@ -25,6 +25,8 @@
     "setup:contact:dry": "tsx scripts/setup-contact-page.ts --dry-run",
     "setup:gallery:page": "tsx scripts/create-gallery-page-settings.ts",
     "setup:gallery:page:dry": "tsx scripts/create-gallery-page-settings.ts --dry-run",
+    "setup:homepage-sections": "tsx scripts/setup-homepage-sections.ts",
+    "setup:homepage-sections:dry": "tsx scripts/setup-homepage-sections.ts --dry-run",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",

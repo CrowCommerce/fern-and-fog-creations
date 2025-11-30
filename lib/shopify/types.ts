@@ -401,3 +401,25 @@ export type ShopifyGalleryPageSettingsOperation = {
     };
   };
 };
+
+export type ShopifyHomepageCategoriesOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};
+
+export type ShopifyHomepageFeaturesOperation = {
+  data: {
+    metaobjects: {
+      nodes: ShopifyMetaobject[];
+    };
+  };
+  variables: {
+    first: number;
+  };
+};

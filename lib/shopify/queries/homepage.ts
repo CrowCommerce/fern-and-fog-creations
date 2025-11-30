@@ -18,3 +18,43 @@ export const getHomepageHeroQuery = /* GraphQL */ `
     }
   }
 `;
+
+export const getHomepageCategoriesQuery = /* GraphQL */ `
+  query getHomepageCategories($first: Int!) {
+    metaobjects(type: "homepage_category", first: $first, sortKey: "updated_at") {
+      nodes {
+        id
+        handle
+        fields {
+          key
+          value
+          reference {
+            ... on MediaImage {
+              image {
+                url
+                altText
+                width
+                height
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+`;
+
+export const getHomepageFeaturesQuery = /* GraphQL */ `
+  query getHomepageFeatures($first: Int!) {
+    metaobjects(type: "homepage_feature", first: $first, sortKey: "updated_at") {
+      nodes {
+        id
+        handle
+        fields {
+          key
+          value
+        }
+      }
+    }
+  }
+`;
