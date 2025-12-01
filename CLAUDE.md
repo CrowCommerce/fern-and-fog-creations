@@ -217,14 +217,65 @@ pnpm setup:contact         # Create contact_page metaobject
 - Turbopack enabled for dev and build
 - React 19: `useOptimistic`, `use` hook, `useActionState`
 
-## Git Workflow
+## Git Workflow (CRITICAL)
 
-Commit and push after completing tasks. Use conventional commits format.
+### Atomic Commits - ALWAYS FOLLOW
+**Commit after EVERY logical unit of work.** Each commit should be:
+- ONE logical change (one component, one fix, one test)
+- In working state (tests pass, no type errors)
+- Describable in one sentence
+- Safely revertable without side effects
 
+### Commit Format
+```
+<type>(<scope>): <description under 50 chars>
+
+[optional body]
+
+Refs: #issue
+
+🤖 Generated with [Claude Code](https://claude.com/claude-code)
+
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+### Commit Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `docs`: Documentation
+- `test`: Tests
+- `refactor`: Code restructuring
+- `style`: Formatting
+- `chore`: Maintenance
+
+### Commit Frequency (IMPORTANT)
+Commit immediately after each:
+- Single feature component added
+- Single bug fix completed
+- Test suite written for specific function
+- Refactoring of single concern
+
+**Example Task Breakdown:**
+Instead of: "Implemented user authentication" (too broad)
+
+Break into:
+1. `feat(auth): add User model with password hashing`
+2. `feat(auth): implement JWT token generation`
+3. `feat(auth): create login API endpoint`
+4. `test(auth): add unit tests for auth flow`
+
+### Workflow Pattern
+1. Implement ONE logical unit
+2. Verify changes work
+3. Stage relevant files: `git add <files>`
+4. Commit immediately with descriptive message
+5. Repeat for next unit
+6. Push when feature complete
+
+### Reverting Changes
 ```bash
-# Undo last commit, keep changes
-git reset --soft HEAD~1
-
-# Revert specific commit (safe)
-git revert <commit-hash>
+git reset --soft HEAD~1     # Undo commit, keep changes
+git reset --hard HEAD~1     # Undo commit, discard changes (destructive)
+git revert <commit-hash>    # Create new commit that undoes changes
+git push --force            # Update remote (feature branches only!)
 ```
