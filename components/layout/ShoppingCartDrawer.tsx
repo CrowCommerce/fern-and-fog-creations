@@ -7,6 +7,7 @@ import { XMarkIcon, MinusIcon, PlusIcon } from '@heroicons/react/24/outline'
 import { useCart } from '@/components/cart/cart-context'
 import { removeItem, updateItemQuantity, createCartAndSetCookie } from '@/components/cart/actions'
 import { useEffect, useRef } from 'react'
+import { analytics } from '@/lib/analytics/tracker'
 
 interface ShoppingCartDrawerProps {
   open: boolean
@@ -37,6 +38,22 @@ export default function ShoppingCartDrawer({ open, setOpen }: ShoppingCartDrawer
       quantityRef.current = cart?.totalQuantity
     }
   }, [open, cart?.totalQuantity, setOpen])
+
+  // Track view_cart event when drawer opens
+  useEffect(() => {
+    if (open && cart && cart.lines.length > 0) {
+      analytics.viewCart({
+        cart_total: parseFloat(cart.cost.totalAmount.amount),
+        item_count: cart.totalQuantity,
+        items: cart.lines.map((line) => ({
+          item_id: line.merchandise.product.id,
+          item_name: line.merchandise.product.title,
+          price: parseFloat(line.cost.totalAmount.amount) / line.quantity,
+          quantity: line.quantity,
+        })),
+      })
+    }
+  }, [open, cart])
 
   const displayItems = cart?.lines || []
   const total = cart?.cost.totalAmount.amount ? parseFloat(cart.cost.totalAmount.amount) : 0

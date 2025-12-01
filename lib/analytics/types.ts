@@ -10,6 +10,8 @@ export type AnalyticsEventName =
   | 'remove_from_cart'
   | 'update_cart_quantity'
   | 'checkout_initiated'
+  | 'view_item_list'
+  | 'view_cart'
   | 'search_performed'
   | 'contact_form_submitted'
   | 'contact_form_error'
@@ -49,6 +51,23 @@ export interface UpdateCartQuantityProperties {
 export interface CheckoutInitiatedProperties {
   cart_total: number;
   item_count: number;
+}
+
+export interface ViewItemListProperties {
+  item_list_id: string;
+  item_list_name: string;
+  items_count: number;
+}
+
+export interface ViewCartProperties {
+  cart_total: number;
+  item_count: number;
+  items: Array<{
+    item_id: string;
+    item_name: string;
+    price: number;
+    quantity: number;
+  }>;
 }
 
 export interface SearchPerformedProperties {
@@ -92,6 +111,8 @@ export type AnalyticsEvent =
   | { name: 'remove_from_cart'; properties: RemoveFromCartProperties }
   | { name: 'update_cart_quantity'; properties: UpdateCartQuantityProperties }
   | { name: 'checkout_initiated'; properties: CheckoutInitiatedProperties }
+  | { name: 'view_item_list'; properties: ViewItemListProperties }
+  | { name: 'view_cart'; properties: ViewCartProperties }
   | { name: 'search_performed'; properties: SearchPerformedProperties }
   | { name: 'contact_form_submitted'; properties: ContactFormSubmittedProperties }
   | { name: 'contact_form_error'; properties: ContactFormErrorProperties }

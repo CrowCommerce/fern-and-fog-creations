@@ -50,6 +50,12 @@ export const analytics = {
   checkoutInitiated: (props: EventProperties<'checkout_initiated'>) =>
     trackEvent('checkout_initiated', props),
 
+  viewItemList: (props: EventProperties<'view_item_list'>) =>
+    trackEvent('view_item_list', props),
+
+  viewCart: (props: EventProperties<'view_cart'>) =>
+    trackEvent('view_cart', props),
+
   searchPerformed: (props: EventProperties<'search_performed'>) =>
     trackEvent('search_performed', props),
 

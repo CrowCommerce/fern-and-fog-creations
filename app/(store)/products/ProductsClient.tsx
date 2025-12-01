@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
+import { analytics } from "@/lib/analytics/tracker";
 import Link from "next/link";
 import {
   ShoppingBagIcon,
@@ -71,6 +72,22 @@ export default function ProductsClient({
     collections,
     initialFilters: activeFilters,
   });
+
+  // Track view_item_list event on mount
+  useEffect(() => {
+    if (filteredProducts.length > 0) {
+      const collectionName = activeFilters.category?.[0] || "all-products";
+      analytics.viewItemList({
+        item_list_id: collectionName,
+        item_list_name:
+          collectionName === "all-products"
+            ? "All Products"
+            : collectionName.charAt(0).toUpperCase() + collectionName.slice(1),
+        items_count: filteredProducts.length,
+      });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Fire once on mount
 
   // Update URL when filters change
   const handleFilterChange = (newFilters: ActiveFilters) => {
