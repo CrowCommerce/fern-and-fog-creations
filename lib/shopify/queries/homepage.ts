@@ -31,7 +31,7 @@ export const getHomepageCategoriesQuery = /* GraphQL */ `
           reference {
             ... on MediaImage {
               image {
-                url
+                url(transform: { maxWidth: 1200, preferredContentType: WEBP })
                 altText
                 width
                 height
