@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import Lightbox from '@/components/Lightbox';
+import { analytics } from '@/lib/analytics/tracker';
 import type { GalleryItem, GalleryCategory, GalleryCategoryFilter, GalleryPageSettings } from '@/types/gallery';
 
 interface GalleryClientProps {
@@ -13,6 +14,7 @@ export default function GalleryClient({ items, pageSettings }: GalleryClientProp
   const [activeFilter, setActiveFilter] = useState<GalleryCategoryFilter>('all');
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const previousFilterRef = useRef<GalleryCategoryFilter>('all');
 
   // Extract unique categories from items and sort by sortOrder
   const categories = useMemo(() => {
@@ -55,17 +57,69 @@ export default function GalleryClient({ items, pageSettings }: GalleryClientProp
     title: item.title,
   }));
 
+  // Helper to get filter name by id
+  const getFilterName = (id: GalleryCategoryFilter): string => {
+    const filter = filters.find((f) => f.id === id);
+    return filter?.name || id;
+  };
+
+  // Handle filter change with analytics
+  const handleFilterChange = (filterId: GalleryCategoryFilter) => {
+    if (filterId !== activeFilter) {
+      analytics.galleryFilter({
+        filter_id: filterId,
+        filter_name: getFilterName(filterId),
+        previous_filter: previousFilterRef.current,
+      });
+      previousFilterRef.current = filterId;
+    }
+    setActiveFilter(filterId);
+  };
+
   const openLightbox = (index: number) => {
+    const item = filteredItems[index];
+    if (item) {
+      analytics.galleryItemClick({
+        item_id: item.id,
+        item_title: item.title,
+        category: item.category.name,
+        index,
+      });
+    }
     setLightboxIndex(index);
     setLightboxOpen(true);
   };
 
   const handlePrevious = () => {
-    setLightboxIndex((prev) => (prev === 0 ? filteredItems.length - 1 : prev - 1));
+    setLightboxIndex((prev) => {
+      const newIndex = prev === 0 ? filteredItems.length - 1 : prev - 1;
+      const item = filteredItems[newIndex];
+      if (item) {
+        analytics.galleryLightboxNavigate({
+          direction: 'previous',
+          from_index: prev,
+          to_index: newIndex,
+          item_title: item.title,
+        });
+      }
+      return newIndex;
+    });
   };
 
   const handleNext = () => {
-    setLightboxIndex((prev) => (prev === filteredItems.length - 1 ? 0 : prev + 1));
+    setLightboxIndex((prev) => {
+      const newIndex = prev === filteredItems.length - 1 ? 0 : prev + 1;
+      const item = filteredItems[newIndex];
+      if (item) {
+        analytics.galleryLightboxNavigate({
+          direction: 'next',
+          from_index: prev,
+          to_index: newIndex,
+          item_title: item.title,
+        });
+      }
+      return newIndex;
+    });
   };
 
   return (
@@ -86,7 +140,7 @@ export default function GalleryClient({ items, pageSettings }: GalleryClientProp
           {filters.map((filter) => (
             <button
               key={filter.id}
-              onClick={() => setActiveFilter(filter.id)}
+              onClick={() => handleFilterChange(filter.id)}
               className={`px-6 py-2 rounded-full text-sm font-medium transition-all cursor-pointer ${
                 activeFilter === filter.id
                   ? 'bg-fern text-parchment ring-2 ring-fern'

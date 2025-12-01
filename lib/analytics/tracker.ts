@@ -59,4 +59,14 @@ export const analytics = {
 
   contactFormError: (props: EventProperties<'contact_form_error'>) =>
     trackEvent('contact_form_error', props),
+
+  // Gallery events
+  galleryFilter: (props: EventProperties<'gallery_filter'>) =>
+    trackEvent('gallery_filter', props),
+
+  galleryItemClick: (props: EventProperties<'gallery_item_click'>) =>
+    trackEvent('gallery_item_click', props),
+
+  galleryLightboxNavigate: (props: EventProperties<'gallery_lightbox_navigate'>) =>
+    trackEvent('gallery_lightbox_navigate', props),
 };
