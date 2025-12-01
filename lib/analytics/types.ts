@@ -12,7 +12,10 @@ export type AnalyticsEventName =
   | 'checkout_initiated'
   | 'search_performed'
   | 'contact_form_submitted'
-  | 'contact_form_error';
+  | 'contact_form_error'
+  | 'gallery_filter'
+  | 'gallery_item_click'
+  | 'gallery_lightbox_navigate';
 
 // Event property types for each event
 export interface ProductViewProperties {
@@ -62,6 +65,26 @@ export interface ContactFormErrorProperties {
   error_message: string;
 }
 
+export interface GalleryFilterProperties {
+  filter_id: string;
+  filter_name: string;
+  previous_filter: string;
+}
+
+export interface GalleryItemClickProperties {
+  item_id: string;
+  item_title: string;
+  category: string;
+  index: number;
+}
+
+export interface GalleryLightboxNavigateProperties {
+  direction: 'previous' | 'next';
+  from_index: number;
+  to_index: number;
+  item_title: string;
+}
+
 // Discriminated union for type-safe event tracking
 export type AnalyticsEvent =
   | { name: 'product_view'; properties: ProductViewProperties }
@@ -71,7 +94,10 @@ export type AnalyticsEvent =
   | { name: 'checkout_initiated'; properties: CheckoutInitiatedProperties }
   | { name: 'search_performed'; properties: SearchPerformedProperties }
   | { name: 'contact_form_submitted'; properties: ContactFormSubmittedProperties }
-  | { name: 'contact_form_error'; properties: ContactFormErrorProperties };
+  | { name: 'contact_form_error'; properties: ContactFormErrorProperties }
+  | { name: 'gallery_filter'; properties: GalleryFilterProperties }
+  | { name: 'gallery_item_click'; properties: GalleryItemClickProperties }
+  | { name: 'gallery_lightbox_navigate'; properties: GalleryLightboxNavigateProperties };
 
 // Extract properties type for a given event name
 export type EventProperties<T extends AnalyticsEventName> = Extract<
