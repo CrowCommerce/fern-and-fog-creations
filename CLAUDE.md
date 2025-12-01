@@ -60,6 +60,21 @@ src/
 
 **Path alias:** `@/*` maps to `./src/*`
 
+## Next.js Conventions
+
+### File & Directory Naming
+
+- Use kebab-case for directory names (e.g., `components/auth-form`)
+- Use PascalCase for component files (e.g., `AuthForm.tsx`)
+- Prefer named exports over default exports:
+  ```typescript
+  // Preferred
+  export function Button() { /* ... */ }
+
+  // Avoid
+  export default function Button() { /* ... */ }
+  ```
+
 ### Server vs Client Components
 
 Default to Server Components. Use `'use client'` only for:
@@ -67,7 +82,27 @@ Default to Server Components. Use `'use client'` only for:
 - Event handlers
 - Browser APIs
 
+**Minimize `'use client'` directives:**
+- Keep most components as React Server Components (RSC)
+- Only use client components when you need interactivity
+- Wrap client components in `Suspense` with fallback UI
+- Create small client component wrappers around interactive elements
+
 Key client components: `cart-context.tsx`, `Header.tsx`, `ShoppingCartDrawer.tsx`, `app/(store)/layout.tsx`
+
+### Avoid Unnecessary Hooks
+
+Prefer server-side patterns over client-side state:
+- Use server components for data fetching (not `useEffect`)
+- Use React Server Actions for form handling (not `useState` + `fetch`)
+- Use URL search params for shareable state
+- Use `nuqs` for URL search param state management when needed
+
+### App Router Structure
+
+- Use `page.tsx` files in route directories
+- Routes live in `app/` (NOT `src/app/`)
+- Use route groups like `(store)` for shared layouts without affecting URL
 
 ### Cart Architecture
 
