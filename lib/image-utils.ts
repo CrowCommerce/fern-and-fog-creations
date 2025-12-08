@@ -45,6 +45,11 @@ export const HERO_BLUR_PLACEHOLDER = getShimmerPlaceholder(1920, 1080);
 export const PRODUCT_BLUR_PLACEHOLDER = getShimmerPlaceholder(800, 800);
 
 /**
- * Common blur placeholder for gallery images
+ * Common blur placeholder for gallery images (square aspect ratio)
  */
-export const GALLERY_BLUR_PLACEHOLDER = getShimmerPlaceholder(600, 400);
+export const GALLERY_BLUR_PLACEHOLDER = getShimmerPlaceholder(600, 600);
+
+/**
+ * Common blur placeholder for lightbox images (landscape)
+ */
+export const LIGHTBOX_BLUR_PLACEHOLDER = getShimmerPlaceholder(1200, 800);

@@ -1,8 +1,10 @@
 'use client';
 
 import { useState, useMemo, useRef } from 'react';
+import Image from 'next/image';
 import Lightbox from '@/components/Lightbox';
 import { analytics } from '@/lib/analytics/tracker';
+import { GALLERY_BLUR_PLACEHOLDER } from '@/lib/image-utils';
 import type { GalleryItem, GalleryCategory, GalleryCategoryFilter, GalleryPageSettings } from '@/types/gallery';
 
 interface GalleryClientProps {
@@ -160,11 +162,15 @@ export default function GalleryClient({ items, pageSettings }: GalleryClientProp
               className="group cursor-pointer"
               onClick={() => openLightbox(index)}
             >
-              <div className="aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">
-                <img
+              <div className="relative aspect-square overflow-hidden rounded-lg ring-1 ring-bark/20 group-hover:ring-fern transition-all">
+                <Image
                   src={item.image}
                   alt={item.title}
-                  className="size-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  fill
+                  sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                  className="object-cover group-hover:scale-105 transition-transform duration-300"
+                  placeholder="blur"
+                  blurDataURL={GALLERY_BLUR_PLACEHOLDER}
                 />
               </div>
               <div className="mt-4">

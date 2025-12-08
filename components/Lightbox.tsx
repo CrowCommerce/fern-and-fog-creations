@@ -3,6 +3,8 @@
 import { Dialog, DialogBackdrop, DialogPanel } from '@headlessui/react'
 import { XMarkIcon, ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/24/outline'
 import { useEffect } from 'react'
+import Image from 'next/image'
+import { LIGHTBOX_BLUR_PLACEHOLDER } from '@/lib/image-utils'
 
 interface LightboxProps {
   images: Array<{ src: string; alt: string; title: string }>
@@ -55,7 +57,7 @@ export default function Lightbox({
         <div className="flex min-h-full items-center justify-center p-4 sm:p-6">
           <DialogPanel className="relative w-full max-w-5xl">
             {/* Image */}
-            <div className="relative bg-bark/20 rounded-lg overflow-hidden max-h-[70vh] flex items-center justify-center">
+            <div className="relative bg-bark/20 rounded-lg overflow-hidden h-[70vh] w-full">
               {/* Close Button - inside image container */}
               <button
                 onClick={onClose}
@@ -64,10 +66,15 @@ export default function Lightbox({
               >
                 <XMarkIcon className="h-6 w-6" />
               </button>
-              <img
+              <Image
                 src={currentImage.src}
                 alt={currentImage.alt}
-                className="max-w-full max-h-[70vh] object-contain"
+                fill
+                sizes="(max-width: 1280px) 100vw, 1280px"
+                className="object-contain"
+                placeholder="blur"
+                blurDataURL={LIGHTBOX_BLUR_PLACEHOLDER}
+                priority
               />
             </div>
 

@@ -19,18 +19,18 @@ export default function GalleryLoading() {
         </div>
 
         {/* Gallery Grid Skeleton */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
           {[...Array(12)].map((_, index) => (
-            <div key={index} className="group relative overflow-hidden rounded-lg">
+            <div key={index} className="group">
               {/* Image Skeleton */}
-              <div className="aspect-[4/3] bg-mist/50 animate-pulse"></div>
+              <div className="aspect-square rounded-lg ring-1 ring-bark/20 overflow-hidden">
+                <div className="size-full bg-mist/50 animate-pulse"></div>
+              </div>
 
-              {/* Overlay Content Skeleton */}
-              <div className="absolute inset-0 bg-gradient-to-t from-bark/80 via-bark/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div className="absolute bottom-0 left-0 right-0 p-6 space-y-2">
-                  <div className="h-6 w-3/4 bg-parchment/50 rounded-md animate-pulse"></div>
-                  <div className="h-4 w-1/2 bg-parchment/50 rounded-md animate-pulse"></div>
-                </div>
+              {/* Content Skeleton */}
+              <div className="mt-4 space-y-2">
+                <div className="h-6 w-3/4 bg-mist/50 rounded-md animate-pulse"></div>
+                <div className="h-4 w-1/2 bg-mist/50 rounded-md animate-pulse"></div>
               </div>
             </div>
           ))}
